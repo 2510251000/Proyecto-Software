@@ -1,7 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { MENSAJES_ERROR_HTTP, MENSAJES_SESION, MENSAJES_VALIDACION } from '../../../core/constants/mensajes.constants';
+import {
+  MENSAJES_ERROR_HTTP,
+  MENSAJES_EXITO,
+  MENSAJES_SESION,
+  MENSAJES_VALIDACION,
+} from '../../../core/constants/mensajes.constants';
 import { MOTIVOS_LOGIN, PARAMETROS_URL } from '../../../core/constants/navegacion.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
@@ -123,6 +128,16 @@ describe('Login', () => {
   it('avisa que la sesión expiró cuando llega el motivo en la URL', async () => {
     await crear(MOTIVOS_LOGIN.sesionExpirada);
     expect(buscar('.aviso')?.textContent).toContain(MENSAJES_SESION.expirada);
+  });
+
+  it('muestra el mensaje de éxito cuando llega tras registrarse', async () => {
+    await crear(MOTIVOS_LOGIN.registroExitoso);
+    expect(buscar('.aviso')?.textContent).toContain(MENSAJES_EXITO.registro);
+  });
+
+  it('ignora un motivo desconocido en la URL', async () => {
+    await crear('constructor');
+    expect(buscar('.aviso')).toBeNull();
   });
 
   it('enlaza al registro', async () => {

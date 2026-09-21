@@ -1,3 +1,4 @@
+import { MOTIVOS_LOGIN } from './navegacion.constants';
 import { LONGITUD_MINIMA_CONTRASENA } from './validacion.constants';
 
 export const MENSAJES_ERROR_HTTP = {
@@ -27,6 +28,10 @@ export const ERRORES_CONTRASENA = {
   minlength: MENSAJES_VALIDACION.contrasenaCorta,
 } as const;
 
+export const ERRORES_CONFIRMACION = {
+  required: MENSAJES_VALIDACION.confirmacionObligatoria,
+} as const;
+
 export const MENSAJES_EXITO = {
   registro: 'Cuenta creada correctamente. Ya puedes iniciar sesión.',
 } as const;
@@ -38,3 +43,9 @@ export const TEXTOS_COMUNES = {
 export const MENSAJES_SESION = {
   expirada: 'Tu sesión expiró. Inicia sesión de nuevo.',
 } as const;
+
+// Aviso que muestra el login según el parámetro "motivo" de la URL.
+export const AVISOS_POR_MOTIVO: ReadonlyMap<string, string> = new Map([
+  [MOTIVOS_LOGIN.sesionExpirada, MENSAJES_SESION.expirada],
+  [MOTIVOS_LOGIN.registroExitoso, MENSAJES_EXITO.registro],
+]);

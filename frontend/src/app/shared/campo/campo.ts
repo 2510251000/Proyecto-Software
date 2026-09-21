@@ -15,15 +15,19 @@ export class Campo {
   readonly autocompletar = input('off');
   /** Mensaje a mostrar por cada error de validación. Se muestra el primero que aplique, en el orden dado. */
   readonly errores = input<Readonly<Record<string, string>>>({});
+  /** Error que no es del campo mismo sino del grupo (p. ej. contraseñas distintas). Se muestra si el campo no tiene errores propios. */
+  readonly errorExtra = input<string | null>(null);
 
   protected readonly idError = computed(() => `${this.idCampo()}-error`);
 
   protected mensajeError(): string | null {
     const control = this.control();
-    if (!control.invalid || !(control.touched || control.dirty)) {
+    if (!(control.touched || control.dirty)) {
       return null;
     }
-    const clave = Object.keys(this.errores()).find((k) => control.hasError(k));
-    return clave === undefined ? null : this.errores()[clave];
+    const clave = control.invalid
+      ? Object.keys(this.errores()).find((k) => control.hasError(k))
+      : undefined;
+    return clave === undefined ? this.errorExtra() : this.errores()[clave];
   }
 }

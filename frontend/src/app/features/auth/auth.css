@@ -3,7 +3,18 @@
   display: block;
 }
 
+/* En escritorio el formulario queda centrado verticalmente; en móvil se alinea arriba. */
+@media (min-width: 48rem) {
+  :host {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+}
+
 .pagina-auth {
+  width: 100%;
   max-width: 26rem;
   margin: 0 auto;
   padding: var(--espacio-xl) var(--espacio-m);
@@ -18,13 +29,13 @@
   font-weight: 700;
 }
 
-.formulario {
-  margin-top: var(--espacio-l);
+/* El espacio bajo el título es el mismo se muestre o no un aviso. */
+h1 {
+  margin-bottom: var(--espacio-l);
 }
 
 .aviso,
-.error-general,
-.exito {
+.error-general {
   margin: 0 0 var(--espacio-m);
   padding: var(--espacio-s) var(--espacio-m);
   border: 1px solid var(--color-texto);

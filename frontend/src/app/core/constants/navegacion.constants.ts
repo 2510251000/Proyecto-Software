@@ -4,4 +4,5 @@ export const PARAMETROS_URL = {
 
 export const MOTIVOS_LOGIN = {
   sesionExpirada: 'sesion-expirada',
+  registroExitoso: 'registro-exitoso',
 } as const;

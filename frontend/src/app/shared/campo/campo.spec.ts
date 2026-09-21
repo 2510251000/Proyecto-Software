@@ -41,6 +41,27 @@ describe('Campo', () => {
     expect(entrada().getAttribute('aria-invalid')).toBe('true');
   });
 
+  it('muestra el error extra solo si el campo no tiene errores propios y ya fue tocado', () => {
+    control.setValue('a@b.co');
+    fixture.componentRef.setInput('errorExtra', 'Error del grupo.');
+    fixture.detectChanges();
+    expect(raiz().querySelector('.mensaje-error')).toBeNull();
+
+    control.markAsTouched();
+    fixture.detectChanges();
+    expect(raiz().querySelector('.mensaje-error')?.textContent).toContain('Error del grupo.');
+    expect(entrada().getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('prefiere los errores propios sobre el error extra', () => {
+    fixture.componentRef.setInput('errorExtra', 'Error del grupo.');
+    control.markAsTouched();
+    fixture.detectChanges();
+    expect(raiz().querySelector('.mensaje-error')?.textContent).toContain(
+      'El correo es obligatorio.',
+    );
+  });
+
   it('quita el error cuando el valor es válido', () => {
     control.markAsTouched();
     control.setValue('a@b.co');
