@@ -1,0 +1,18 @@
+@let mensaje = mensajeError();
+
+<div class="campo">
+  <label class="etiqueta" [for]="idCampo()">{{ etiqueta() }}</label>
+  <input
+    class="entrada"
+    [class.entrada-invalida]="mensaje !== null"
+    [id]="idCampo()"
+    [type]="tipo()"
+    [attr.autocomplete]="autocompletar()"
+    [formControl]="control()"
+    [attr.aria-invalid]="mensaje !== null"
+    [attr.aria-describedby]="mensaje !== null ? idError() : null"
+  />
+  @if (mensaje !== null) {
+    <p class="mensaje-error" [id]="idError()">{{ mensaje }}</p>
+  }
+</div>

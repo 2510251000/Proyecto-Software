@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.encabezado {
+  border-bottom: 4px solid var(--color-acento);
+  background: var(--color-fondo);
+}
+
+.contenido {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-m);
+  max-width: var(--ancho-maximo);
+  margin: 0 auto;
+  padding: var(--espacio-m);
+}
+
+.marca {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-s);
+}
