@@ -11,6 +11,7 @@ export class Boton {
   readonly cargando = input(false);
   readonly deshabilitado = input(false);
   readonly bloque = input(false);
+  readonly variante = input<'primaria' | 'secundaria'>('primaria');
 
   protected readonly textos = TEXTOS_COMUNES;
 }

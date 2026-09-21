@@ -34,6 +34,13 @@ describe('Boton', () => {
     expect(boton().textContent).toContain(TEXTOS_COMUNES.cargando);
   });
 
+  it('usa el estilo secundario cuando se le pide', async () => {
+    expect(boton().classList).not.toContain('boton-secundario');
+    fixture.componentRef.setInput('variante', 'secundaria');
+    await fixture.whenStable();
+    expect(boton().classList).toContain('boton-secundario');
+  });
+
   it('se deshabilita cuando se le pide', async () => {
     fixture.componentRef.setInput('deshabilitado', true);
     await fixture.whenStable();

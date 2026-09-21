@@ -1,6 +1,7 @@
 <button
   class="boton"
   [class.boton-bloque]="bloque()"
+  [class.boton-secundario]="variante() === 'secundaria'"
   [type]="tipo()"
   [disabled]="deshabilitado() || cargando()"
   [attr.aria-busy]="cargando()"

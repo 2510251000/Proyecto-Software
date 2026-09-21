@@ -28,6 +28,18 @@
   cursor: not-allowed;
 }
 
+.boton-secundario {
+  border-color: var(--color-texto);
+  background: transparent;
+  color: var(--color-texto);
+}
+
+.boton-secundario:hover:not(:disabled) {
+  background: var(--color-texto);
+  border-color: var(--color-texto);
+  color: var(--color-fondo);
+}
+
 .boton-bloque {
   width: 100%;
 }

@@ -24,6 +24,7 @@
   /* Forma */
   --radio: 2px;
   --alto-control: 2.75rem; /* 44 px: tamaño táctil mínimo */
+  --ancho-maximo: 72rem; /* ancho del contenido en las pantallas de la aplicación */
 
   /* Tipografía: sin fuentes externas */
   --fuente-titulos: Georgia, 'Times New Roman', serif;

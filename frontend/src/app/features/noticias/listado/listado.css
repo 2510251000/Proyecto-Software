@@ -1,0 +1,33 @@
+:host {
+  display: block;
+}
+
+.pagina {
+  max-width: var(--ancho-maximo);
+  margin: 0 auto;
+  padding: var(--espacio-l) var(--espacio-m) var(--espacio-xl);
+}
+
+/* Una columna en móvil; se reparte en más columnas según el ancho disponible. */
+.lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: var(--espacio-l);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.estado {
+  padding: var(--espacio-l);
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio);
+  color: var(--color-texto-suave);
+  text-align: center;
+}
+
+.estado-error {
+  border-color: var(--color-error);
+  color: var(--color-error);
+  font-weight: 600;
+}

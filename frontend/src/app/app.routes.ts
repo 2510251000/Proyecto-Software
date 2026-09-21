@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { RUTAS } from './core/constants/rutas.constants';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -11,5 +12,11 @@ export const routes: Routes = [
     path: RUTAS.registro,
     title: 'Crear cuenta | Al Día',
     loadComponent: () => import('./features/auth/registro/registro').then((m) => m.Registro),
+  },
+  {
+    path: RUTAS.noticias,
+    title: 'Noticias | Al Día',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/noticias/listado/listado').then((m) => m.Listado),
   },
 ];

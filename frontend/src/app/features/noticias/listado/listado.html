@@ -1,0 +1,26 @@
+<app-encabezado>
+  <app-boton variante="secundaria" (click)="cerrarSesion()">Cerrar sesión</app-boton>
+</app-encabezado>
+
+<main class="pagina">
+  <h1>Noticias</h1>
+
+  @if (cargando()) {
+    <p class="estado" role="status">{{ textos.cargando }}</p>
+  } @else if (error(); as mensaje) {
+    <div class="estado estado-error" role="alert">
+      <p>{{ mensaje }}</p>
+      <app-boton (click)="cargar()">Reintentar</app-boton>
+    </div>
+  } @else if (noticias().length === 0) {
+    <p class="estado">Todavía no hay noticias publicadas.</p>
+  } @else {
+    <ul class="lista">
+      @for (noticia of noticias(); track noticia.id) {
+        <li>
+          <app-tarjeta-noticia [noticia]="noticia" />
+        </li>
+      }
+    </ul>
+  }
+</main>
