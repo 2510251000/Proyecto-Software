@@ -1,0 +1,10 @@
+<article class="tarjeta">
+  <h2 class="titulo">{{ noticia().titulo }}</h2>
+  <p class="resumen">{{ noticia().resumen }}</p>
+  <p class="datos">
+    <span class="ciudad">{{ noticia().ciudad }}</span>
+    @if (fecha() !== '') {
+      <time [attr.datetime]="noticia().fechaPublicacion">{{ fecha() }}</time>
+    }
+  </p>
+</article>

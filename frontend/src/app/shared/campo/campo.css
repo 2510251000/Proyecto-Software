@@ -1,0 +1,32 @@
+.campo {
+  margin-bottom: var(--espacio-m);
+}
+
+.etiqueta {
+  display: block;
+  margin-bottom: var(--espacio-xs);
+  font-weight: 600;
+}
+
+.entrada {
+  display: block;
+  width: 100%;
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-m);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font: inherit; /* 16 px: evita el zoom automático en iOS */
+}
+
+.entrada-invalida {
+  border-color: var(--color-error);
+  border-width: 2px;
+}
+
+.mensaje-error {
+  margin: var(--espacio-xs) 0 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+}

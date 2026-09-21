@@ -20,6 +20,10 @@ export const MENSAJES_EXITO = {
   registro: 'Cuenta creada correctamente. Ya puedes iniciar sesión.',
 } as const;
 
+export const TEXTOS_COMUNES = {
+  cargando: 'Cargando…',
+} as const;
+
 export const MENSAJES_SESION = {
   expirada: 'Tu sesión expiró. Inicia sesión de nuevo.',
 } as const;

@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.tarjeta {
+  height: 100%;
+  padding: var(--espacio-l);
+  border: 1px solid var(--color-linea);
+  border-top: 4px solid var(--color-acento);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+}
+
+.titulo {
+  font-size: 1.35rem;
+  overflow-wrap: anywhere;
+}
+
+.resumen {
+  color: var(--color-texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs) var(--espacio-m);
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.ciudad {
+  color: var(--color-texto);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

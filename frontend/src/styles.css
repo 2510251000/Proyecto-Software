@@ -1,1 +1,90 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+  Diseño provisional de Al Día (hasta tener Figma): blanco y negro, formal, con
+  un solo acento rojo. Todo el aspecto se cambia desde estas variables.
+*/
+:root {
+  /* Colores */
+  --color-fondo: #ffffff;
+  --color-texto: #111111;
+  --color-texto-suave: #4d4d4d;
+  --color-borde: #767676; /* bordes de campos: 4.5:1 sobre blanco */
+  --color-linea: #d9d9d9; /* separadores decorativos */
+  --color-acento: #b3261e; /* rojo periódico: 6.5:1 sobre blanco */
+  --color-acento-oscuro: #8c1d17;
+  --color-sobre-acento: #ffffff;
+  --color-error: #b3261e;
+
+  /* Espacios */
+  --espacio-xs: 0.25rem;
+  --espacio-s: 0.5rem;
+  --espacio-m: 1rem;
+  --espacio-l: 1.5rem;
+  --espacio-xl: 2.5rem;
+
+  /* Forma */
+  --radio: 2px;
+  --alto-control: 2.75rem; /* 44 px: tamaño táctil mínimo */
+
+  /* Tipografía: sin fuentes externas */
+  --fuente-titulos: Georgia, 'Times New Roman', serif;
+  --fuente-texto: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 var(--espacio-s);
+  font-family: var(--fuente-titulos);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+p {
+  margin: 0 0 var(--espacio-m);
+}
+
+a {
+  color: var(--color-acento);
+}
+
+a:hover {
+  color: var(--color-acento-oscuro);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+.solo-lectores-pantalla {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
