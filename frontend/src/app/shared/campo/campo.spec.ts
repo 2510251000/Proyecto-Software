@@ -13,7 +13,7 @@ describe('Campo', () => {
     await TestBed.configureTestingModule({ imports: [Campo] }).compileComponents();
     control = new FormControl('', { nonNullable: true, validators: [Validators.required] });
     fixture = TestBed.createComponent(Campo);
-    fixture.componentRef.setInput('id', 'campo-correo');
+    fixture.componentRef.setInput('idCampo', 'campo-correo');
     fixture.componentRef.setInput('etiqueta', 'Correo');
     fixture.componentRef.setInput('control', control);
     fixture.componentRef.setInput('errores', { required: 'El correo es obligatorio.' });

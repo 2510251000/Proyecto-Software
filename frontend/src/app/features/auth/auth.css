@@ -1,0 +1,44 @@
+/* Estilos comunes de las pantallas de login y registro. */
+:host {
+  display: block;
+}
+
+.pagina-auth {
+  max-width: 26rem;
+  margin: 0 auto;
+  padding: var(--espacio-xl) var(--espacio-m);
+}
+
+.marca {
+  margin: 0 0 var(--espacio-l);
+  padding-bottom: var(--espacio-s);
+  border-bottom: 4px solid var(--color-acento);
+  font-family: var(--fuente-titulos);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.formulario {
+  margin-top: var(--espacio-l);
+}
+
+.aviso,
+.error-general,
+.exito {
+  margin: 0 0 var(--espacio-m);
+  padding: var(--espacio-s) var(--espacio-m);
+  border: 1px solid var(--color-texto);
+  border-left-width: 4px;
+  border-radius: var(--radio);
+}
+
+.error-general {
+  border-color: var(--color-error);
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.enlace-alterno {
+  margin: var(--espacio-l) 0 0;
+  text-align: center;
+}

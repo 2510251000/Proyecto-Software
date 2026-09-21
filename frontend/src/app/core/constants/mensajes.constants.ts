@@ -16,6 +16,17 @@ export const MENSAJES_VALIDACION = {
   contrasenasDistintas: 'Las contraseñas no coinciden.',
 } as const;
 
+// Mensaje por cada error de validación de Angular, en el orden en que se muestran.
+export const ERRORES_CORREO = {
+  required: MENSAJES_VALIDACION.correoObligatorio,
+  email: MENSAJES_VALIDACION.correoInvalido,
+} as const;
+
+export const ERRORES_CONTRASENA = {
+  required: MENSAJES_VALIDACION.contrasenaObligatoria,
+  minlength: MENSAJES_VALIDACION.contrasenaCorta,
+} as const;
+
 export const MENSAJES_EXITO = {
   registro: 'Cuenta creada correctamente. Ya puedes iniciar sesión.',
 } as const;

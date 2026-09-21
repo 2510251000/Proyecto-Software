@@ -1,11 +1,11 @@
 @let mensaje = mensajeError();
 
 <div class="campo">
-  <label class="etiqueta" [for]="id()">{{ etiqueta() }}</label>
+  <label class="etiqueta" [for]="idCampo()">{{ etiqueta() }}</label>
   <input
     class="entrada"
     [class.entrada-invalida]="mensaje !== null"
-    [id]="id()"
+    [id]="idCampo()"
     [type]="tipo()"
     [attr.autocomplete]="autocompletar()"
     [formControl]="control()"

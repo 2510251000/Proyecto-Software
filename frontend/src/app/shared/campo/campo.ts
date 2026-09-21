@@ -8,7 +8,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './campo.css',
 })
 export class Campo {
-  readonly id = input.required<string>();
+  readonly idCampo = input.required<string>();
   readonly etiqueta = input.required<string>();
   readonly control = input.required<FormControl<string>>();
   readonly tipo = input<'text' | 'email' | 'password'>('text');
@@ -16,7 +16,7 @@ export class Campo {
   /** Mensaje a mostrar por cada error de validación. Se muestra el primero que aplique, en el orden dado. */
   readonly errores = input<Readonly<Record<string, string>>>({});
 
-  protected readonly idError = computed(() => `${this.id()}-error`);
+  protected readonly idError = computed(() => `${this.idCampo()}-error`);
 
   protected mensajeError(): string | null {
     const control = this.control();
