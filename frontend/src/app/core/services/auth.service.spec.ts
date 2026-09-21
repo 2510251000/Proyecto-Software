@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { crearAlmacenamientoFalso } from '../../../testing/almacenamiento-falso';
+import { ahoraEnSegundos, crearToken } from '../../../testing/token-falso';
 import { environment } from '../../../environments/environment';
 import { CLAVE_TOKEN } from '../constants/almacenamiento.constants';
 import { ENDPOINTS } from '../constants/endpoints.constants';
@@ -10,17 +11,6 @@ import { MENSAJES_ERROR_HTTP } from '../constants/mensajes.constants';
 import { ROLES } from '../constants/roles.constants';
 import { ErrorApi } from '../models/error-api.model';
 import { AuthService } from './auth.service';
-
-function crearToken(exp: number): string {
-  const contenido = { sub: 'a@b.co', rol: ROLES.usuarioComun, id: 1, iat: 0, exp };
-  const cuerpo = btoa(JSON.stringify(contenido))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-  return `cabecera.${cuerpo}.firma`;
-}
-
-const AHORA_EN_SEGUNDOS = () => Math.floor(Date.now() / 1000);
 
 describe('AuthService', () => {
   let servicio: AuthService;
@@ -71,13 +61,13 @@ describe('AuthService', () => {
   });
 
   it('la sesión es vigente con un token que no ha expirado', () => {
-    localStorage.setItem(CLAVE_TOKEN, crearToken(AHORA_EN_SEGUNDOS() + 3600));
+    localStorage.setItem(CLAVE_TOKEN, crearToken(ahoraEnSegundos() + 3600));
     expect(servicio.haySesionVigente()).toBe(true);
     expect(servicio.obtenerContenidoToken()?.sub).toBe('a@b.co');
   });
 
   it('cierra la sesión si el token expiró', () => {
-    localStorage.setItem(CLAVE_TOKEN, crearToken(AHORA_EN_SEGUNDOS() - 10));
+    localStorage.setItem(CLAVE_TOKEN, crearToken(ahoraEnSegundos() - 10));
     expect(servicio.haySesionVigente()).toBe(false);
     expect(localStorage.getItem(CLAVE_TOKEN)).toBeNull();
   });
