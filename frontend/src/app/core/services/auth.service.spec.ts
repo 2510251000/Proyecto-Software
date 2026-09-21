@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { crearAlmacenamientoFalso } from '../../../testing/almacenamiento-falso';
 import { environment } from '../../../environments/environment';
 import { CLAVE_TOKEN } from '../constants/almacenamiento.constants';
 import { ENDPOINTS } from '../constants/endpoints.constants';
@@ -26,14 +27,7 @@ describe('AuthService', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    // Node 26 define un localStorage global sin implementar que tapa el de jsdom.
-    const datos = new Map<string, string>();
-    vi.stubGlobal('localStorage', {
-      getItem: (clave: string) => datos.get(clave) ?? null,
-      setItem: (clave: string, valor: string) => datos.set(clave, valor),
-      removeItem: (clave: string) => datos.delete(clave),
-      clear: () => datos.clear(),
-    });
+    vi.stubGlobal('localStorage', crearAlmacenamientoFalso());
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
