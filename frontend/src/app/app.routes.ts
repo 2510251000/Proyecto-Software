@@ -3,6 +3,7 @@ import { RUTAS } from './core/constants/rutas.constants';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
+  { path: RUTAS.raiz, pathMatch: 'full', redirectTo: RUTAS.noticias },
   {
     path: RUTAS.login,
     title: 'Iniciar sesión | Al Día',
@@ -19,4 +20,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/noticias/listado/listado').then((m) => m.Listado),
   },
+  // Cualquier ruta desconocida va al listado; si no hay sesión, el guard la manda al login.
+  { path: '**', redirectTo: RUTAS.noticias },
 ];
