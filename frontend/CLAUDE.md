@@ -54,7 +54,9 @@ Todas las relaciones son de uno a muchos, sin tablas intermedias.
 Reglas de diseño:
 
 - Nombres de tablas y campos en minúscula y con guion bajo (`fecha_publicacion`).
-- Llave primaria propia en cada tabla, con `BIGSERIAL`.
+- Llave primaria propia en cada tabla, con `BIGSERIAL`, llamada `id`. Las llaves
+  foráneas se llaman `<tabla>_id` (convención de JPA que usa el backend de David).
+- La base de datos se llama `aldia_db`.
 - `NOT NULL` en todo lo que sea obligatorio; `UNIQUE` en el correo del usuario.
 - Restricción `CHECK` en la calificación para que quede entre 1 y 5.
 - Fechas con `TIMESTAMP` y valor por defecto `CURRENT_TIMESTAMP` donde aplique.
@@ -63,7 +65,7 @@ Reglas de diseño:
 **Nada de valores quemados.** Los niveles de usuario, con sus puntajes y límites diarios,
 son **filas de la tabla `nivel`**, no constantes en el código:
 
-| nivel | nombre | puntaje_minimo | limite_diario |
+| nivel | nombre | puntaje_minimo | limite_noticias_diarias |
 |---|---|---|---|
 | 1 | Básico | 0 | 3 |
 | 2 | Activo | 50 | 10 |
