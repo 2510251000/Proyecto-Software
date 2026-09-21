@@ -4,14 +4,12 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CLAVE_TOKEN } from '../constants/almacenamiento.constants';
 import { ENDPOINTS } from '../constants/endpoints.constants';
-import { CODIGOS_HTTP } from '../constants/http.constants';
-import { MENSAJES_ERROR_HTTP } from '../constants/mensajes.constants';
 import { ContenidoToken } from '../models/contenido-token.model';
 import { CredencialesLogin } from '../models/credenciales-login.model';
-import { ErrorApi } from '../models/error-api.model';
 import { RespuestaAutenticacion } from '../models/respuesta-autenticacion.model';
 import { RespuestaRegistro } from '../models/respuesta-registro.model';
 import { SolicitudRegistro } from '../models/solicitud-registro.model';
+import { aErrorApi } from './error-http';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -20,7 +18,7 @@ export class AuthService {
   registrar(datos: SolicitudRegistro): Observable<RespuestaRegistro> {
     return this.http
       .post<RespuestaRegistro>(`${environment.apiUrl}${ENDPOINTS.registro}`, datos)
-      .pipe(catchError((error: HttpErrorResponse) => throwError(() => this.aErrorApi(error))));
+      .pipe(catchError((error: HttpErrorResponse) => throwError(() => aErrorApi(error))));
   }
 
   iniciarSesion(datos: CredencialesLogin): Observable<RespuestaAutenticacion> {
@@ -28,7 +26,7 @@ export class AuthService {
       .post<RespuestaAutenticacion>(`${environment.apiUrl}${ENDPOINTS.login}`, datos)
       .pipe(
         tap((respuesta) => localStorage.setItem(CLAVE_TOKEN, respuesta.token)),
-        catchError((error: HttpErrorResponse) => throwError(() => this.aErrorApi(error))),
+        catchError((error: HttpErrorResponse) => throwError(() => aErrorApi(error))),
       );
   }
 
@@ -67,19 +65,6 @@ export class AuthService {
       return typeof contenido.exp === 'number' ? contenido : null;
     } catch {
       return null;
-    }
-  }
-
-  private aErrorApi(error: HttpErrorResponse): ErrorApi {
-    switch (error.status) {
-      case CODIGOS_HTTP.solicitudInvalida:
-        return { estado: error.status, mensaje: MENSAJES_ERROR_HTTP.validacion };
-      case CODIGOS_HTTP.noAutorizado:
-        return { estado: error.status, mensaje: MENSAJES_ERROR_HTTP.credencialesInvalidas };
-      case CODIGOS_HTTP.conflicto:
-        return { estado: error.status, mensaje: MENSAJES_ERROR_HTTP.correoRepetido };
-      default:
-        return { estado: error.status, mensaje: MENSAJES_ERROR_HTTP.generico };
     }
   }
 }
