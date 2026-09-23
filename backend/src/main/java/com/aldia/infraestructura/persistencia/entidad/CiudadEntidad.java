@@ -7,8 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "nivel")
-public class NivelEntidad {
+@Table(name = "ciudad")
+public class CiudadEntidad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +16,9 @@ public class NivelEntidad {
 
     private String nombre;
 
-    private int puntajeMinimo;
+    private String departamento;
 
-    private int limiteNoticiasDiarias;
-
-    public NivelEntidad() {
+    public CiudadEntidad() {
     }
 
     public Long getId() {
@@ -39,19 +37,11 @@ public class NivelEntidad {
         this.nombre = nombre;
     }
 
-    public int getPuntajeMinimo() {
-        return puntajeMinimo;
+    public String getDepartamento() {
+        return departamento;
     }
 
-    public void setPuntajeMinimo(int puntajeMinimo) {
-        this.puntajeMinimo = puntajeMinimo;
-    }
-
-    public int getLimiteNoticiasDiarias() {
-        return limiteNoticiasDiarias;
-    }
-
-    public void setLimiteNoticiasDiarias(int limiteNoticiasDiarias) {
-        this.limiteNoticiasDiarias = limiteNoticiasDiarias;
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
     }
 }

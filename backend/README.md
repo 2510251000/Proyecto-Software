@@ -22,6 +22,22 @@ DB_USUARIO=postgres
 DB_CONTRASENA=tu_contraseña
 JWT_CLAVE_SECRETA=una_clave_de_al_menos_64_caracteres
 
+En dev no hace falta nada más: la URL de la base, el tiempo de expiración del
+token y el origen de CORS tienen valores predeterminados para trabajar en local.
+
+## Perfiles de ambiente
+
+| Perfil | Uso | Variables obligatorias |
+|---|---|---|
+| dev | Máquina local (predeterminado) | DB_USUARIO, DB_CONTRASENA, JWT_CLAVE_SECRETA |
+| test | Ambiente de pruebas | Las de dev + DB_URL, JWT_EXPIRACION_MS, CORS_ORIGENES |
+| prod | Producción | Las de dev + DB_URL, JWT_EXPIRACION_MS, CORS_ORIGENES |
+
+Los nombres coinciden con los ambientes del frontend (dev / test / prod).
+Para arrancar con otro perfil:
+
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=test"
+
 ## Cómo correr el proyecto
 
 Desde la carpeta backend/:

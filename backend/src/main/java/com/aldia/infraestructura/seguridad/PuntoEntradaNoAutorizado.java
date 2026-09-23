@@ -25,7 +25,10 @@ public class PuntoEntradaNoAutorizado implements AuthenticationEntryPoint {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        ErrorResponseDTO error = new ErrorResponseDTO("No autorizado. Token ausente, inválido o expirado.");
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                HttpStatus.UNAUTHORIZED.value(),
+                "No autorizado. Token ausente, inválido o expirado."
+        );
         response.getWriter().write(objectMapper.writeValueAsString(error));
     }
 }
