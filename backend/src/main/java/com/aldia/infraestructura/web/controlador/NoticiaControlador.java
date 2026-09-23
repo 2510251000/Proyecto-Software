@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aldia.dominio.puerto.entrada.ListarNoticiasCasoDeUso;
-import com.aldia.infraestructura.web.dto.NoticiaRespuestaDto;
+import com.aldia.infraestructura.web.dto.NoticiaResponseDTO;
 
 @RestController
 @RequestMapping("/api/noticias")
@@ -21,10 +21,10 @@ public class NoticiaControlador {
     }
 
     @GetMapping
-    public ResponseEntity<List<NoticiaRespuestaDto>> listar() {
-        List<NoticiaRespuestaDto> noticias = listarNoticiasCasoDeUso.listarPublicadas()
+    public ResponseEntity<List<NoticiaResponseDTO>> listar() {
+        List<NoticiaResponseDTO> noticias = listarNoticiasCasoDeUso.listarPublicadas()
                 .stream()
-                .map(NoticiaRespuestaDto::desde)
+                .map(NoticiaResponseDTO::desde)
                 .toList();
         return ResponseEntity.ok(noticias);
     }

@@ -8,10 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.entrada.ObtenerUsuarioActualCasoDeUso;
+import com.aldia.infraestructura.configuracion.OpenApiConfiguracion;
 import com.aldia.infraestructura.web.dto.UsuarioActualResponseDTO;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@SecurityRequirement(name = OpenApiConfiguracion.ESQUEMA_JWT)
 public class UsuarioControlador {
 
     private final ObtenerUsuarioActualCasoDeUso obtenerUsuarioActualCasoDeUso;

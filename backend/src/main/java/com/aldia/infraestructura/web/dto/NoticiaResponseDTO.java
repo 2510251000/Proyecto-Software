@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.aldia.dominio.modelo.Noticia;
 
-public record NoticiaRespuestaDto(
+public record NoticiaResponseDTO(
         Long id,
         String titulo,
         String resumen,
@@ -13,8 +13,8 @@ public record NoticiaRespuestaDto(
         boolean oficial,
         String ciudad
 ) {
-    public static NoticiaRespuestaDto desde(Noticia noticia) {
-        return new NoticiaRespuestaDto(
+    public static NoticiaResponseDTO desde(Noticia noticia) {
+        return new NoticiaResponseDTO(
                 noticia.getId(),
                 noticia.getTitulo(),
                 noticia.getResumen(),
