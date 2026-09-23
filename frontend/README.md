@@ -36,6 +36,17 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Environments
+
+The project has three environments: `environment.ts` (development), `environment.test.ts`
+(test) and `environment.prod.ts` (production). To build against the test environment, run:
+
+```bash
+ng build --configuration=test
+```
+
+The `pre` branch deploys to the test environment.
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
