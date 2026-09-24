@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.aldia.dominio.excepcion.CredencialesInvalidasExcepcion;
+import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.excepcion.UsuarioNoEncontradoExcepcion;
 import com.aldia.dominio.excepcion.UsuarioYaExisteExcepcion;
 import com.aldia.infraestructura.web.dto.ErrorResponseDTO;
@@ -38,6 +39,11 @@ public class ManejadorGlobalExcepciones {
     @ExceptionHandler(CredencialesInvalidasExcepcion.class)
     public ResponseEntity<ErrorResponseDTO> manejarCredencialesInvalidas(CredencialesInvalidasExcepcion ex) {
         return responder(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(CuentaDesactivadaExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarCuentaDesactivada(CuentaDesactivadaExcepcion ex) {
+        return responder(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
     @ExceptionHandler(UsuarioNoEncontradoExcepcion.class)

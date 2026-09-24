@@ -3,6 +3,7 @@ package com.aldia.aplicacion.servicio;
 import org.springframework.stereotype.Service;
 
 import com.aldia.dominio.excepcion.CredencialesInvalidasExcepcion;
+import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.entrada.IniciarSesionCasoDeUso;
 import com.aldia.dominio.puerto.salida.CifradorPuerto;
@@ -31,6 +32,12 @@ public class IniciarSesionServicio implements IniciarSesionCasoDeUso {
 
         if (!cifradorPuerto.coincide(contrasena, usuario.getContrasenaCifrada())) {
             throw new CredencialesInvalidasExcepcion();
+        }
+
+        // Se revisa después de la contraseña: así solo se revela que la cuenta
+        // está desactivada a quien ya demostró ser su dueño.
+        if (!usuario.isActivo()) {
+            throw new CuentaDesactivadaExcepcion();
         }
 
         return tokenPuerto.generarToken(usuario);

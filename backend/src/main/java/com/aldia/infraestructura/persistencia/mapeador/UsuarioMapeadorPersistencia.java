@@ -22,6 +22,7 @@ public class UsuarioMapeadorPersistencia {
         entidad.setNivel(nivelEntidad);
 
         entidad.setFechaRegistro(usuario.getFechaRegistro());
+        entidad.setActivo(usuario.isActivo());
         return entidad;
     }
 
@@ -38,7 +39,8 @@ public class UsuarioMapeadorPersistencia {
                 entidad.getContrasenaCifrada(),
                 Usuario.Rol.valueOf(entidad.getRol().name()),
                 nivel,
-                entidad.getFechaRegistro()
+                entidad.getFechaRegistro(),
+                entidad.isActivo()
         );
     }
 }

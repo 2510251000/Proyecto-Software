@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 @Component
 public class FiltroJWT extends OncePerRequestFilter {
@@ -49,9 +51,16 @@ public class FiltroJWT extends OncePerRequestFilter {
                     .getPayload();
 
             String correo = claims.getSubject();
+            String rol = claims.get("rol", String.class);
+
+            // El rol del token se pasa a Spring Security como ROLE_<rol>, para poder
+            // proteger endpoints con hasRole("ADMINISTRADOR").
+            List<SimpleGrantedAuthority> permisos = rol != null
+                    ? List.of(new SimpleGrantedAuthority("ROLE_" + rol))
+                    : Collections.emptyList();
 
             UsernamePasswordAuthenticationToken autenticacion =
-                    new UsernamePasswordAuthenticationToken(correo, null, Collections.emptyList());
+                    new UsernamePasswordAuthenticationToken(correo, null, permisos);
 
             SecurityContextHolder.getContext().setAuthentication(autenticacion);
 

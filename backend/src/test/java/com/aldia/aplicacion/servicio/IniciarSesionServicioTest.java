@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.aldia.dominio.excepcion.CredencialesInvalidasExcepcion;
+import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.modelo.Nivel;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.salida.CifradorPuerto;
@@ -77,6 +78,19 @@ class IniciarSesionServicioTest {
         // Mismo error que con correo inexistente: no se revela cuál de los dos falló.
         assertThatThrownBy(() -> servicio.iniciarSesion(CORREO, "otraClave"))
                 .isInstanceOf(CredencialesInvalidasExcepcion.class);
+
+        verify(tokenPuerto, never()).generarToken(any());
+    }
+
+    @Test
+    void rechazaCuentaDesactivadaAunqueLaContrasenaSeaCorrecta() {
+        Usuario desactivado = new Usuario(1L, CORREO, CONTRASENA_CIFRADA, Usuario.Rol.USUARIO_COMUN,
+                new Nivel(1L, "Básico", 3), LocalDateTime.now(), false);
+        when(usuarioRepositorioPuerto.buscarPorCorreo(CORREO)).thenReturn(Optional.of(desactivado));
+        when(cifradorPuerto.coincide(CONTRASENA, CONTRASENA_CIFRADA)).thenReturn(true);
+
+        assertThatThrownBy(() -> servicio.iniciarSesion(CORREO, CONTRASENA))
+                .isInstanceOf(CuentaDesactivadaExcepcion.class);
 
         verify(tokenPuerto, never()).generarToken(any());
     }

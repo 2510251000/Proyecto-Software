@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.excepcion.UsuarioNoEncontradoExcepcion;
 import com.aldia.dominio.modelo.Nivel;
 import com.aldia.dominio.modelo.Usuario;
@@ -44,5 +45,15 @@ class ObtenerUsuarioActualServicioTest {
 
         assertThatThrownBy(() -> servicio.obtenerPorCorreo(CORREO))
                 .isInstanceOf(UsuarioNoEncontradoExcepcion.class);
+    }
+
+    @Test
+    void rechazaTokenDeUnaCuentaQueFueDesactivada() {
+        Usuario desactivado = new Usuario(1L, CORREO, "hash", Usuario.Rol.USUARIO_COMUN,
+                new Nivel(1L, "Básico", 3), LocalDateTime.now(), false);
+        when(usuarioRepositorioPuerto.buscarPorCorreo(CORREO)).thenReturn(Optional.of(desactivado));
+
+        assertThatThrownBy(() -> servicio.obtenerPorCorreo(CORREO))
+                .isInstanceOf(CuentaDesactivadaExcepcion.class);
     }
 }

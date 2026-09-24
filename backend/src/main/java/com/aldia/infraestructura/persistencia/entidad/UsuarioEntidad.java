@@ -37,6 +37,9 @@ public class UsuarioEntidad {
 
     private LocalDateTime fechaRegistro;
 
+    @Column(nullable = false)
+    private boolean activo = true;
+
     public UsuarioEntidad() {
     }
 
@@ -86,6 +89,14 @@ public class UsuarioEntidad {
 
     public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     public enum Rol {
