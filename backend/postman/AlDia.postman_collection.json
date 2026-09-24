@@ -353,6 +353,62 @@
                   "body": "[\n  {\n    \"id\": 986,\n    \"titulo\": \"string\",\n    \"resumen\": \"string\",\n    \"contenido\": \"string\",\n    \"fechaPublicacion\": \"2006-04-20T13:04:42.411Z\",\n    \"oficial\": true,\n    \"ciudad\": \"string\"\n  },\n  {\n    \"id\": 8457,\n    \"titulo\": \"string\",\n    \"resumen\": \"string\",\n    \"contenido\": \"string\",\n    \"fechaPublicacion\": \"1953-12-18T19:22:46.337Z\",\n    \"oficial\": false,\n    \"ciudad\": \"string\"\n  }\n]"
                 }
               ]
+            },
+            {
+              "name": "publicar noticia",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"titulo\": \"Cierre de la vía principal\",\r\n  \"resumen\": \"Obras hasta el viernes\",\r\n  \"contenido\": \"La alcaldía informa que la vía estará cerrada.\",\r\n  \"ciudadId\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/noticias",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "noticias"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ver noticia",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/noticias/2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "noticias",
+                    "2"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         }
