@@ -117,7 +117,7 @@ frontend/src/app/
 │   ├── auth/                login y registro
 │   ├── noticias/            listado y detalle
 │   └── admin/               panel de administrador
-└── environments/            environment.ts, environment.pre.ts, environment.prod.ts
+└── environments/            environment.ts, environment.test.ts, environment.prod.ts
 ```
 
 ## 7. Reglas no negociables
@@ -136,7 +136,7 @@ frontend/src/app/
    configuración.
 3. **Toda llamada HTTP vive en un servicio de `core/services/`.** Los componentes nunca
    llaman a `HttpClient` directamente.
-4. **Tres ambientes**: `environment.ts` (DEV), `environment.pre.ts` (PRE) y
+4. **Tres ambientes**: `environment.ts` (DEV), `environment.test.ts` (TEST) y
    `environment.prod.ts` (PROD), cada uno con su `apiUrl`. La aplicación es la misma; lo
    único que cambia es la configuración.
 5. **Nada secreto en Angular.** Todo lo que llega al navegador es inspeccionable por
