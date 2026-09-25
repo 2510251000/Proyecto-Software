@@ -16,6 +16,7 @@ const NOTICIAS: Noticia[] = [
     resumen: 'Resumen uno',
     contenido: 'Contenido uno',
     fechaPublicacion: '2026-09-21T10:00:00',
+    oficial: true,
     ciudad: 'Fusagasugá',
   },
   {
@@ -24,6 +25,7 @@ const NOTICIAS: Noticia[] = [
     resumen: 'Resumen dos',
     contenido: 'Contenido dos',
     fechaPublicacion: '2026-09-20T08:00:00',
+    oficial: false,
     ciudad: 'Soacha',
   },
 ];

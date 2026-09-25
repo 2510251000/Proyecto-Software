@@ -7,5 +7,7 @@ export interface Noticia {
   resumen: string;
   contenido: string;
   fechaPublicacion: string;
+  /** true si la publicó un administrador (noticia oficial); false si viene de la comunidad. */
+  oficial: boolean;
   ciudad: string;
 }
