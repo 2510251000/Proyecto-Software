@@ -1,3 +1,14 @@
+@if (!fallo()) {
+  <img
+    [src]="rutaFoto()"
+    [alt]="textoAlternativo()"
+    width="1280"
+    height="720"
+    loading="lazy"
+    decoding="async"
+    (error)="fallo.set(true)"
+  />
+} @else {
 <!-- Es decoración: el titular ya dice de qué trata la noticia. -->
 <svg
   viewBox="0 0 320 180"
@@ -67,3 +78,4 @@
     }
   }
 </svg>
+}

@@ -16,3 +16,11 @@ svg {
   width: 100%;
   height: 100%;
 }
+
+/* La foto llena el recuadro y se recorta sin deformarse. */
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

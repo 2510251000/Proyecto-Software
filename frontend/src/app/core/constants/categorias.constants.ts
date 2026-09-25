@@ -27,3 +27,6 @@ export const SECCION_POR_CATEGORIA: Readonly<Record<CategoriaMiniatura, string>>
   obra: 'Obras',
   cultura: 'Cultura',
 };
+
+/** Carpeta de public/ con una foto .webp por categoría (bici.webp, agua.webp…). */
+export const RUTA_IMAGENES_NOTICIAS = '/imagenes/noticias';

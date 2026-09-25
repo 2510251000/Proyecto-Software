@@ -61,9 +61,9 @@ describe('TarjetaNoticia', () => {
     expect(buscar('time')).toBeNull();
   });
 
-  it('dibuja la miniatura según la categoría del titular', async () => {
+  it('muestra la foto según la categoría del titular', async () => {
     await mostrar({ ...NOTICIA, titulo: 'Nueva ciclorruta en el centro' });
-    expect(buscar('app-miniatura svg')?.getAttribute('data-categoria')).toBe('bici');
+    expect(buscar('app-miniatura img')?.getAttribute('src')).toMatch(/\/bici\.webp$/);
   });
 
   it('muestra los minutos de lectura', async () => {
