@@ -1,0 +1,26 @@
+:host {
+  --mini-fondo: var(--color-superficie-2);
+  --mini-sombra: #c9d4e6;
+  --mini-tinta: var(--color-marca);
+  --mini-acento: var(--color-marca);
+  --mini-acento-2: #7fa0d8;
+  --mini-sol: var(--color-sol);
+
+  display: block;
+  background: var(--mini-fondo);
+}
+
+/* Llena el recuadro que le den (16:9 o cuadrado) recortando los bordes del dibujo. */
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* La foto llena el recuadro y se recorta sin deformarse. */
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

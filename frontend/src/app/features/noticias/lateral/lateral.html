@@ -1,0 +1,32 @@
+<aside class="lateral">
+  <section class="bloque" aria-labelledby="lateral-recientes">
+    <h2 class="titulo" id="lateral-recientes">{{ textos.recientes }}</h2>
+    <ol class="recientes">
+      @for (noticia of recientes(); track noticia.id) {
+        <li>
+          <p class="titular">{{ noticia.titulo }}</p>
+          <p class="datos">
+            {{ noticia.ciudad }}
+            @if (cuando(noticia.fechaPublicacion); as hora) {
+              · <time [attr.datetime]="noticia.fechaPublicacion">{{ hora }}</time>
+            }
+          </p>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <section class="bloque tarjeta" aria-labelledby="lateral-ciudad">
+    <h2 class="titulo" id="lateral-ciudad">{{ textos.tuCiudad }}</h2>
+    <ul class="conteo">
+      @for (fila of conteo(); track fila.ciudad) {
+        <li>
+          <span>{{ fila.ciudad }}</span>
+          <span class="cantidad">
+            {{ fila.cantidad }} {{ fila.cantidad === 1 ? textos.noticia : textos.noticias }}
+          </span>
+        </li>
+      }
+    </ul>
+  </section>
+</aside>

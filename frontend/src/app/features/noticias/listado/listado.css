@@ -5,13 +5,72 @@
 .pagina {
   max-width: var(--ancho-maximo);
   margin: 0 auto;
-  padding: var(--espacio-l) var(--espacio-m) var(--espacio-xl);
+  padding: var(--espacio-m) var(--espacio-m) var(--espacio-xl);
+}
+
+/* Dos columnas: el contenido y un lateral de 252 px. Por debajo de 900 px se apilan. */
+.portada {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 252px;
+  gap: var(--espacio-xl);
+  margin-top: var(--espacio-l);
+}
+
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xl);
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .portada {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+  Chips de filtro: se desplazan de lado si no caben, sin mover la página. El scroll
+  recorta lo que sobresale, así que se deja aire (6 px) para que el foco se vea completo.
+*/
+.chips {
+  display: flex;
+  gap: var(--espacio-s);
+  margin: -6px -6px calc(var(--espacio-l) - 6px);
+  padding: 6px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.chip {
+  flex: none;
+  min-height: 2.25rem;
+  padding: 0 var(--espacio-m);
+  border: 1px solid var(--color-linea);
+  border-radius: 999px;
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--color-borde);
+}
+
+.chip-activo,
+.chip-activo:hover {
+  border-color: var(--color-texto);
+  background: var(--color-texto);
+  color: var(--color-fondo);
 }
 
 /* Una columna en móvil; se reparte en más columnas según el ancho disponible. */
-.lista {
+.rejilla {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
   gap: var(--espacio-l);
   margin: 0;
   padding: 0;
@@ -19,25 +78,44 @@
 }
 
 /* Cada tarjeta se estira hasta la altura de su fila. */
-.lista > li {
+.rejilla > li {
   display: flex;
 }
 
-.lista app-tarjeta-noticia {
+.rejilla app-tarjeta-noticia {
   flex: 1;
   min-width: 0;
 }
 
+.ver-mas {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--espacio-l);
+}
+
 .estado {
-  padding: var(--espacio-l);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-s);
+  padding: var(--espacio-xl) var(--espacio-l);
   border: 1px solid var(--color-linea);
   border-radius: var(--radio);
   color: var(--color-texto-suave);
   text-align: center;
 }
 
+.estado p {
+  margin: 0 0 var(--espacio-s);
+}
+
 .estado-error {
   border-color: var(--color-error);
   color: var(--color-error);
   font-weight: 600;
+}
+
+.dibujo {
+  width: 7.5rem;
+  height: auto;
 }

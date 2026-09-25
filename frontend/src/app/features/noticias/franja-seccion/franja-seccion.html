@@ -1,0 +1,11 @@
+<section class="franja" [attr.aria-labelledby]="idTitulo()">
+  <div class="cabecera">
+    <h2 class="titulo" [id]="idTitulo()" tabindex="-1">{{ titulo() }}</h2>
+    @if (mostrarVerTodo()) {
+      <button type="button" class="ver-todo" (click)="verTodo.emit()">
+        {{ textos.verTodo }}<span class="solo-lectores-pantalla">: {{ titulo() }}</span>
+      </button>
+    }
+  </div>
+  <ng-content />
+</section>

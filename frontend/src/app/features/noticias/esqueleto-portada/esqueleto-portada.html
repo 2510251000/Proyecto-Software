@@ -1,0 +1,28 @@
+<div class="esqueleto" role="status">
+  <span class="solo-lectores-pantalla">{{ textos.cargando }}</span>
+  <div class="apertura" aria-hidden="true">
+    <div>
+      <div class="bloque imagen"></div>
+      <div class="bloque linea corta"></div>
+      <div class="bloque linea titulo"></div>
+      <div class="bloque linea"></div>
+    </div>
+    <div class="secundarias">
+      @for (n of tarjetas; track n) {
+        <div class="horizontal">
+          <div class="bloque miniatura"></div>
+          <div class="bloque linea"></div>
+        </div>
+      }
+    </div>
+  </div>
+  <div class="rejilla" aria-hidden="true">
+    @for (n of tarjetas; track n) {
+      <div>
+        <div class="bloque imagen"></div>
+        <div class="bloque linea"></div>
+        <div class="bloque linea corta"></div>
+      </div>
+    }
+  </div>
+</div>

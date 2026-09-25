@@ -1,0 +1,81 @@
+@if (!fallo()) {
+  <img
+    [src]="rutaFoto()"
+    [alt]="textoAlternativo()"
+    width="1280"
+    height="720"
+    loading="lazy"
+    decoding="async"
+    (error)="fallo.set(true)"
+  />
+} @else {
+<!-- Es decoración: el titular ya dice de qué trata la noticia. -->
+<svg
+  viewBox="0 0 320 180"
+  preserveAspectRatio="xMidYMid slice"
+  aria-hidden="true"
+  focusable="false"
+  [attr.data-categoria]="categoria()"
+>
+  <rect width="320" height="180" fill="var(--mini-fondo)" />
+  @switch (categoria()) {
+    @case ('bici') {
+      <path d="M0 150h320" stroke="var(--mini-sombra)" stroke-width="16" />
+      <path d="M0 150h320" stroke="var(--mini-acento)" stroke-width="2" stroke-dasharray="18 14" />
+      <circle cx="120" cy="120" r="26" fill="none" stroke="var(--mini-acento-2)" stroke-width="5" />
+      <circle cx="205" cy="120" r="26" fill="none" stroke="var(--mini-acento-2)" stroke-width="5" />
+      <path d="m120 120 26-40h34l25 40M146 80h40" stroke="var(--mini-tinta)" stroke-width="5" fill="none" stroke-linecap="round" />
+      <circle cx="196" cy="66" r="9" fill="var(--mini-sol)" />
+    }
+    @case ('agua') {
+      <path d="M160 34c22 30 34 48 34 62a34 34 0 0 1-68 0c0-14 12-32 34-62Z" fill="none" stroke="var(--mini-acento-2)" stroke-width="6" />
+      <path d="M148 96a12 12 0 0 0 24 0" stroke="var(--mini-acento)" stroke-width="5" fill="none" stroke-linecap="round" />
+      <path d="M0 146c30-12 50 12 80 0s50 12 80 0 50 12 80 0 50 12 80 0" stroke="var(--mini-acento)" stroke-width="4" fill="none" />
+      <path d="M0 164c30-12 50 12 80 0s50 12 80 0 50 12 80 0 50 12 80 0" stroke="var(--mini-sombra)" stroke-width="4" fill="none" />
+    }
+    @case ('deporte') {
+      <circle cx="160" cy="92" r="46" fill="none" stroke="var(--mini-tinta)" stroke-width="6" />
+      <path d="m160 46 26 20-10 32h-32l-10-32Z" fill="var(--mini-acento)" />
+      <path d="M134 98l-22 22M186 98l22 22M160 130v22" stroke="var(--mini-acento-2)" stroke-width="5" stroke-linecap="round" />
+      <path d="M40 160h240" stroke="var(--mini-sombra)" stroke-width="8" />
+    }
+    @case ('parque') {
+      <path d="M0 152h320" stroke="var(--mini-sombra)" stroke-width="18" />
+      <path d="M78 152V96" stroke="var(--mini-acento-2)" stroke-width="5" />
+      <circle cx="78" cy="72" r="28" fill="var(--mini-sombra)" stroke="var(--mini-acento-2)" stroke-width="5" />
+      <circle cx="238" cy="80" r="22" fill="var(--mini-sombra)" stroke="var(--mini-acento)" stroke-width="5" />
+      <path d="M238 152v-50" stroke="var(--mini-acento)" stroke-width="5" />
+      <path d="M140 60h60M150 60v40M190 60v40" stroke="var(--mini-tinta)" stroke-width="5" stroke-linecap="round" />
+      <rect x="142" y="100" width="56" height="9" rx="4" fill="var(--mini-sol)" />
+    }
+    @case ('comida') {
+      <path d="M96 96h128a64 64 0 0 1-128 0Z" fill="var(--mini-acento)" />
+      <path d="M84 96h152" stroke="var(--mini-tinta)" stroke-width="7" stroke-linecap="round" />
+      <path d="M132 62c0-12 14-12 14-24M160 58c0-14 16-14 16-28M188 62c0-12 14-12 14-24" stroke="var(--mini-acento-2)" stroke-width="5" fill="none" stroke-linecap="round" />
+      <path d="M110 150h100" stroke="var(--mini-sombra)" stroke-width="10" stroke-linecap="round" />
+      <circle cx="252" cy="44" r="10" fill="var(--mini-sol)" />
+    }
+    @case ('mercado') {
+      <path d="M60 72h200l-14 84H74Z" fill="none" stroke="var(--mini-acento-2)" stroke-width="6" />
+      <path d="M60 72 84 36h152l24 36" fill="var(--mini-sombra)" stroke="var(--mini-acento)" stroke-width="5" />
+      <path d="M116 72v-36M160 72V36M204 72V36" stroke="var(--mini-acento)" stroke-width="4" />
+      <circle cx="130" cy="120" r="13" fill="var(--mini-sol)" />
+      <circle cx="176" cy="126" r="16" fill="var(--mini-acento)" />
+    }
+    @case ('obra') {
+      <path d="M0 156h320" stroke="var(--mini-sombra)" stroke-width="16" />
+      <path d="M96 156V72h44v84M140 116h56v40" fill="none" stroke="var(--mini-acento-2)" stroke-width="6" />
+      <path d="M96 72h44l-8-22h-28Z" fill="var(--mini-acento)" />
+      <path d="M212 156V60h12v96M224 60h48" stroke="var(--mini-tinta)" stroke-width="5" fill="none" />
+      <path d="M272 60v26" stroke="var(--mini-sol)" stroke-width="5" />
+    }
+    @default {
+      <circle cx="160" cy="88" r="44" fill="none" stroke="var(--mini-acento)" stroke-width="6" />
+      <path d="M140 70v36l32-18Z" fill="var(--mini-tinta)" />
+      <path d="M52 132c22-10 40 10 62 0" stroke="var(--mini-acento-2)" stroke-width="5" fill="none" stroke-linecap="round" />
+      <path d="M206 132c22-10 40 10 62 0" stroke="var(--mini-acento-2)" stroke-width="5" fill="none" stroke-linecap="round" />
+      <circle cx="72" cy="52" r="9" fill="var(--mini-sol)" />
+    }
+  }
+</svg>
+}

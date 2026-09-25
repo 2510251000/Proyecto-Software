@@ -1,11 +1,30 @@
-<article class="tarjeta">
-  <h2 class="titulo">{{ noticia().titulo }}</h2>
-  <p class="resumen">{{ noticia().resumen }}</p>
+<article class="tarjeta" [class.tarjeta-horizontal]="variante() === 'horizontal'">
+  <div class="imagen">
+    <app-miniatura [categoria]="categoria()" />
+    @if (variante() === 'vertical') {
+      @if (ultimaHora()) {
+        <span class="etiqueta etiqueta-urgente">{{ etiquetas.ultimaHora }}</span>
+      } @else if (noticia().oficial) {
+        <span class="etiqueta etiqueta-oficial">
+          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false">
+            <path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="2.4" />
+          </svg>
+          {{ etiquetas.oficial }}
+        </span>
+      }
+      <span class="lectura">
+        {{ minutosLectura() }} {{ etiquetas.minutos }}
+        <span class="solo-lectores-pantalla">{{ etiquetas.deLectura }}</span>
+      </span>
+      <p class="asomo">{{ noticia().resumen }}</p>
+    }
+  </div>
+  <h3 class="titulo">{{ noticia().titulo }}</h3>
   <div class="datos">
     <p class="datos-lista">
       <span class="ciudad">{{ noticia().ciudad }}</span>
-      @if (fecha() !== '') {
-        <time [attr.datetime]="noticia().fechaPublicacion">{{ fecha() }}</time>
+      @if (cuando() !== '') {
+        <time [attr.datetime]="noticia().fechaPublicacion" [attr.title]="fecha()">{{ cuando() }}</time>
       }
     </p>
   </div>

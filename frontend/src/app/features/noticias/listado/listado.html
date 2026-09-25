@@ -1,26 +1,101 @@
 <app-encabezado>
-  <app-boton variante="secundaria" (click)="cerrarSesion()">Cerrar sesión</app-boton>
+  <app-boton variante="secundaria" (click)="cerrarSesion()">{{ textosPortada.cerrarSesion }}</app-boton>
 </app-encabezado>
 
 <main class="pagina">
-  <h1>Noticias</h1>
+  <h1 class="solo-lectores-pantalla">{{ textosPortada.titulo }}</h1>
 
   @if (cargando()) {
-    <p class="estado" role="status">{{ textos.cargando }}</p>
+    <app-esqueleto-portada />
   } @else if (error(); as mensaje) {
     <div class="estado estado-error" role="alert">
       <p>{{ mensaje }}</p>
-      <app-boton (click)="cargar()">Reintentar</app-boton>
+      <app-boton (click)="cargar()">{{ textosPortada.reintentar }}</app-boton>
     </div>
   } @else if (noticias().length === 0) {
-    <p class="estado">Todavía no hay noticias publicadas.</p>
+    <div class="estado">
+      <svg class="dibujo" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
+        <rect x="18" y="10" width="84" height="60" rx="6" fill="var(--color-superficie-2)" />
+        <path d="M42 40a18 18 0 0 1 36 0Z" fill="var(--color-sol)" />
+        <path d="M32 44h56M40 53h40M48 61h24" stroke="var(--color-marca)" stroke-width="4" stroke-linecap="round" />
+      </svg>
+      <p>{{ textosPortada.sinNoticias }}</p>
+      <app-boton variante="secundaria" (click)="cargar()">{{ textosPortada.actualizar }}</app-boton>
+    </div>
   } @else {
-    <ul class="lista">
-      @for (noticia of noticias(); track noticia.id) {
-        <li>
-          <app-tarjeta-noticia [noticia]="noticia" />
-        </li>
-      }
-    </ul>
+    @if (ultimaHora(); as noticia) {
+      <app-cintillo [noticia]="noticia" />
+    }
+
+    <div class="portada">
+      <div class="contenido">
+        @if (principal(); as noticia) {
+          <app-apertura [principal]="noticia" [secundarias]="secundarias()" />
+        }
+
+        <app-franja-seccion
+          [titulo]="textosPortada.enTuCiudad"
+          [idTitulo]="idFranjaCiudad"
+          [mostrarVerTodo]="hayMas()"
+          (verTodo)="verTodoCiudad()"
+        >
+          <div class="chips" role="group" [attr.aria-label]="textosPortada.filtrar">
+            @for (chip of chips(); track chip.etiqueta) {
+              <button
+                type="button"
+                class="chip"
+                [class.chip-activo]="esActivo(chip.filtro)"
+                [attr.aria-pressed]="esActivo(chip.filtro)"
+                (click)="filtrar(chip.filtro)"
+              >
+                {{ chip.etiqueta }}
+              </button>
+            }
+          </div>
+
+          @if (noticiasFiltradas().length === 0) {
+            <div class="estado">
+              <p>{{ textosPortada.sinResultados }}</p>
+              <app-boton variante="secundaria" (click)="quitarFiltro()">
+                {{ textosPortada.verTodas }}
+              </app-boton>
+            </div>
+          } @else if (mostradas().length > 0) {
+            <ul class="rejilla">
+              @for (noticia of mostradas(); track noticia.id) {
+                <li>
+                  <app-tarjeta-noticia [noticia]="noticia" />
+                </li>
+              }
+            </ul>
+          }
+
+          @if (hayMas()) {
+            <div class="ver-mas">
+              <app-boton variante="secundaria" (click)="verMas()">{{ textosPortada.verMas }}</app-boton>
+            </div>
+          }
+        </app-franja-seccion>
+
+        @if (comunidad().length > 0) {
+          <app-franja-seccion
+            [titulo]="textosPortada.comunidad"
+            idTitulo="franja-comunidad"
+            [mostrarVerTodo]="hayMasComunidad()"
+            (verTodo)="verTodoComunidad()"
+          >
+            <ul class="rejilla">
+              @for (noticia of comunidad(); track noticia.id) {
+                <li>
+                  <app-tarjeta-noticia [noticia]="noticia" />
+                </li>
+              }
+            </ul>
+          </app-franja-seccion>
+        }
+      </div>
+
+      <app-lateral [recientes]="recientes()" [conteo]="conteo()" />
+    </div>
   }
 </main>

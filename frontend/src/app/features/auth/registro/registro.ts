@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TEXTOS_PANEL_MARCA } from '../../../core/constants/marca.constants';
 import {
   ERRORES_CONFIRMACION,
   ERRORES_CONTRASENA,
@@ -17,11 +18,12 @@ import { ErrorApi } from '../../../core/models/error-api.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { Boton } from '../../../shared/boton/boton';
 import { Campo } from '../../../shared/campo/campo';
+import { PanelMarca } from '../panel-marca/panel-marca';
 import { contrasenasIguales } from '../../../shared/validadores/contrasenas-iguales';
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule, RouterLink, Campo, Boton],
+  imports: [ReactiveFormsModule, RouterLink, Campo, Boton, PanelMarca],
   templateUrl: './registro.html',
   styleUrl: '../auth.css',
 })
@@ -42,6 +44,7 @@ export class Registro {
   protected readonly cargando = signal(false);
   protected readonly error = signal<string | null>(null);
 
+  protected readonly titular = TEXTOS_PANEL_MARCA.titularRegistro;
   protected readonly rutas = RUTAS;
   protected readonly erroresCorreo = ERRORES_CORREO;
   protected readonly erroresContrasena = ERRORES_CONTRASENA;

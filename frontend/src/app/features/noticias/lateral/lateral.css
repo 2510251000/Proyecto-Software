@@ -1,0 +1,90 @@
+:host {
+  display: block;
+}
+
+.lateral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-l);
+}
+
+.bloque {
+  padding-top: var(--espacio-s);
+  border-top: 2px solid var(--color-sol);
+}
+
+.tarjeta {
+  padding: var(--espacio-s) var(--espacio-m) var(--espacio-m);
+  border-radius: 0 0 var(--radio) var(--radio);
+  background: var(--color-superficie);
+}
+
+.titulo {
+  margin-bottom: var(--espacio-m);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.recientes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: puesto;
+}
+
+/* El número va en Bricolage 800 y en azul de marca. */
+.recientes > li {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr;
+  column-gap: var(--espacio-s);
+  padding: var(--espacio-s) 0;
+  counter-increment: puesto;
+}
+
+.recientes > li + li {
+  border-top: 1px solid var(--color-linea);
+}
+
+.recientes > li::before {
+  content: counter(puesto);
+  grid-row: span 2;
+  color: var(--color-marca);
+  font-family: var(--fuente-titulos);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.titular {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.datos {
+  margin: var(--espacio-xs) 0 0;
+  color: var(--color-texto-suave);
+  font-size: 0.78rem;
+}
+
+.conteo {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.conteo > li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-s);
+  padding: var(--espacio-xs) 0;
+}
+
+.cantidad {
+  color: var(--color-texto-suave);
+  white-space: nowrap;
+}

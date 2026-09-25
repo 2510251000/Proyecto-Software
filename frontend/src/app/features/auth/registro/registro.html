@@ -1,42 +1,45 @@
 <main class="pagina-auth">
-  <p class="marca">Al Día</p>
-  <h1>Crear cuenta</h1>
+  <app-panel-marca [titular]="titular" />
 
-  <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
-    @if (error(); as mensaje) {
-      <p class="error-general" role="alert">{{ mensaje }}</p>
-    }
+  <div class="panel-formulario">
+    <h1>Crear cuenta</h1>
 
-    <app-campo
-      idCampo="registro-correo"
-      etiqueta="Correo electrónico"
-      tipo="email"
-      autocompletar="email"
-      [control]="formulario.controls.correo"
-      [errores]="erroresCorreo"
-    />
-    <app-campo
-      idCampo="registro-contrasena"
-      etiqueta="Contraseña"
-      tipo="password"
-      autocompletar="new-password"
-      [control]="formulario.controls.contrasena"
-      [errores]="erroresContrasena"
-    />
-    <app-campo
-      idCampo="registro-confirmacion"
-      etiqueta="Confirmar contraseña"
-      tipo="password"
-      autocompletar="new-password"
-      [control]="formulario.controls.confirmacion"
-      [errores]="erroresConfirmacion"
-      [errorExtra]="errorContrasenasDistintas()"
-    />
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+      @if (error(); as mensaje) {
+        <p class="error-general" role="alert">{{ mensaje }}</p>
+      }
 
-    <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">Crear cuenta</app-boton>
-  </form>
+      <app-campo
+        idCampo="registro-correo"
+        etiqueta="Correo electrónico"
+        tipo="email"
+        autocompletar="email"
+        [control]="formulario.controls.correo"
+        [errores]="erroresCorreo"
+      />
+      <app-campo
+        idCampo="registro-contrasena"
+        etiqueta="Contraseña"
+        tipo="password"
+        autocompletar="new-password"
+        [control]="formulario.controls.contrasena"
+        [errores]="erroresContrasena"
+      />
+      <app-campo
+        idCampo="registro-confirmacion"
+        etiqueta="Confirmar contraseña"
+        tipo="password"
+        autocompletar="new-password"
+        [control]="formulario.controls.confirmacion"
+        [errores]="erroresConfirmacion"
+        [errorExtra]="errorContrasenasDistintas()"
+      />
 
-  <p class="enlace-alterno">
-    ¿Ya tienes cuenta? <a [routerLink]="['/', rutas.login]">Inicia sesión</a>
-  </p>
+      <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">Crear cuenta</app-boton>
+    </form>
+
+    <p class="enlace-alterno">
+      ¿Ya tienes cuenta? <a [routerLink]="['/', rutas.login]">Inicia sesión</a>
+    </p>
+  </div>
 </main>

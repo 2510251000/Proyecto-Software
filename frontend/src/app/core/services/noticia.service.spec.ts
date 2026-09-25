@@ -32,6 +32,7 @@ describe('NoticiaService', () => {
         resumen: 'Resumen',
         contenido: 'Contenido',
         fechaPublicacion: '2026-09-21T10:00:00',
+        oficial: true,
         ciudad: 'Fusagasugá',
       },
     ];
