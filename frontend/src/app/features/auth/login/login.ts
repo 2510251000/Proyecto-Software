@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TEXTOS_PANEL_MARCA } from '../../../core/constants/marca.constants';
 import {
   AVISOS_POR_MOTIVO,
   ERRORES_CONTRASENA,
@@ -13,10 +14,11 @@ import { ErrorApi } from '../../../core/models/error-api.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { Boton } from '../../../shared/boton/boton';
 import { Campo } from '../../../shared/campo/campo';
+import { PanelMarca } from '../panel-marca/panel-marca';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, Campo, Boton],
+  imports: [ReactiveFormsModule, RouterLink, Campo, Boton, PanelMarca],
   templateUrl: './login.html',
   styleUrl: '../auth.css',
 })
@@ -37,6 +39,7 @@ export class Login {
       inject(ActivatedRoute).snapshot.queryParamMap.get(PARAMETROS_URL.motivo) ?? '',
     ) ?? null;
 
+  protected readonly titular = TEXTOS_PANEL_MARCA.titularLogin;
   protected readonly rutas = RUTAS;
   protected readonly erroresCorreo = ERRORES_CORREO;
   protected readonly erroresContrasena = ERRORES_CONTRASENA;

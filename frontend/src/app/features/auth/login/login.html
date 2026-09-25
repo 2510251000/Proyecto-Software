@@ -1,37 +1,40 @@
 <main class="pagina-auth">
-  <p class="marca">Al Día</p>
-  <h1>Iniciar sesión</h1>
+  <app-panel-marca [titular]="titular" />
 
-  @if (aviso) {
-    <p class="aviso" role="status">{{ aviso }}</p>
-  }
+  <div class="panel-formulario">
+    <h1>Iniciar sesión</h1>
 
-  <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
-    @if (error(); as mensaje) {
-      <p class="error-general" role="alert">{{ mensaje }}</p>
+    @if (aviso) {
+      <p class="aviso" role="status">{{ aviso }}</p>
     }
 
-    <app-campo
-      idCampo="login-correo"
-      etiqueta="Correo electrónico"
-      tipo="email"
-      autocompletar="email"
-      [control]="formulario.controls.correo"
-      [errores]="erroresCorreo"
-    />
-    <app-campo
-      idCampo="login-contrasena"
-      etiqueta="Contraseña"
-      tipo="password"
-      autocompletar="current-password"
-      [control]="formulario.controls.contrasena"
-      [errores]="erroresContrasena"
-    />
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+      @if (error(); as mensaje) {
+        <p class="error-general" role="alert">{{ mensaje }}</p>
+      }
 
-    <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">Entrar</app-boton>
-  </form>
+      <app-campo
+        idCampo="login-correo"
+        etiqueta="Correo electrónico"
+        tipo="email"
+        autocompletar="email"
+        [control]="formulario.controls.correo"
+        [errores]="erroresCorreo"
+      />
+      <app-campo
+        idCampo="login-contrasena"
+        etiqueta="Contraseña"
+        tipo="password"
+        autocompletar="current-password"
+        [control]="formulario.controls.contrasena"
+        [errores]="erroresContrasena"
+      />
 
-  <p class="enlace-alterno">
-    ¿No tienes cuenta? <a [routerLink]="['/', rutas.registro]">Crea una</a>
-  </p>
+      <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">Entrar</app-boton>
+    </form>
+
+    <p class="enlace-alterno">
+      ¿No tienes cuenta? <a [routerLink]="['/', rutas.registro]">Crea una</a>
+    </p>
+  </div>
 </main>

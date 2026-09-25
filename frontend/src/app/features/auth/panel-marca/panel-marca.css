@@ -1,0 +1,104 @@
+:host {
+  display: block;
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xl);
+  height: 100%;
+  padding: var(--espacio-xl) clamp(var(--espacio-l), 5vw, 4rem);
+  overflow: hidden;
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+}
+
+/* El isotipo ampliado, casi transparente y recortado en la esquina. Es solo decoración. */
+.decoracion {
+  position: absolute;
+  right: -70px;
+  bottom: -70px;
+  opacity: 0.09;
+  pointer-events: none;
+}
+
+.lockup {
+  position: relative;
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+/* Sobre el azul, el isotipo del lockup se invierte: cuadro blanco y filetes azules. */
+.lockup app-logo {
+  --color-marca: var(--color-sobre-marca);
+  --color-fondo: var(--color-marca-oscuro);
+}
+
+.mensaje {
+  position: relative;
+  margin: auto 0;
+}
+
+.titular {
+  max-width: 16ch;
+  margin: 0 0 var(--espacio-m);
+  font-family: var(--fuente-titulos);
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.bajada {
+  max-width: 34ch;
+  margin: 0;
+  opacity: 0.85;
+  font-size: 1.05rem;
+}
+
+.datos {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-l) var(--espacio-xl);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.datos li {
+  display: flex;
+  flex-direction: column;
+}
+
+.valor {
+  color: var(--color-sol);
+  font-family: var(--fuente-titulos);
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.texto {
+  opacity: 0.85;
+  font-size: 0.85rem;
+}
+
+/* En móvil el panel es una banda superior: menos aire y sin los datos. */
+@media (max-width: 760px) {
+  .panel {
+    gap: var(--espacio-m);
+    padding: var(--espacio-l) var(--espacio-m);
+  }
+
+  .titular {
+    max-width: none;
+    font-size: 1.5rem;
+  }
+
+  .datos {
+    display: none;
+  }
+}

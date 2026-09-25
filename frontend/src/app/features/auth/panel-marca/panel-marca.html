@@ -1,0 +1,21 @@
+<section class="panel">
+  <div class="decoracion" aria-hidden="true">
+    <app-logo [tamano]="330" />
+  </div>
+
+  <p class="lockup"><app-logo [tamano]="40" [conNombre]="true" /></p>
+
+  <div class="mensaje">
+    <p class="titular">{{ titular() }}</p>
+    <p class="bajada">{{ bajada }}</p>
+  </div>
+
+  <ul class="datos">
+    @for (dato of datos; track dato.texto) {
+      <li>
+        <span class="valor">{{ dato.valor }}</span>
+        <span class="texto">{{ dato.texto }}</span>
+      </li>
+    }
+  </ul>
+</section>
