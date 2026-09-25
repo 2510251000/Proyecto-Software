@@ -22,11 +22,6 @@
   --color-borde: #7a869c; /* bordes de campos: 3.5:1 sobre la superficie */
   --color-error: #b3261e; /* errores de formulario: 6.5:1 sobre blanco */
 
-  /* Nombres anteriores: apuntan a los nuevos mientras se rediseña cada componente. */
-  --color-acento: var(--color-marca);
-  --color-acento-oscuro: var(--color-marca-oscuro);
-  --color-sobre-acento: var(--color-sobre-marca);
-
   /* Espacios */
   --espacio-xs: 0.25rem;
   --espacio-s: 0.5rem;

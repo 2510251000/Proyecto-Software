@@ -29,12 +29,15 @@
   }
 }
 
-/* Chips de filtro: se desplazan de lado si no caben, sin mover la página. */
+/*
+  Chips de filtro: se desplazan de lado si no caben, sin mover la página. El scroll
+  recorta lo que sobresale, así que se deja aire (6 px) para que el foco se vea completo.
+*/
 .chips {
   display: flex;
   gap: var(--espacio-s);
-  margin: 0 0 var(--espacio-l);
-  padding: 2px 2px var(--espacio-xs);
+  margin: -6px -6px calc(var(--espacio-l) - 6px);
+  padding: 6px;
   overflow-x: auto;
   scrollbar-width: thin;
 }
