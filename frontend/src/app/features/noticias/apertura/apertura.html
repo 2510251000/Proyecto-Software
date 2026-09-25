@@ -1,0 +1,28 @@
+<div class="apertura" [class.sin-secundarias]="secundarias().length === 0">
+  <article class="principal">
+    <app-miniatura class="imagen" [categoria]="categoria()" />
+    <p class="antetitulo">{{ principal().ciudad }} · {{ seccion() }}</p>
+    <h2 class="titulo">{{ principal().titulo }}</h2>
+    <p class="resumen">{{ principal().resumen }}</p>
+    <p class="datos">
+      @if (principal().oficial) {
+        <span class="oficial">{{ etiquetas.oficial }}</span>
+      }
+      <span>{{ principal().ciudad }}</span>
+      @if (cuando() !== '') {
+        <time [attr.datetime]="principal().fechaPublicacion">{{ cuando() }}</time>
+      }
+      <span>{{ minutosLectura() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}</span>
+    </p>
+  </article>
+
+  @if (secundarias().length > 0) {
+    <ul class="secundarias">
+      @for (noticia of secundarias(); track noticia.id) {
+        <li>
+          <app-tarjeta-noticia [noticia]="noticia" variante="horizontal" />
+        </li>
+      }
+    </ul>
+  }
+</div>

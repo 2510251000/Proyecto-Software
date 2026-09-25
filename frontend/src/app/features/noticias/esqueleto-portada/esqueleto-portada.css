@@ -1,0 +1,79 @@
+:host {
+  display: block;
+}
+
+.esqueleto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xl);
+}
+
+.apertura {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: var(--espacio-l);
+}
+
+.secundarias {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-m);
+}
+
+.horizontal {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--espacio-m);
+}
+
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--espacio-l);
+}
+
+.bloque {
+  border-radius: 4px;
+  background: var(--color-superficie-2);
+  animation: respirar 1.6s ease-in-out infinite;
+}
+
+.imagen {
+  aspect-ratio: 16 / 9;
+  margin-bottom: var(--espacio-s);
+}
+
+.miniatura {
+  aspect-ratio: 4 / 3;
+}
+
+.linea {
+  height: 0.9rem;
+  margin-bottom: var(--espacio-s);
+}
+
+.titulo {
+  height: 1.8rem;
+}
+
+.corta {
+  width: 40%;
+}
+
+@keyframes respirar {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (max-width: 40rem) {
+  .apertura {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bloque {
+    animation: none;
+  }
+}

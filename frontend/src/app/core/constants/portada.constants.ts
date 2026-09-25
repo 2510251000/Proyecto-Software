@@ -20,3 +20,27 @@ export const ETIQUETAS_NOTICIA = {
   minutos: 'min',
   deLectura: 'de lectura',
 } as const;
+
+/** Notas de la franja «Lo que cuenta la comunidad». */
+export const CANTIDAD_COMUNIDAD = 3;
+
+export const TEXTOS_PORTADA = {
+  titulo: 'Noticias',
+  todas: 'Todas',
+  oficiales: 'Oficiales',
+  cerrarSesion: 'Cerrar sesión',
+  enTuCiudad: 'En tu ciudad',
+  comunidad: 'Lo que cuenta la comunidad',
+  verTodo: 'Ver todo',
+  verMas: 'Ver más',
+  filtrar: 'Filtrar noticias',
+  recientes: 'Lo más reciente de tu ciudad',
+  tuCiudad: 'Tu ciudad',
+  noticia: 'noticia',
+  noticias: 'noticias',
+  sinNoticias: 'Todavía no hay noticias publicadas.',
+  sinResultados: 'No hay noticias con este filtro.',
+  verTodas: 'Ver todas',
+  actualizar: 'Actualizar',
+  reintentar: 'Reintentar',
+} as const;

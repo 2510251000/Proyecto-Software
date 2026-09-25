@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.franja {
+  padding-top: var(--espacio-s);
+  border-top: 2px solid var(--color-sol);
+}
+
+.cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-m);
+  margin-bottom: var(--espacio-m);
+}
+
+.titulo {
+  margin: 0;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.titulo:focus {
+  outline: none;
+}
+
+.ver-todo {
+  flex: none;
+  padding: var(--espacio-xs) 0;
+  border: 0;
+  background: none;
+  color: var(--color-marca);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ver-todo:hover {
+  text-decoration: underline;
+}

@@ -15,3 +15,15 @@ export const RAICES_POR_CATEGORIA: readonly (readonly [CategoriaMiniatura, reado
 ];
 
 export const CATEGORIA_POR_DEFECTO: CategoriaMiniatura = 'cultura';
+
+/** Nombre de la sección que se muestra en el antetítulo de la nota principal. */
+export const SECCION_POR_CATEGORIA: Readonly<Record<CategoriaMiniatura, string>> = {
+  bici: 'Movilidad',
+  agua: 'Servicios públicos',
+  deporte: 'Deportes',
+  parque: 'Medio ambiente',
+  comida: 'Gastronomía',
+  mercado: 'Economía',
+  obra: 'Obras',
+  cultura: 'Cultura',
+};
