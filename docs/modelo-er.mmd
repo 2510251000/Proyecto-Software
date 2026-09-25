@@ -1,0 +1,99 @@
+erDiagram
+    CIUDAD ||--o{ USUARIO : "es residencia de"
+    NIVEL ||--o{ USUARIO : "clasifica a"
+    USUARIO ||--o{ NOTICIA : "publica"
+    CIUDAD ||--o{ NOTICIA : "localiza"
+    USUARIO ||--o{ COMENTARIO : "escribe"
+    NOTICIA ||--o{ COMENTARIO : "recibe"
+    USUARIO ||--o{ CALIFICACION : "asigna"
+    NOTICIA ||--o{ CALIFICACION : "es calificada en"
+    USUARIO ||--o{ REPORTE : "reporta"
+    NOTICIA ||--o{ REPORTE : "es reportada en"
+    NOTICIA ||--o{ MULTIMEDIA : "contiene"
+    USUARIO ||--o{ NOTIFICACION : "recibe"
+    NOTICIA ||--o{ NOTIFICACION : "origina"
+    USUARIO ||--o{ HISTORIAL : "registra"
+    CIUDAD {
+        bigint id PK
+        varchar nombre
+        varchar departamento
+    }
+    NIVEL {
+        bigint id PK
+        varchar nombre UK
+        integer puntaje_minimo UK
+        integer limite_noticias_diarias
+        numeric peso_recomendacion
+    }
+    USUARIO {
+        bigint id PK
+        varchar correo UK
+        varchar contrasena_cifrada
+        varchar nombre
+        bigint ciudad_id FK
+        varchar rol
+        integer puntaje
+        boolean activo
+        timestamp fecha_registro
+        bigint nivel_id FK
+    }
+    NOTICIA {
+        bigint id PK
+        varchar titulo
+        varchar resumen
+        text contenido
+        timestamp fecha_publicacion
+        boolean oficial
+        varchar estado
+        numeric latitud
+        numeric longitud
+        varchar id_lugar_google
+        bigint usuario_id FK
+        bigint ciudad_id FK
+    }
+    COMENTARIO {
+        bigint id PK
+        text contenido
+        timestamp fecha
+        bigint usuario_id FK
+        bigint noticia_id FK
+    }
+    CALIFICACION {
+        bigint id PK
+        smallint valor
+        timestamp fecha
+        bigint usuario_id FK
+        bigint noticia_id FK
+    }
+    REPORTE {
+        bigint id PK
+        varchar motivo
+        text descripcion
+        varchar estado
+        timestamp fecha
+        bigint usuario_id FK
+        bigint noticia_id FK
+    }
+    MULTIMEDIA {
+        bigint id PK
+        varchar url
+        varchar tipo
+        smallint orden
+        bigint noticia_id FK
+    }
+    NOTIFICACION {
+        bigint id PK
+        varchar mensaje
+        varchar tipo
+        boolean leida
+        timestamp fecha
+        bigint usuario_id FK
+        bigint noticia_id FK
+    }
+    HISTORIAL {
+        bigint id PK
+        varchar accion
+        varchar detalle
+        timestamp fecha
+        bigint usuario_id FK
+    }
