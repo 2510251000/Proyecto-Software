@@ -1,18 +1,31 @@
+/* Fuentes autoalojadas: no dependen de internet. */
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/manrope';
+
 /*
-  Diseño provisional de Al Día (hasta tener Figma): blanco y negro, formal, con
-  un solo acento rojo. Todo el aspecto se cambia desde estas variables.
+  Identidad «Amanecer» de Al Día: el cielo antes del amanecer (azul) y el sol (ámbar).
+  El color señala, no decora. Todo el aspecto se cambia desde estas variables.
 */
 :root {
   /* Colores */
+  --color-marca: #0e2551; /* azul madrugada: 15:1 sobre blanco */
+  --color-marca-oscuro: #09193a;
+  --color-sol: #f0a028; /* solo relleno, nunca texto sobre blanco */
+  --color-urgente: #d7262d; /* última hora y antetítulos: una vez por pantalla */
   --color-fondo: #ffffff;
-  --color-texto: #111111;
-  --color-texto-suave: #4d4d4d;
-  --color-borde: #767676; /* bordes de campos: 4.5:1 sobre blanco */
-  --color-linea: #d9d9d9; /* separadores decorativos */
-  --color-acento: #b3261e; /* rojo periódico: 6.5:1 sobre blanco */
-  --color-acento-oscuro: #8c1d17;
-  --color-sobre-acento: #ffffff;
-  --color-error: #b3261e;
+  --color-superficie: #f7f9fc;
+  --color-superficie-2: #edf1f7;
+  --color-linea: #e3e7ef; /* bordes y separadores decorativos */
+  --color-texto: #111827;
+  --color-texto-suave: #5c6880; /* 5.6:1 sobre blanco */
+  --color-sobre-marca: #ffffff;
+  --color-borde: #7a869c; /* bordes de campos: 3.5:1 sobre la superficie */
+  --color-error: #b3261e; /* errores de formulario: 6.5:1 sobre blanco */
+
+  /* Nombres anteriores: apuntan a los nuevos mientras se rediseña cada componente. */
+  --color-acento: var(--color-marca);
+  --color-acento-oscuro: var(--color-marca-oscuro);
+  --color-sobre-acento: var(--color-sobre-marca);
 
   /* Espacios */
   --espacio-xs: 0.25rem;
@@ -22,13 +35,13 @@
   --espacio-xl: 2.5rem;
 
   /* Forma */
-  --radio: 2px;
+  --radio: 8px;
   --alto-control: 2.75rem; /* 44 px: tamaño táctil mínimo */
   --ancho-maximo: 72rem; /* ancho del contenido en las pantallas de la aplicación */
 
-  /* Tipografía: sin fuentes externas */
-  --fuente-titulos: Georgia, 'Times New Roman', serif;
-  --fuente-texto: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Tipografía: titulares en Bricolage Grotesque, interfaz y cuerpo en Manrope */
+  --fuente-titulos: 'Bricolage Grotesque Variable', 'Manrope Variable', system-ui, sans-serif;
+  --fuente-texto: 'Manrope Variable', system-ui, sans-serif;
 }
 
 *,
@@ -57,8 +70,10 @@ h3,
 h4 {
   margin: 0 0 var(--espacio-s);
   font-family: var(--fuente-titulos);
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 p {
@@ -66,11 +81,11 @@ p {
 }
 
 a {
-  color: var(--color-acento);
+  color: var(--color-marca);
 }
 
 a:hover {
-  color: var(--color-acento-oscuro);
+  color: var(--color-marca-oscuro);
 }
 
 :focus-visible {
