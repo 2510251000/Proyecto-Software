@@ -285,17 +285,23 @@ CREATE TABLE notificacion (
     fecha           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     usuario_id      BIGINT       NOT NULL,
 
+    -- Opcional: un aviso de cercanía apunta a una noticia, uno de ascenso de nivel no.
+    noticia_id      BIGINT,
+
     CONSTRAINT ck_notificacion_tipo
         CHECK (tipo IN ('COMENTARIO', 'CALIFICACION',
-                        'ASCENSO_NIVEL', 'MODERACION')),
+                        'ASCENSO_NIVEL', 'MODERACION', 'CERCANIA')),
 
     CONSTRAINT fk_notificacion_usuario FOREIGN KEY (usuario_id)
-        REFERENCES usuario (id) ON DELETE CASCADE
+        REFERENCES usuario (id) ON DELETE CASCADE,
+    CONSTRAINT fk_notificacion_noticia FOREIGN KEY (noticia_id)
+        REFERENCES noticia (id) ON DELETE CASCADE
 );
 
 -- La campanita del portal pide las no leídas de un usuario.
 CREATE INDEX idx_notificacion_no_leidas ON notificacion (usuario_id, fecha DESC)
     WHERE leida = FALSE;
+CREATE INDEX idx_notificacion_noticia ON notificacion (noticia_id);
 
 
 -- ---------------------------------------------------------------------------
