@@ -19,7 +19,7 @@
   display: none;
 }
 
-/* Fondo: azul oscuro de marca al 60 %, con la portada desenfocada detrás. */
+/* Fondo: azul oscuro de marca al 60 %, con la portada desenfocada detrás. Decorativo: no hay texto encima. */
 .modal::backdrop {
   background: rgba(9, 25, 58, 0.6);
   backdrop-filter: blur(12px);

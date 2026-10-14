@@ -35,20 +35,35 @@
   overflow-wrap: anywhere;
 }
 
-/* Datos separados por puntos; el punto no lo leen los lectores de pantalla. */
+/*
+  Datos separados por puntos que no leen los lectores de pantalla. El punto va en el margen
+  izquierdo de cada dato, que el overflow recorta cuando el dato empieza un renglón: así
+  nunca queda un punto suelto al comienzo.
+*/
 .datos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-xs) 0;
   margin-bottom: var(--espacio-l);
+  overflow: hidden;
   color: var(--color-texto-suave);
   font-size: 0.9rem;
 }
 
-.datos > * + *::before {
+.datos-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs) 0;
+  margin: 0 0 0 -1.2em;
+}
+
+.datos-lista > * {
+  position: relative;
+  padding-left: 1.2em;
+}
+
+.datos-lista > *::before {
   content: '·';
   content: '·' / '';
-  margin: 0 0.5em;
+  position: absolute;
+  left: 0.45em;
 }
 
 .oficial {

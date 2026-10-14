@@ -106,6 +106,15 @@
   }
 }
 
+/* En teléfonos angostos «Volver a la portada» se achica para caber en una línea junto al logo. */
+@media (max-width: 25rem) {
+  .volver {
+    padding-inline: var(--espacio-xs);
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bloque {
     animation: none;

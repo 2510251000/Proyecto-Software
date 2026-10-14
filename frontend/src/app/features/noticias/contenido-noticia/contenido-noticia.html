@@ -10,15 +10,17 @@
       <h2 class="titulo" [id]="idTitulo()">{{ noticia().titulo }}</h2>
     }
 
-    <p class="datos">
-      @if (noticia().oficial) {
-        <span class="oficial">{{ etiquetas.oficial }}</span>
-      }
-      @if (fecha() !== '') {
-        <time [attr.datetime]="noticia().fechaPublicacion">{{ fecha() }}</time>
-      }
-      <span>{{ minutosLectura() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}</span>
-    </p>
+    <div class="datos">
+      <p class="datos-lista">
+        @if (noticia().oficial) {
+          <span class="oficial">{{ etiquetas.oficial }}</span>
+        }
+        @if (fecha() !== '') {
+          <time [attr.datetime]="noticia().fechaPublicacion">{{ fecha() }}</time>
+        }
+        <span>{{ minutosLectura() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}</span>
+      </p>
+    </div>
 
     <p class="resumen">{{ noticia().resumen }}</p>
 

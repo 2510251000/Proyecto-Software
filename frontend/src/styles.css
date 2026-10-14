@@ -11,19 +11,19 @@
   /* Colores */
   --color-marca: #0e2551; /* azul madrugada: 15:1 sobre blanco, 13.2:1 sobre la página */
   --color-marca-oscuro: #09193a; /* con texto blanco encima: 17.3:1 */
-  --color-sol: #f0a028; /* solo relleno, nunca texto sobre blanco */
+  --color-sol: #f0a028; /* solo relleno (2.2:1 sobre blanco), nunca texto sobre blanco. Como texto, sobre el azul: 7:1 */
   /* Última hora y antetítulos, una vez por pantalla. 5:1 sobre blanco; como texto solo va sobre tarjeta (4.4:1 sobre la página). */
   --color-urgente: #d7262d;
-  --color-fondo: #ffffff;
+  --color-fondo: #ffffff; /* blanco de los filetes del logo y del lockup */
   --color-pagina: #eef1f6; /* fondo neutro de la página: las tarjetas blancas flotan encima */
   --color-tarjeta: #ffffff; /* superficie de las tarjetas */
-  --color-superficie: #f7f9fc;
-  --color-superficie-2: #edf1f7;
-  --color-linea: #e3e7ef; /* bordes y separadores decorativos */
+  --color-superficie: #f7f9fc; /* relleno de campos y avisos: texto 16.8:1, texto suave 5.3:1, error 6.2:1 */
+  --color-superficie-2: #edf1f7; /* solo relleno decorativo: esqueletos y dibujos */
+  --color-linea: #e3e7ef; /* bordes y separadores decorativos (1.2:1): nunca el único borde de un control */
   --color-texto: #111827; /* 17.7:1 sobre blanco, 15.7:1 sobre la página */
   --color-texto-suave: #5c6880; /* 5.6:1 sobre blanco, 4.9:1 sobre la página */
-  --color-sobre-marca: #ffffff;
-  --color-borde: #7a869c; /* bordes de campos: 3.5:1 sobre la superficie, 3.2:1 sobre la página */
+  --color-sobre-marca: #ffffff; /* texto sobre el azul (15:1), el azul oscuro (17.3:1) y el rojo (5:1) */
+  --color-borde: #7a869c; /* bordes de campos: 3.5:1 sobre la superficie, 3.7:1 sobre blanco, 3.2:1 sobre la página */
   --color-error: #b3261e; /* errores de formulario: 6.5:1 sobre blanco, 5.8:1 sobre la página */
 
   /* Espacios */

@@ -47,7 +47,7 @@
 .titular {
   min-width: 0;
   overflow: hidden;
-  padding: var(--espacio-s) 0;
+  line-height: var(--alto-control); /* una sola línea de 44 px: tamaño táctil mínimo */
   color: inherit;
   text-decoration: none;
   font-family: var(--fuente-titulares-serif);

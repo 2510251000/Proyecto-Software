@@ -54,6 +54,7 @@
   text-wrap: balance;
 }
 
+/* Blanco al 85 % sobre el azul: 11.1:1. */
 .bajada {
   max-width: 34ch;
   margin: 0;
@@ -76,6 +77,7 @@
   flex-direction: column;
 }
 
+/* Ámbar sobre el azul: 7:1. */
 .valor {
   color: var(--color-sol);
   font-family: var(--fuente-titulos);
