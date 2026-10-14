@@ -2,26 +2,30 @@
   display: block;
 }
 
+/* Pieza blanca que flota encima de la portada. */
 .cintillo {
   display: flex;
   align-items: center;
   gap: var(--espacio-m);
-  padding: var(--espacio-s) 0;
-  border-bottom: 1px solid var(--color-linea);
+  padding: var(--espacio-s) var(--espacio-l) var(--espacio-s) var(--espacio-s);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-1);
 }
 
+/* Blanco sobre el rojo: 5:1. */
 .etiqueta {
   display: inline-flex;
   flex: none;
   align-items: center;
   gap: 0.45em;
-  padding: 0.2rem 0.55rem;
-  border-radius: 3px;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
   background: var(--color-urgente);
-  color: #fff;
+  color: var(--color-sobre-marca);
   font-size: 0.75rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -29,7 +33,7 @@
   width: 0.5em;
   height: 0.5em;
   border-radius: 50%;
-  background: #fff;
+  background: var(--color-sobre-marca);
   animation: latido 1.4s ease-in-out infinite;
 }
 
@@ -44,6 +48,8 @@
   min-width: 0;
   overflow: hidden;
   margin: 0;
+  font-family: var(--fuente-titulares-serif);
+  font-size: 1.05rem;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;

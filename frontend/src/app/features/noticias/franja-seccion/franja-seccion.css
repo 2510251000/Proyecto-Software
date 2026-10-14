@@ -2,24 +2,30 @@
   display: block;
 }
 
-.franja {
-  padding-top: var(--espacio-s);
-  border-top: 2px solid var(--color-sol);
-}
-
 .cabecera {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--espacio-m);
   margin-bottom: var(--espacio-m);
 }
 
+/* El filete ámbar de la sección va corto y delante del título. */
 .titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-s);
   margin: 0;
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 1.35rem;
+}
+
+.titulo::before {
+  content: '';
+  flex: none;
+  width: 0.35rem;
+  height: 1em;
+  border-radius: 999px;
+  background: var(--color-sol);
 }
 
 .titulo:focus {
@@ -28,8 +34,10 @@
 
 .ver-todo {
   flex: none;
-  padding: var(--espacio-xs) 0;
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-s);
   border: 0;
+  border-radius: var(--radio-s);
   background: none;
   color: var(--color-marca);
   font: inherit;

@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 
-/** Sección de la portada: filete ámbar arriba, título en mayúsculas y «Ver todo» a la derecha. */
+/** Sección de la portada: título con un filete ámbar delante y «Ver todo» a la derecha. */
 @Component({
   selector: 'app-franja-seccion',
   templateUrl: './franja-seccion.html',

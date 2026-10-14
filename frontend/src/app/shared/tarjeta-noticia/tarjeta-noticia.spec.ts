@@ -88,6 +88,40 @@ describe('TarjetaNoticia', () => {
     expect(buscar('.etiqueta-oficial')).toBeNull();
   });
 
+  it('lleva la sección de la noticia como antetítulo', async () => {
+    await mostrar({ ...NOTICIA, titulo: 'Nueva ciclorruta en el centro' });
+    expect(buscar('.antetitulo')?.textContent).toContain('Movilidad');
+  });
+
+  describe('inclinación 3D', () => {
+    /** Simula el mouse en un punto de una tarjeta de 200 × 100 px. */
+    function moverMouse(x: number, y: number): void {
+      vi.spyOn(raiz(), 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 200, 100));
+      raiz().dispatchEvent(new MouseEvent('pointermove', { clientX: x, clientY: y }));
+    }
+    const giro = (eje: 'x' | 'y') => raiz().style.getPropertyValue(`--giro-${eje}`);
+
+    it('gira hacia el mouse y se endereza cuando el mouse sale', async () => {
+      await mostrar(NOTICIA);
+      moverMouse(200, 0);
+      await fixture.whenStable();
+      expect(giro('x')).toBe('5.00deg');
+      expect(giro('y')).toBe('5.00deg');
+
+      raiz().dispatchEvent(new MouseEvent('pointerleave'));
+      await fixture.whenStable();
+      expect(giro('x')).toBe('0deg');
+      expect(giro('y')).toBe('0deg');
+    });
+
+    it('la variante horizontal no se inclina', async () => {
+      await mostrar(NOTICIA, 'horizontal');
+      moverMouse(200, 0);
+      await fixture.whenStable();
+      expect(giro('y')).toBe('0deg');
+    });
+  });
+
   it('la variante horizontal no pone etiquetas ni resumen encima de la miniatura', async () => {
     await mostrar({ ...NOTICIA, oficial: true }, 'horizontal');
     expect(buscar('.tarjeta-horizontal')).not.toBeNull();
