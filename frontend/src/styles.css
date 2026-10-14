@@ -1,6 +1,7 @@
 /* Fuentes autoalojadas: no dependen de internet. */
 @import '@fontsource-variable/bricolage-grotesque';
 @import '@fontsource-variable/manrope';
+@import '@fontsource-variable/source-serif-4';
 
 /*
   Identidad «Amanecer» de Al Día: el cielo antes del amanecer (azul) y el sol (ámbar).
@@ -8,19 +9,22 @@
 */
 :root {
   /* Colores */
-  --color-marca: #0e2551; /* azul madrugada: 15:1 sobre blanco */
+  --color-marca: #0e2551; /* azul madrugada: 15:1 sobre blanco, 13.2:1 sobre la página */
   --color-marca-oscuro: #09193a;
   --color-sol: #f0a028; /* solo relleno, nunca texto sobre blanco */
-  --color-urgente: #d7262d; /* última hora y antetítulos: una vez por pantalla */
+  /* Última hora y antetítulos, una vez por pantalla. 5:1 sobre blanco; como texto solo va sobre tarjeta (4.4:1 sobre la página). */
+  --color-urgente: #d7262d;
   --color-fondo: #ffffff;
+  --color-pagina: #eef1f6; /* fondo neutro de la página: las tarjetas blancas flotan encima */
+  --color-tarjeta: #ffffff; /* superficie de las tarjetas */
   --color-superficie: #f7f9fc;
   --color-superficie-2: #edf1f7;
   --color-linea: #e3e7ef; /* bordes y separadores decorativos */
-  --color-texto: #111827;
-  --color-texto-suave: #5c6880; /* 5.6:1 sobre blanco */
+  --color-texto: #111827; /* 17.7:1 sobre blanco, 15.7:1 sobre la página */
+  --color-texto-suave: #5c6880; /* 5.6:1 sobre blanco, 4.9:1 sobre la página */
   --color-sobre-marca: #ffffff;
-  --color-borde: #7a869c; /* bordes de campos: 3.5:1 sobre la superficie */
-  --color-error: #b3261e; /* errores de formulario: 6.5:1 sobre blanco */
+  --color-borde: #7a869c; /* bordes de campos: 3.5:1 sobre la superficie, 3.2:1 sobre la página */
+  --color-error: #b3261e; /* errores de formulario: 6.5:1 sobre blanco, 5.8:1 sobre la página */
 
   /* Espacios */
   --espacio-xs: 0.25rem;
@@ -30,13 +34,28 @@
   --espacio-xl: 2.5rem;
 
   /* Forma */
-  --radio: 8px;
+  --radio-s: 12px; /* controles: botones, campos, avisos */
+  --radio-m: 24px; /* lo que va dentro de una tarjeta, como la imagen */
+  --radio-g: 32px; /* tarjetas y piezas grandes */
+  --radio: var(--radio-s);
   --alto-control: 2.75rem; /* 44 px: tamaño táctil mínimo */
   --ancho-maximo: 72rem; /* ancho del contenido en las pantallas de la aplicación */
 
-  /* Tipografía: titulares en Bricolage Grotesque, interfaz y cuerpo en Manrope */
+  /*
+    Sombras en capas, teñidas con el azul de marca (14, 37, 81) para que no ensucien.
+    1: tarjeta en reposo. 2: imagen flotante y tarjeta con el mouse encima. 3: modal.
+  */
+  --sombra-1: 0 1px 2px rgba(14, 37, 81, 0.04), 0 8px 24px rgba(14, 37, 81, 0.06);
+  --sombra-2: 0 2px 4px rgba(14, 37, 81, 0.06), 0 16px 40px rgba(14, 37, 81, 0.12);
+  --sombra-3: 0 8px 16px rgba(14, 37, 81, 0.1), 0 32px 80px rgba(14, 37, 81, 0.28);
+
+  /*
+    Tipografía: Bricolage Grotesque en títulos de interfaz, Manrope en interfaz y cuerpo,
+    y Source Serif 4 en los titulares de noticia.
+  */
   --fuente-titulos: 'Bricolage Grotesque Variable', 'Manrope Variable', system-ui, sans-serif;
   --fuente-texto: 'Manrope Variable', system-ui, sans-serif;
+  --fuente-titulares-serif: 'Source Serif 4 Variable', Georgia, 'Times New Roman', serif;
 }
 
 *,
@@ -52,7 +71,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--color-fondo);
+  background: var(--color-pagina);
   color: var(--color-texto);
   font-family: var(--fuente-texto);
   font-size: 1rem;
@@ -69,6 +88,16 @@ h4 {
   line-height: 1.15;
   letter-spacing: -0.03em;
   text-wrap: balance;
+}
+
+/*
+  Titulares de noticia en serif. Provisional: mientras no se toquen los componentes se
+  aplica desde aquí; después cada componente lo declara en su propio CSS.
+*/
+app-tarjeta-noticia h3,
+app-apertura .principal h2 {
+  font-family: var(--fuente-titulares-serif);
+  letter-spacing: -0.01em;
 }
 
 p {
