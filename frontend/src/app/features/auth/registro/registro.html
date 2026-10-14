@@ -3,7 +3,7 @@
 
   <div class="panel-formulario">
     <div class="tarjeta-formulario">
-      <h1>Crear cuenta</h1>
+      <h1>{{ textos.tituloRegistro }}</h1>
 
       <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
         @if (error(); as mensaje) {
@@ -12,7 +12,7 @@
 
         <app-campo
           idCampo="registro-correo"
-          etiqueta="Correo electrónico"
+          [etiqueta]="textos.correo"
           tipo="email"
           autocompletar="email"
           [control]="formulario.controls.correo"
@@ -20,7 +20,7 @@
         />
         <app-campo
           idCampo="registro-contrasena"
-          etiqueta="Contraseña"
+          [etiqueta]="textos.contrasena"
           tipo="password"
           autocompletar="new-password"
           [control]="formulario.controls.contrasena"
@@ -28,7 +28,7 @@
         />
         <app-campo
           idCampo="registro-confirmacion"
-          etiqueta="Confirmar contraseña"
+          [etiqueta]="textos.confirmacion"
           tipo="password"
           autocompletar="new-password"
           [control]="formulario.controls.confirmacion"
@@ -36,11 +36,11 @@
           [errorExtra]="errorContrasenasDistintas()"
         />
 
-        <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">Crear cuenta</app-boton>
+        <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">{{ textos.crearCuenta }}</app-boton>
       </form>
 
       <p class="enlace-alterno">
-        ¿Ya tienes cuenta? <a [routerLink]="['/', rutas.login]">Inicia sesión</a>
+        {{ textos.conCuenta }} <a [routerLink]="['/', rutas.login]">{{ textos.iniciarSesion }}</a>
       </p>
     </div>
   </div>

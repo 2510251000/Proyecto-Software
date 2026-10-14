@@ -6,6 +6,7 @@ import {
   AVISOS_POR_MOTIVO,
   ERRORES_CONTRASENA,
   ERRORES_CORREO,
+  TEXTOS_AUTH,
 } from '../../../core/constants/mensajes.constants';
 import { PARAMETROS_URL } from '../../../core/constants/navegacion.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
@@ -40,6 +41,7 @@ export class Login {
     ) ?? null;
 
   protected readonly titular = TEXTOS_PANEL_MARCA.titularLogin;
+  protected readonly textos = TEXTOS_AUTH;
   protected readonly rutas = RUTAS;
   protected readonly erroresCorreo = ERRORES_CORREO;
   protected readonly erroresContrasena = ERRORES_CONTRASENA;

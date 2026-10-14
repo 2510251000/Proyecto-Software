@@ -7,6 +7,7 @@ import {
   ERRORES_CONTRASENA,
   ERRORES_CORREO,
   MENSAJES_VALIDACION,
+  TEXTOS_AUTH,
 } from '../../../core/constants/mensajes.constants';
 import { MOTIVOS_LOGIN, PARAMETROS_URL } from '../../../core/constants/navegacion.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
@@ -45,6 +46,7 @@ export class Registro {
   protected readonly error = signal<string | null>(null);
 
   protected readonly titular = TEXTOS_PANEL_MARCA.titularRegistro;
+  protected readonly textos = TEXTOS_AUTH;
   protected readonly rutas = RUTAS;
   protected readonly erroresCorreo = ERRORES_CORREO;
   protected readonly erroresContrasena = ERRORES_CONTRASENA;

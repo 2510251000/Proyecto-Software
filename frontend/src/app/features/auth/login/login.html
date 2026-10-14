@@ -3,7 +3,7 @@
 
   <div class="panel-formulario">
     <div class="tarjeta-formulario">
-      <h1>Iniciar sesión</h1>
+      <h1>{{ textos.tituloLogin }}</h1>
 
       @if (aviso) {
         <p class="aviso" role="status">{{ aviso }}</p>
@@ -16,7 +16,7 @@
 
         <app-campo
           idCampo="login-correo"
-          etiqueta="Correo electrónico"
+          [etiqueta]="textos.correo"
           tipo="email"
           autocompletar="email"
           [control]="formulario.controls.correo"
@@ -24,18 +24,18 @@
         />
         <app-campo
           idCampo="login-contrasena"
-          etiqueta="Contraseña"
+          [etiqueta]="textos.contrasena"
           tipo="password"
           autocompletar="current-password"
           [control]="formulario.controls.contrasena"
           [errores]="erroresContrasena"
         />
 
-        <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">Entrar</app-boton>
+        <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">{{ textos.entrar }}</app-boton>
       </form>
 
       <p class="enlace-alterno">
-        ¿No tienes cuenta? <a [routerLink]="['/', rutas.registro]">Crea una</a>
+        {{ textos.sinCuenta }} <a [routerLink]="['/', rutas.registro]">{{ textos.crearUna }}</a>
       </p>
     </div>
   </div>
