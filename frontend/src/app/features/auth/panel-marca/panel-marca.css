@@ -2,6 +2,7 @@
   display: block;
 }
 
+/* Pieza azul de marca con las esquinas redondeadas. */
 .panel {
   position: relative;
   display: flex;
@@ -10,7 +11,9 @@
   height: 100%;
   padding: var(--espacio-xl) clamp(var(--espacio-l), 5vw, 4rem);
   overflow: hidden;
+  border-radius: var(--radio-g);
   background: var(--color-marca);
+  box-shadow: var(--sombra-2);
   color: var(--color-sobre-marca);
 }
 
@@ -90,7 +93,8 @@
 @media (max-width: 760px) {
   .panel {
     gap: var(--espacio-m);
-    padding: var(--espacio-l) var(--espacio-m);
+    padding: var(--espacio-l);
+    border-radius: var(--radio-m);
   }
 
   .titular {
