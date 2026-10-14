@@ -13,9 +13,12 @@
   border-radius: var(--radio-g);
   background: var(--color-tarjeta);
   box-shadow: var(--sombra-1);
+  color: inherit;
+  text-decoration: none;
 }
 
-.tarjeta:hover {
+.tarjeta:hover,
+.tarjeta:focus-visible {
   box-shadow: var(--sombra-2);
 }
 
@@ -86,7 +89,8 @@
   transition: transform 180ms ease-out;
 }
 
-.tarjeta:hover .asomo {
+.tarjeta:hover .asomo,
+.tarjeta:focus-visible .asomo {
   transform: translateY(0);
 }
 

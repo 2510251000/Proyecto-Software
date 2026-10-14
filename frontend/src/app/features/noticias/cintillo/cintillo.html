@@ -3,5 +3,5 @@
     <span class="punto" aria-hidden="true"></span>
     {{ etiquetas.ultimaHora }}
   </span>
-  <p class="titular">{{ noticia().titulo }}</p>
+  <a class="titular" [appEnlaceNoticia]="noticia()" (abrirNoticia)="abrir.emit($event)">{{ noticia().titulo }}</a>
 </aside>

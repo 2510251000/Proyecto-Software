@@ -1,0 +1,43 @@
+<app-encabezado>
+  <a class="volver" [routerLink]="['/', rutas.noticias]">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+      <path d="M9.5 3 4.5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    {{ textos.volver }}
+  </a>
+</app-encabezado>
+
+<main class="pagina">
+  @if (noticia(); as encontrada) {
+    <div class="hoja">
+      <app-contenido-noticia [noticia]="encontrada" [idTitulo]="idTitulo" [nivelTitulo]="1" />
+    </div>
+  } @else if (cargando()) {
+    <div class="hoja estado" role="status">
+      <span class="solo-lectores-pantalla">{{ textosComunes.cargando }}</span>
+      <div class="bloque imagen" aria-hidden="true"></div>
+      <div class="lineas" aria-hidden="true">
+        <div class="bloque linea corta"></div>
+        <div class="bloque linea titulo"></div>
+        <div class="bloque linea"></div>
+        <div class="bloque linea"></div>
+      </div>
+    </div>
+  } @else if (error(); as mensaje) {
+    <div class="hoja aviso aviso-error" role="alert">
+      <p>{{ mensaje }}</p>
+      <app-boton (click)="reintentar()">{{ textosPortada.reintentar }}</app-boton>
+    </div>
+  } @else {
+    <div class="hoja aviso">
+      <svg class="dibujo" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
+        <rect x="18" y="10" width="84" height="60" rx="10" fill="var(--color-superficie-2)" />
+        <path d="M42 40a18 18 0 0 1 36 0Z" fill="var(--color-sol)" />
+        <path d="M32 44h56M40 53h40M48 61h24" stroke="var(--color-marca)" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 9" />
+      </svg>
+      <h1 class="titulo-aviso">{{ textos.noEncontrada }}</h1>
+      <p>{{ textos.noEncontradaAyuda }}</p>
+      <a class="enlace-portada" [routerLink]="['/', rutas.noticias]">{{ textos.volver }}</a>
+    </div>
+  }
+</main>

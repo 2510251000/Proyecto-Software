@@ -75,6 +75,18 @@
   overflow-wrap: anywhere;
 }
 
+/* El enlace llena el renglón del titular para que sea fácil de tocar. */
+.titular a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.titular a:hover {
+  color: var(--color-marca);
+  text-decoration: underline;
+}
+
 .datos {
   margin: var(--espacio-xs) 0 0;
   color: var(--color-texto-suave);

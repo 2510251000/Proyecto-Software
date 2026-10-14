@@ -38,6 +38,10 @@ describe('rutas de la aplicación', () => {
       expect(await ir(url)).toBe('/login');
     });
 
+    it('la página de una noticia también pide sesión', async () => {
+      expect(await ir('/noticias/5')).toBe('/login');
+    });
+
     it.each(['/login', '/registro'])('%s es de acceso libre', async (url) => {
       expect(await ir(url)).toBe(url);
     });
@@ -48,6 +52,10 @@ describe('rutas de la aplicación', () => {
 
     it.each(['/', '/noticias', '/ruta-que-no-existe'])('%s termina en el listado', async (url) => {
       expect(await ir(url)).toBe('/noticias');
+    });
+
+    it('/noticias/5 abre la página de esa noticia', async () => {
+      expect(await ir('/noticias/5')).toBe('/noticias/5');
     });
   });
 });

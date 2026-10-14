@@ -21,6 +21,15 @@ export const ETIQUETAS_NOTICIA = {
   deLectura: 'de lectura',
 } as const;
 
+/** Textos de la vista de una noticia: la vista rápida de la portada y su página propia. */
+export const TEXTOS_NOTICIA = {
+  cerrar: 'Cerrar noticia',
+  abrirPagina: 'Abrir en página completa',
+  volver: 'Volver a la portada',
+  noEncontrada: 'No encontramos esta noticia',
+  noEncontradaAyuda: 'Puede que ya no esté publicada o que el enlace esté incompleto.',
+} as const;
+
 /** Notas de la franja «Lo que cuenta la comunidad». */
 export const CANTIDAD_COMUNIDAD = 3;
 

@@ -1,10 +1,11 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { SECCION_POR_CATEGORIA } from '../../core/constants/categorias.constants';
 import { ETIQUETAS_NOTICIA } from '../../core/constants/portada.constants';
 import { IDIOMA } from '../../core/constants/regional.constants';
 import { Noticia } from '../../core/models/noticia.model';
 import { categoriaDeNoticia } from '../../core/utils/categoria-noticia';
 import { esUltimaHora, minutosDeLectura, tiempoRelativo } from '../../core/utils/noticia';
+import { EnlaceNoticia } from '../enlace-noticia/enlace-noticia';
 import { Miniatura } from '../miniatura/miniatura';
 
 const FORMATO_FECHA = new Intl.DateTimeFormat(IDIOMA, { dateStyle: 'long' });
@@ -13,9 +14,12 @@ const FORMATO_FECHA = new Intl.DateTimeFormat(IDIOMA, { dateStyle: 'long' });
 const GIRO_MAXIMO = 5;
 const SIN_GIRO = '0deg';
 
+/** Cada tarjeta necesita ids propios: una misma noticia puede salir dos veces en la portada. */
+let tarjetasCreadas = 0;
+
 @Component({
   selector: 'app-tarjeta-noticia',
-  imports: [Miniatura],
+  imports: [Miniatura, EnlaceNoticia],
   templateUrl: './tarjeta-noticia.html',
   styleUrl: './tarjeta-noticia.css',
   host: {
@@ -29,8 +33,15 @@ export class TarjetaNoticia {
   readonly noticia = input.required<Noticia>();
   /** Vertical: miniatura arriba (rejillas). Horizontal: miniatura pequeña a la izquierda (apertura). */
   readonly variante = input<'vertical' | 'horizontal'>('vertical');
+  /** Clic normal en la tarjeta: quien la usa decide cómo mostrar la noticia. */
+  readonly abrir = output<Noticia>();
 
   protected readonly etiquetas = ETIQUETAS_NOTICIA;
+
+  private readonly numero = ++tarjetasCreadas;
+  protected readonly idTitulo = `tarjeta-${this.numero}-titulo`;
+  protected readonly idAntetitulo = `tarjeta-${this.numero}-antetitulo`;
+  protected readonly idDatos = `tarjeta-${this.numero}-datos`;
 
   /** Fecha completa: se muestra al dejar el mouse sobre la hora relativa. */
   protected readonly fecha = computed(() => {
