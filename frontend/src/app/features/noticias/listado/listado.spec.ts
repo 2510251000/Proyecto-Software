@@ -8,6 +8,7 @@ import { ErrorApi } from '../../../core/models/error-api.model';
 import { Noticia } from '../../../core/models/noticia.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { NoticiaService } from '../../../core/services/noticia.service';
+import { simularDialogoNativo } from '../modal-noticia/dialogo-de-prueba';
 import { Listado } from './listado';
 
 const NOTICIAS: Noticia[] = [
@@ -99,6 +100,44 @@ describe('Listado', () => {
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
     expect(buscar('app-apertura')?.textContent).toContain('Primera noticia');
+  });
+
+  describe('vista rápida de una noticia', () => {
+    const dialogo = () => buscar<HTMLDialogElement>('dialog') as HTMLDialogElement;
+
+    beforeEach(async () => {
+      simularDialogoNativo();
+      respuesta.next(NOTICIAS);
+      await fixture.whenStable();
+    });
+
+    it('las tarjetas son enlaces a la página de su noticia', () => {
+      expect(buscar('app-apertura a.principal')?.getAttribute('href')).toBe('/noticias/1');
+      expect(buscar('app-tarjeta-noticia a')?.getAttribute('href')).toBe('/noticias/2');
+    });
+
+    it('al hacer clic en una tarjeta se abre con esa noticia, sin pedir nada al backend', async () => {
+      expect(dialogo().hasAttribute('open')).toBe(false);
+      buscar<HTMLAnchorElement>('app-tarjeta-noticia a')?.click();
+      await fixture.whenStable();
+      expect(dialogo().hasAttribute('open')).toBe(true);
+      expect(dialogo().textContent).toContain('Segunda noticia');
+      expect(dialogo().textContent).toContain('Contenido dos');
+      expect(listar).toHaveBeenCalledTimes(1);
+    });
+
+    it('al cerrarla queda vacía y se puede abrir otra', async () => {
+      buscar<HTMLAnchorElement>('app-tarjeta-noticia a')?.click();
+      await fixture.whenStable();
+      buscar<HTMLButtonElement>('dialog button.cerrar')?.click();
+      await fixture.whenStable();
+      expect(dialogo().hasAttribute('open')).toBe(false);
+      expect(dialogo().textContent?.trim()).toBe('');
+
+      buscar<HTMLAnchorElement>('app-apertura a.principal')?.click();
+      await fixture.whenStable();
+      expect(dialogo().textContent).toContain('Contenido uno');
+    });
   });
 
   it('cierra la sesión y vuelve al login', () => {

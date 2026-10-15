@@ -1,0 +1,25 @@
+<dialog
+  #dialogo
+  class="modal"
+  [attr.aria-labelledby]="idTitulo"
+  (close)="cerrada.emit()"
+>
+  @if (noticia(); as abierta) {
+    <!-- Clic fuera de la hoja. Es solo para el mouse: con teclado se cierra con Escape o con el botón. -->
+    <button type="button" class="fondo" tabindex="-1" aria-hidden="true" (click)="cerrar()"></button>
+
+    <div class="hoja">
+      <button type="button" class="cerrar" [attr.aria-label]="textos.cerrar" (click)="cerrar()">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+          <path d="m3 3 10 10M13 3 3 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <app-contenido-noticia [noticia]="abierta" [idTitulo]="idTitulo" />
+
+      <p class="pie">
+        <a class="pagina" [routerLink]="['/', rutas.noticias, abierta.id]">{{ textos.abrirPagina }}</a>
+      </p>
+    </div>
+  }
+</dialog>

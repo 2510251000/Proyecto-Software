@@ -2,39 +2,41 @@
   <app-panel-marca [titular]="titular" />
 
   <div class="panel-formulario">
-    <h1>Iniciar sesión</h1>
+    <div class="tarjeta-formulario">
+      <h1>{{ textos.tituloLogin }}</h1>
 
-    @if (aviso) {
-      <p class="aviso" role="status">{{ aviso }}</p>
-    }
-
-    <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
-      @if (error(); as mensaje) {
-        <p class="error-general" role="alert">{{ mensaje }}</p>
+      @if (aviso) {
+        <p class="aviso" role="status">{{ aviso }}</p>
       }
 
-      <app-campo
-        idCampo="login-correo"
-        etiqueta="Correo electrónico"
-        tipo="email"
-        autocompletar="email"
-        [control]="formulario.controls.correo"
-        [errores]="erroresCorreo"
-      />
-      <app-campo
-        idCampo="login-contrasena"
-        etiqueta="Contraseña"
-        tipo="password"
-        autocompletar="current-password"
-        [control]="formulario.controls.contrasena"
-        [errores]="erroresContrasena"
-      />
+      <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+        @if (error(); as mensaje) {
+          <p class="error-general" role="alert">{{ mensaje }}</p>
+        }
 
-      <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">Entrar</app-boton>
-    </form>
+        <app-campo
+          idCampo="login-correo"
+          [etiqueta]="textos.correo"
+          tipo="email"
+          autocompletar="email"
+          [control]="formulario.controls.correo"
+          [errores]="erroresCorreo"
+        />
+        <app-campo
+          idCampo="login-contrasena"
+          [etiqueta]="textos.contrasena"
+          tipo="password"
+          autocompletar="current-password"
+          [control]="formulario.controls.contrasena"
+          [errores]="erroresContrasena"
+        />
 
-    <p class="enlace-alterno">
-      ¿No tienes cuenta? <a [routerLink]="['/', rutas.registro]">Crea una</a>
-    </p>
+        <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">{{ textos.entrar }}</app-boton>
+      </form>
+
+      <p class="enlace-alterno">
+        {{ textos.sinCuenta }} <a [routerLink]="['/', rutas.registro]">{{ textos.crearUna }}</a>
+      </p>
+    </div>
   </div>
 </main>

@@ -24,13 +24,13 @@
     </div>
   } @else {
     @if (ultimaHora(); as noticia) {
-      <app-cintillo [noticia]="noticia" />
+      <app-cintillo [noticia]="noticia" (abrir)="abrirNoticia($event)" />
     }
 
     <div class="portada">
       <div class="contenido">
         @if (principal(); as noticia) {
-          <app-apertura [principal]="noticia" [secundarias]="secundarias()" />
+          <app-apertura [principal]="noticia" [secundarias]="secundarias()" (abrir)="abrirNoticia($event)" />
         }
 
         <app-franja-seccion
@@ -64,7 +64,7 @@
             <ul class="rejilla">
               @for (noticia of mostradas(); track noticia.id) {
                 <li>
-                  <app-tarjeta-noticia [noticia]="noticia" />
+                  <app-tarjeta-noticia [noticia]="noticia" (abrir)="abrirNoticia($event)" />
                 </li>
               }
             </ul>
@@ -87,7 +87,7 @@
             <ul class="rejilla">
               @for (noticia of comunidad(); track noticia.id) {
                 <li>
-                  <app-tarjeta-noticia [noticia]="noticia" />
+                  <app-tarjeta-noticia [noticia]="noticia" (abrir)="abrirNoticia($event)" />
                 </li>
               }
             </ul>
@@ -95,7 +95,9 @@
         }
       </div>
 
-      <app-lateral [recientes]="recientes()" [conteo]="conteo()" />
+      <app-lateral [recientes]="recientes()" [conteo]="conteo()" (abrir)="abrirNoticia($event)" />
     </div>
   }
 </main>
+
+<app-modal-noticia [noticia]="noticiaAbierta()" (cerrada)="noticiaAbierta.set(null)" />

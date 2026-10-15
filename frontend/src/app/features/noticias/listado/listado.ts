@@ -1,6 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
 import {
@@ -11,19 +10,19 @@ import {
   TEXTOS_PORTADA,
 } from '../../../core/constants/portada.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
-import { ErrorApi } from '../../../core/models/error-api.model';
 import { Noticia } from '../../../core/models/noticia.model';
 import { esUltimaHora } from '../../../core/utils/noticia';
 import { AuthService } from '../../../core/services/auth.service';
-import { NoticiaService } from '../../../core/services/noticia.service';
 import { Boton } from '../../../shared/boton/boton';
 import { Encabezado } from '../../../shared/encabezado/encabezado';
 import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
+import { AlmacenNoticias } from '../almacen-noticias';
 import { Apertura } from '../apertura/apertura';
 import { Cintillo } from '../cintillo/cintillo';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
 import { FranjaSeccion } from '../franja-seccion/franja-seccion';
 import { ConteoCiudad, Lateral } from '../lateral/lateral';
+import { ModalNoticia } from '../modal-noticia/modal-noticia';
 import {
   CHIPS_FIJOS,
   ChipFiltro,
@@ -48,20 +47,23 @@ const ID_FRANJA_CIUDAD = 'franja-ciudad';
     EsqueletoPortada,
     FranjaSeccion,
     Lateral,
+    ModalNoticia,
   ],
   templateUrl: './listado.html',
   styleUrl: './listado.css',
 })
 export class Listado implements OnInit {
-  private readonly noticiaServicio = inject(NoticiaService);
+  private readonly almacen = inject(AlmacenNoticias);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly documento = inject(DOCUMENT);
 
-  protected readonly cargando = signal(true);
-  protected readonly error = signal<string | null>(null);
-  protected readonly noticias = signal<Noticia[]>([]);
+  // El listado vive en el almacén: la página de una noticia usa el mismo.
+  protected readonly cargando = this.almacen.cargando;
+  protected readonly error = this.almacen.error;
+  protected readonly noticias = this.almacen.noticias;
+  /** Noticia que se está viendo en la vista rápida; null si está cerrada. */
+  protected readonly noticiaAbierta = signal<Noticia | null>(null);
   protected readonly textos = TEXTOS_COMUNES;
   protected readonly textosPortada = TEXTOS_PORTADA;
   protected readonly idFranjaCiudad = ID_FRANJA_CIUDAD;
@@ -122,21 +124,11 @@ export class Listado implements OnInit {
   }
 
   protected cargar(): void {
-    this.cargando.set(true);
-    this.error.set(null);
-    this.noticiaServicio
-      .listar()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (noticias) => {
-          this.noticias.set(noticias);
-          this.cargando.set(false);
-        },
-        error: (error: ErrorApi) => {
-          this.error.set(error.mensaje);
-          this.cargando.set(false);
-        },
-      });
+    this.almacen.cargar();
+  }
+
+  protected abrirNoticia(noticia: Noticia): void {
+    this.noticiaAbierta.set(noticia);
   }
 
   protected cerrarSesion(): void {

@@ -5,7 +5,7 @@
 .pagina {
   max-width: var(--ancho-maximo);
   margin: 0 auto;
-  padding: var(--espacio-m) var(--espacio-m) var(--espacio-xl);
+  padding: var(--espacio-l) var(--espacio-m) var(--espacio-xl);
 }
 
 /* Dos columnas: el contenido y un lateral de 252 px. Por debajo de 900 px se apilan. */
@@ -44,11 +44,11 @@
 
 .chip {
   flex: none;
-  min-height: 2.25rem;
-  padding: 0 var(--espacio-m);
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-l);
   border: 1px solid var(--color-linea);
   border-radius: 999px;
-  background: var(--color-superficie);
+  background: var(--color-tarjeta);
   color: var(--color-texto);
   font: inherit;
   font-size: 0.875rem;
@@ -60,11 +60,12 @@
   border-color: var(--color-borde);
 }
 
+/* Blanco sobre el azul de marca: 15:1. */
 .chip-activo,
 .chip-activo:hover {
-  border-color: var(--color-texto);
-  background: var(--color-texto);
-  color: var(--color-fondo);
+  border-color: var(--color-marca);
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
 }
 
 /* Una columna en móvil; se reparte en más columnas según el ancho disponible. */
@@ -99,8 +100,10 @@
   align-items: center;
   gap: var(--espacio-s);
   padding: var(--espacio-xl) var(--espacio-l);
-  border: 1px solid var(--color-linea);
-  border-radius: var(--radio);
+  border: 1px solid transparent;
+  border-radius: var(--radio-g);
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-1);
   color: var(--color-texto-suave);
   text-align: center;
 }

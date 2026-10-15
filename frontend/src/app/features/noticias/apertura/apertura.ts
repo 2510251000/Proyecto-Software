@@ -1,22 +1,24 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { SECCION_POR_CATEGORIA } from '../../../core/constants/categorias.constants';
 import { ETIQUETAS_NOTICIA } from '../../../core/constants/portada.constants';
 import { Noticia } from '../../../core/models/noticia.model';
 import { categoriaDeNoticia } from '../../../core/utils/categoria-noticia';
 import { minutosDeLectura, tiempoRelativo } from '../../../core/utils/noticia';
+import { EnlaceNoticia } from '../../../shared/enlace-noticia/enlace-noticia';
 import { Miniatura } from '../../../shared/miniatura/miniatura';
 import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
 
 /** Apertura de la portada: la noticia más reciente en grande y las siguientes al lado. */
 @Component({
   selector: 'app-apertura',
-  imports: [Miniatura, TarjetaNoticia],
+  imports: [Miniatura, TarjetaNoticia, EnlaceNoticia],
   templateUrl: './apertura.html',
   styleUrl: './apertura.css',
 })
 export class Apertura {
   readonly principal = input.required<Noticia>();
   readonly secundarias = input<readonly Noticia[]>([]);
+  readonly abrir = output<Noticia>();
 
   protected readonly etiquetas = ETIQUETAS_NOTICIA;
 

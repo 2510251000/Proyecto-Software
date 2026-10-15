@@ -6,6 +6,7 @@ import {
   MENSAJES_EXITO,
   MENSAJES_SESION,
   MENSAJES_VALIDACION,
+  TEXTOS_AUTH,
 } from '../../../core/constants/mensajes.constants';
 import { MOTIVOS_LOGIN, PARAMETROS_URL } from '../../../core/constants/navegacion.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
@@ -67,7 +68,7 @@ describe('Login', () => {
     await crear();
     expect(buscar('#login-correo')).not.toBeNull();
     expect(buscar('#login-contrasena')).not.toBeNull();
-    expect(buscar('button[type="submit"]')?.textContent).toContain('Entrar');
+    expect(buscar('button[type="submit"]')?.textContent).toContain(TEXTOS_AUTH.entrar);
     expect(buscar('.aviso')).toBeNull();
   });
 

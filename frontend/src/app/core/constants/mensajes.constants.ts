@@ -36,6 +36,21 @@ export const MENSAJES_EXITO = {
   registro: 'Cuenta creada correctamente. Ya puedes iniciar sesión.',
 } as const;
 
+/** Textos de las pantallas de login y registro. */
+export const TEXTOS_AUTH = {
+  correo: 'Correo electrónico',
+  contrasena: 'Contraseña',
+  confirmacion: 'Confirmar contraseña',
+  tituloLogin: 'Iniciar sesión',
+  entrar: 'Entrar',
+  sinCuenta: '¿No tienes cuenta?',
+  crearUna: 'Crea una',
+  tituloRegistro: 'Crear cuenta',
+  crearCuenta: 'Crear cuenta',
+  conCuenta: '¿Ya tienes cuenta?',
+  iniciarSesion: 'Inicia sesión',
+} as const;
+
 export const TEXTOS_COMUNES = {
   cargando: 'Cargando…',
 } as const;

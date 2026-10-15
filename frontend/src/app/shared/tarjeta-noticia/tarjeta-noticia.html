@@ -1,4 +1,12 @@
-<article class="tarjeta" [class.tarjeta-horizontal]="variante() === 'horizontal'">
+<!-- El enlace se anuncia con el titular; la sección, la ciudad y la hora van como descripción. -->
+<a
+  class="tarjeta"
+  [class.tarjeta-horizontal]="variante() === 'horizontal'"
+  [appEnlaceNoticia]="noticia()"
+  [attr.aria-labelledby]="idTitulo"
+  [attr.aria-describedby]="idAntetitulo + ' ' + idDatos"
+  (abrirNoticia)="abrir.emit($event)"
+>
   <div class="imagen">
     <app-miniatura [categoria]="categoria()" />
     @if (variante() === 'vertical') {
@@ -19,8 +27,9 @@
       <p class="asomo">{{ noticia().resumen }}</p>
     }
   </div>
-  <h3 class="titulo">{{ noticia().titulo }}</h3>
-  <div class="datos">
+  <p class="antetitulo" [id]="idAntetitulo">{{ seccion() }}</p>
+  <h3 class="titulo" [id]="idTitulo">{{ noticia().titulo }}</h3>
+  <div class="datos" [id]="idDatos">
     <p class="datos-lista">
       <span class="ciudad">{{ noticia().ciudad }}</span>
       @if (cuando() !== '') {
@@ -28,4 +37,4 @@
       }
     </p>
   </div>
-</article>
+</a>

@@ -3,20 +3,33 @@
   flex-direction: column;
 }
 
-/* La tarjeta ocupa toda la altura de su fila para que las de una misma fila midan igual. */
+/* Tarjeta blanca que flota sobre la página. Ocupa toda la altura de su fila. */
 .tarjeta {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: var(--espacio-s);
+  padding: var(--espacio-m);
+  border-radius: var(--radio-g);
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-1);
+  color: inherit;
+  text-decoration: none;
 }
 
+.tarjeta:hover,
+.tarjeta:focus-visible {
+  box-shadow: var(--sombra-2);
+}
+
+/* La imagen flota dentro de la tarjeta: radio y sombra propios. */
 .imagen {
   position: relative;
   overflow: hidden;
   aspect-ratio: 16 / 9;
-  border: 1px solid var(--color-linea);
-  border-radius: 4px;
+  margin-bottom: var(--espacio-s);
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-2);
 }
 
 .imagen app-miniatura {
@@ -26,9 +39,9 @@
 .etiqueta,
 .lectura {
   position: absolute;
-  padding: 0.15rem 0.45rem;
-  border-radius: 3px;
-  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  color: var(--color-sobre-marca);
   font-size: 0.72rem;
   font-weight: 700;
 }
@@ -43,18 +56,21 @@
   text-transform: uppercase;
 }
 
+/* Blanco sobre el rojo: 5:1. */
 .etiqueta-urgente {
   background: var(--color-urgente);
 }
 
+/* Blanco sobre el azul de marca: 15:1. */
 .etiqueta-oficial {
-  background: rgba(14, 11, 8, 0.82);
+  background: var(--color-marca);
 }
 
+/* Blanco sobre el azul oscuro: 17.3:1, igual que el asomo. */
 .lectura {
   right: var(--espacio-s);
   bottom: var(--espacio-s);
-  background: rgba(9, 25, 58, 0.78);
+  background: var(--color-marca-oscuro);
   font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
   font-weight: 400;
 }
@@ -64,52 +80,64 @@
   position: absolute;
   inset: auto 0 0;
   margin: 0;
-  padding: var(--espacio-m) var(--espacio-s) var(--espacio-s);
-  background: rgba(9, 25, 58, 0.92);
-  color: #fff;
+  padding: var(--espacio-m);
+  background: var(--color-marca-oscuro);
+  color: var(--color-sobre-marca);
   font-size: 0.85rem;
   line-height: 1.4;
   transform: translateY(101%);
   transition: transform 180ms ease-out;
 }
 
-.tarjeta:hover .asomo {
+.tarjeta:hover .asomo,
+.tarjeta:focus-visible .asomo {
   transform: translateY(0);
+}
+
+.antetitulo {
+  margin: 0;
+  color: var(--color-marca);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .titulo {
   display: -webkit-box;
   overflow: hidden;
   margin: 0;
-  font-size: 1.1rem;
+  font-family: var(--fuente-titulares-serif);
+  font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.25;
+  letter-spacing: -0.01em;
   overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   line-clamp: 3;
-  transition: color 180ms;
-}
-
-.tarjeta:hover .titulo {
-  color: var(--color-marca);
 }
 
 /* Horizontal: miniatura de 96 px a la izquierda y el texto al lado. */
 .tarjeta-horizontal {
   display: grid;
   grid-template-columns: 96px 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   gap: var(--espacio-xs) var(--espacio-m);
+  padding: 0.75rem;
+  border-radius: var(--radio-m);
 }
 
 .tarjeta-horizontal .imagen {
-  grid-row: span 2;
+  grid-row: span 3;
   aspect-ratio: 4 / 3;
+  margin-bottom: 0;
+  border-radius: var(--radio-s);
+  box-shadow: var(--sombra-1);
 }
 
 .tarjeta-horizontal .titulo {
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 /*
@@ -150,12 +178,34 @@ time::before {
   left: 0.5em;
 }
 
+/*
+  Inclinación 3D: solo con mouse y si no se pidió menos movimiento. Los giros los pone el
+  componente según la posición del mouse; la imagen se adelanta un poco para que flote.
+*/
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :host {
+    perspective: 1200px;
+  }
+
+  .tarjeta {
+    transform: rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+    transform-style: preserve-3d;
+    transition:
+      transform 150ms ease-out,
+      box-shadow 250ms ease;
+  }
+
+  .imagen {
+    transition: transform 250ms ease;
+  }
+
+  .tarjeta:not(.tarjeta-horizontal):hover .imagen {
+    transform: translateZ(24px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .asomo {
     display: none;
-  }
-
-  .titulo {
-    transition: none;
   }
 }

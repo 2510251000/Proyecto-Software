@@ -13,32 +13,59 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* La nota principal es la tarjeta más grande de la portada. */
+.principal {
+  display: block;
+  padding: var(--espacio-m) var(--espacio-m) var(--espacio-l);
+  border-radius: var(--radio-g);
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-1);
+  color: inherit;
+  text-decoration: none;
+  transition: box-shadow 250ms ease;
+}
+
+.principal:hover,
+.principal:focus-visible {
+  box-shadow: var(--sombra-2);
+}
+
 .imagen {
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  margin-bottom: var(--espacio-m);
-  border: 1px solid var(--color-linea);
-  border-radius: 4px;
+  margin-bottom: var(--espacio-l);
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-2);
 }
 
+.antetitulo,
+.titulo,
+.resumen,
+.datos {
+  margin-inline: var(--espacio-s);
+}
+
+/* El único antetítulo en rojo de la pantalla: 5:1 sobre la tarjeta blanca. */
 .antetitulo {
-  margin: 0 0 var(--espacio-xs);
+  margin-bottom: var(--espacio-s);
   color: var(--color-urgente);
   font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .titulo {
   margin-bottom: var(--espacio-s);
-  font-size: 1.8125rem; /* 29 px */
-  line-height: 1.1;
+  font-family: var(--fuente-titulares-serif);
+  font-size: 2rem;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
   overflow-wrap: anywhere;
 }
 
 .resumen {
-  margin-bottom: var(--espacio-s);
+  margin-bottom: var(--espacio-m);
   color: var(--color-texto);
   font-size: 1.02rem;
 }
@@ -49,7 +76,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--espacio-xs) 0;
-  margin: 0;
+  margin-bottom: 0;
   color: var(--color-texto-suave);
   font-size: 0.85rem;
 }
@@ -74,9 +101,21 @@
   list-style: none;
 }
 
-.secundarias > li + li {
-  padding-top: var(--espacio-m);
-  border-top: 1px solid var(--color-linea);
+/* Las secundarias se reparten la altura de la principal. */
+.secundarias > li {
+  display: flex;
+  flex: 1;
+}
+
+.secundarias app-tarjeta-noticia {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .principal {
+    transition: none;
+  }
 }
 
 @media (max-width: 40rem) {
@@ -85,6 +124,6 @@
   }
 
   .titulo {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 }

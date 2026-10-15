@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import {
   MENSAJES_ERROR_HTTP,
   MENSAJES_VALIDACION,
+  TEXTOS_AUTH,
 } from '../../../core/constants/mensajes.constants';
 import { MOTIVOS_LOGIN, PARAMETROS_URL } from '../../../core/constants/navegacion.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
@@ -56,7 +57,7 @@ describe('Registro', () => {
     expect(buscar('#registro-correo')).not.toBeNull();
     expect(buscar('#registro-contrasena')).not.toBeNull();
     expect(buscar('#registro-confirmacion')).not.toBeNull();
-    expect(buscar('button[type="submit"]')?.textContent).toContain('Crear cuenta');
+    expect(buscar('button[type="submit"]')?.textContent).toContain(TEXTOS_AUTH.crearCuenta);
   });
 
   it('con campos vacíos muestra los errores y no llama al backend', async () => {

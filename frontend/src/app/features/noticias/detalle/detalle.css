@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.volver,
+.enlace-portada {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-s);
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-m);
+  border-radius: var(--radio-s);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.volver:hover,
+.enlace-portada:hover {
+  text-decoration: underline;
+}
+
+.pagina {
+  max-width: 54rem;
+  margin: 0 auto;
+  padding: var(--espacio-l) var(--espacio-m) var(--espacio-xl);
+}
+
+/* La noticia es una sola tarjeta blanca; recorta la imagen con sus esquinas. */
+.hoja {
+  overflow: hidden;
+  border-radius: var(--radio-g);
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-1);
+}
+
+.aviso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-s);
+  padding: var(--espacio-xl) var(--espacio-l);
+  color: var(--color-texto-suave);
+  text-align: center;
+}
+
+.aviso p {
+  margin: 0 0 var(--espacio-s);
+}
+
+.aviso-error {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.titulo-aviso {
+  margin: var(--espacio-s) 0 0;
+  color: var(--color-texto);
+  font-size: 1.5rem;
+}
+
+.dibujo {
+  width: 7.5rem;
+  height: auto;
+}
+
+/* Forma de la noticia mientras llega el listado. */
+.bloque {
+  border-radius: var(--radio-s);
+  background: var(--color-superficie-2);
+  animation: respirar 1.6s ease-in-out infinite;
+}
+
+.imagen {
+  aspect-ratio: 16 / 9;
+  max-height: 26rem;
+  width: 100%;
+  border-radius: 0;
+}
+
+.lineas {
+  padding: var(--espacio-xl) clamp(var(--espacio-m), 6vw, 3.5rem);
+}
+
+.linea {
+  height: 1rem;
+  margin-bottom: var(--espacio-m);
+}
+
+.titulo {
+  height: 2.4rem;
+}
+
+.corta {
+  width: 40%;
+}
+
+@keyframes respirar {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (max-width: 40rem) {
+  .hoja {
+    border-radius: var(--radio-m);
+  }
+}
+
+/* En teléfonos angostos «Volver a la portada» se achica para caber en una línea junto al logo. */
+@media (max-width: 25rem) {
+  .volver {
+    padding-inline: var(--espacio-xs);
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bloque {
+    animation: none;
+  }
+}

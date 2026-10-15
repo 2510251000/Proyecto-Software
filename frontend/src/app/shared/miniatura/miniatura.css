@@ -1,3 +1,4 @@
+/* Colores del dibujo de respaldo. Es decorativo (aria-hidden): no lleva texto ni necesita contraste. */
 :host {
   --mini-fondo: var(--color-superficie-2);
   --mini-sombra: #c9d4e6;

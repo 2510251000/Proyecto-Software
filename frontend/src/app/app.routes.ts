@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { RUTAS } from './core/constants/rutas.constants';
+import { PARAMETRO_ID_NOTICIA, RUTAS } from './core/constants/rutas.constants';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -19,6 +19,12 @@ export const routes: Routes = [
     title: 'Noticias | Al Día',
     canActivate: [authGuard],
     loadComponent: () => import('./features/noticias/listado/listado').then((m) => m.Listado),
+  },
+  {
+    path: `${RUTAS.noticias}/:${PARAMETRO_ID_NOTICIA}`,
+    title: 'Noticia | Al Día',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/noticias/detalle/detalle').then((m) => m.Detalle),
   },
   // Cualquier ruta desconocida va al listado; si no hay sesión, el guard la manda al login.
   { path: '**', redirectTo: RUTAS.noticias },

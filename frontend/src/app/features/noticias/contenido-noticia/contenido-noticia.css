@@ -1,0 +1,112 @@
+:host {
+  display: block;
+}
+
+/* Imagen grande arriba: quien muestra la noticia le redondea las esquinas al recortarla. */
+.imagen {
+  aspect-ratio: 16 / 9;
+  max-height: 26rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cuerpo {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--espacio-xl) clamp(var(--espacio-m), 6vw, 3.5rem);
+}
+
+/* Rojo de antetítulo: 5:1 sobre la tarjeta blanca. */
+.antetitulo {
+  margin-bottom: var(--espacio-s);
+  color: var(--color-urgente);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.titulo {
+  margin-bottom: var(--espacio-m);
+  font-family: var(--fuente-titulares-serif);
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
+}
+
+/*
+  Datos separados por puntos que no leen los lectores de pantalla. El punto va en el margen
+  izquierdo de cada dato, que el overflow recorta cuando el dato empieza un renglón: así
+  nunca queda un punto suelto al comienzo.
+*/
+.datos {
+  margin-bottom: var(--espacio-l);
+  overflow: hidden;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.datos-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs) 0;
+  margin: 0 0 0 -1.2em;
+}
+
+.datos-lista > * {
+  position: relative;
+  padding-left: 1.2em;
+}
+
+.datos-lista > *::before {
+  content: '·';
+  content: '·' / '';
+  position: absolute;
+  left: 0.45em;
+}
+
+.oficial {
+  color: var(--color-marca);
+  font-weight: 700;
+}
+
+/* Resumen destacado, con el filete ámbar de la marca al lado. */
+.resumen {
+  margin-bottom: var(--espacio-xl);
+  padding-left: var(--espacio-l);
+  border-left: 5px solid var(--color-sol);
+  font-size: clamp(1.1rem, 2.6vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.parrafo {
+  margin-bottom: var(--espacio-l);
+  font-family: var(--fuente-titulares-serif);
+  font-size: 1.15rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.parrafo:last-child {
+  margin-bottom: 0;
+}
+
+/* Letra capital en el primer párrafo del cuerpo. */
+.resumen + .parrafo::first-letter {
+  float: left;
+  margin: 0.08em 0.12em 0 0;
+  color: var(--color-marca);
+  font-size: 4.2em;
+  font-weight: 800;
+  line-height: 0.8;
+}
+
+/* Justificado solo donde la línea es larga: en pantallas angostas deja huecos entre palabras. */
+@media (min-width: 40rem) {
+  .parrafo {
+    hyphens: auto;
+    text-align: justify;
+  }
+}

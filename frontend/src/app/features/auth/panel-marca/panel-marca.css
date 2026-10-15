@@ -2,6 +2,7 @@
   display: block;
 }
 
+/* Pieza azul de marca con las esquinas redondeadas. */
 .panel {
   position: relative;
   display: flex;
@@ -10,7 +11,9 @@
   height: 100%;
   padding: var(--espacio-xl) clamp(var(--espacio-l), 5vw, 4rem);
   overflow: hidden;
+  border-radius: var(--radio-g);
   background: var(--color-marca);
+  box-shadow: var(--sombra-2);
   color: var(--color-sobre-marca);
 }
 
@@ -51,6 +54,7 @@
   text-wrap: balance;
 }
 
+/* Blanco al 85 % sobre el azul: 11.1:1. */
 .bajada {
   max-width: 34ch;
   margin: 0;
@@ -73,6 +77,7 @@
   flex-direction: column;
 }
 
+/* Ámbar sobre el azul: 7:1. */
 .valor {
   color: var(--color-sol);
   font-family: var(--fuente-titulos);
@@ -90,7 +95,8 @@
 @media (max-width: 760px) {
   .panel {
     gap: var(--espacio-m);
-    padding: var(--espacio-l) var(--espacio-m);
+    padding: var(--espacio-l);
+    border-radius: var(--radio-m);
   }
 
   .titular {

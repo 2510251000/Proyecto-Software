@@ -1,0 +1,32 @@
+<article class="noticia">
+  <app-miniatura class="imagen" [categoria]="categoria()" />
+
+  <div class="cuerpo">
+    <p class="antetitulo">{{ noticia().ciudad }} · {{ seccion() }}</p>
+
+    @if (nivelTitulo() === 1) {
+      <h1 class="titulo" [id]="idTitulo()">{{ noticia().titulo }}</h1>
+    } @else {
+      <h2 class="titulo" [id]="idTitulo()">{{ noticia().titulo }}</h2>
+    }
+
+    <div class="datos">
+      <p class="datos-lista">
+        @if (noticia().oficial) {
+          <span class="oficial">{{ etiquetas.oficial }}</span>
+        }
+        @if (fecha() !== '') {
+          <time [attr.datetime]="noticia().fechaPublicacion">{{ fecha() }}</time>
+        }
+        <span>{{ minutosLectura() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}</span>
+      </p>
+    </div>
+
+    <p class="resumen">{{ noticia().resumen }}</p>
+
+    <!-- El contenido viene del backend: se interpola como texto, nunca como HTML. -->
+    @for (parrafo of parrafos(); track $index) {
+      <p class="parrafo">{{ parrafo }}</p>
+    }
+  </div>
+</article>

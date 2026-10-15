@@ -2,9 +2,11 @@
   display: block;
 }
 
+/* Una sola pieza blanca con las esquinas de abajo redondeadas, que flota sobre la página. */
 .encabezado {
-  border-bottom: 1px solid var(--color-linea);
-  background: var(--color-fondo);
+  border-radius: 0 0 var(--radio-g) var(--radio-g);
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-1);
 }
 
 .contenido {
@@ -14,7 +16,7 @@
   gap: var(--espacio-m);
   max-width: var(--ancho-maximo);
   margin: 0 auto;
-  padding: var(--espacio-m);
+  padding: var(--espacio-m) var(--espacio-l);
 }
 
 .marca {

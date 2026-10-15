@@ -4,7 +4,9 @@
     <ol class="recientes">
       @for (noticia of recientes(); track noticia.id) {
         <li>
-          <p class="titular">{{ noticia.titulo }}</p>
+          <p class="titular">
+            <a [appEnlaceNoticia]="noticia" (abrirNoticia)="abrir.emit($event)">{{ noticia.titulo }}</a>
+          </p>
           <p class="datos">
             {{ noticia.ciudad }}
             @if (cuando(noticia.fechaPublicacion); as hora) {
