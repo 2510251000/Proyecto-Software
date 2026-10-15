@@ -1,35 +1,29 @@
-<div class="apertura" [class.sin-secundarias]="secundarias().length === 0">
-  <!-- El enlace se anuncia con el titular; el resumen y los datos van como descripción. -->
-  <a
-    class="principal"
-    [appEnlaceNoticia]="principal()"
-    aria-labelledby="apertura-titulo"
-    aria-describedby="apertura-antetitulo apertura-resumen apertura-datos"
-    (abrirNoticia)="abrir.emit($event)"
-  >
-    <app-miniatura class="imagen" [categoria]="categoria()" />
-    <p class="antetitulo" id="apertura-antetitulo">{{ principal().ciudad }} · {{ seccion() }}</p>
+<!-- El enlace se anuncia con el titular; el resumen y los datos van como descripción. -->
+<a
+  class="principal"
+  [appEnlaceNoticia]="principal()"
+  aria-labelledby="apertura-titulo"
+  aria-describedby="apertura-seccion apertura-resumen apertura-datos"
+  (abrirNoticia)="abrir.emit($event)"
+>
+  <app-miniatura class="imagen" [categoria]="categoria()" />
+  <div class="texto">
+    <p class="seccion" id="apertura-seccion">{{ seccion() }}</p>
     <h2 class="titulo" id="apertura-titulo">{{ principal().titulo }}</h2>
     <p class="resumen" id="apertura-resumen">{{ principal().resumen }}</p>
     <p class="datos" id="apertura-datos">
       @if (principal().oficial) {
-        <span class="oficial">{{ etiquetas.oficial }}</span>
+        <span class="oficial">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+            <path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="2.4" />
+          </svg>
+          {{ etiquetas.oficial }}
+        </span>
       }
-      <span>{{ principal().ciudad }}</span>
-      @if (cuando() !== '') {
-        <time [attr.datetime]="principal().fechaPublicacion">{{ cuando() }}</time>
-      }
+      <span>
+        {{ principal().ciudad }}@if (cuando() !== '') {, <time [attr.datetime]="principal().fechaPublicacion">{{ cuando() }}</time>}
+      </span>
       <span>{{ minutosLectura() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}</span>
     </p>
-  </a>
-
-  @if (secundarias().length > 0) {
-    <ul class="secundarias">
-      @for (noticia of secundarias(); track noticia.id) {
-        <li>
-          <app-tarjeta-noticia [noticia]="noticia" variante="horizontal" (abrir)="abrir.emit($event)" />
-        </li>
-      }
-    </ul>
-  }
-</div>
+  </div>
+</a>

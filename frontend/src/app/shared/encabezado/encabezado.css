@@ -2,11 +2,10 @@
   display: block;
 }
 
-/* Una sola pieza blanca con las esquinas de abajo redondeadas, que flota sobre la página. */
+/* La misma banda azul de la portada, en su versión delgada. */
 .encabezado {
-  border-radius: 0 0 var(--radio-g) var(--radio-g);
-  background: var(--color-tarjeta);
-  box-shadow: var(--sombra-1);
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
 }
 
 .contenido {
@@ -16,13 +15,18 @@
   gap: var(--espacio-m);
   max-width: var(--ancho-maximo);
   margin: 0 auto;
-  padding: var(--espacio-m) var(--espacio-l);
+  padding: var(--espacio-m);
 }
 
 .marca {
   margin: 0;
-  color: var(--color-marca);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
+}
+
+/* Sobre el azul, el isotipo se invierte: cuadro blanco y filetes azules. */
+.marca app-logo {
+  --color-marca: var(--color-sobre-marca);
+  --color-fondo: var(--color-marca-oscuro);
 }
 
 .acciones {

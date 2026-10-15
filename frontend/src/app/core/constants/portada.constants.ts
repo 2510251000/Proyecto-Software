@@ -4,14 +4,8 @@ export const PALABRAS_POR_MINUTO = 200;
 /** Una noticia oficial es «Última hora» durante estas horas después de publicada. */
 export const HORAS_ULTIMA_HORA = 3;
 
-/** Noticias que se muestran al abrir la portada y que agrega cada clic en «Ver más». */
-export const NOTICIAS_POR_TANDA = 12;
-
-/** Notas pequeñas que acompañan a la nota principal de la apertura. */
-export const CANTIDAD_SECUNDARIAS = 3;
-
-/** Puestos de la lista «Lo más reciente de tu ciudad». */
-export const CANTIDAD_RECIENTES_LATERAL = 5;
+/** Noticias que muestra cada columna de la portada al abrirla y que agrega cada clic en «Ver más». */
+export const NOTICIAS_POR_TANDA = 6;
 
 export const ETIQUETAS_NOTICIA = {
   ultimaHora: 'Última hora',
@@ -30,26 +24,21 @@ export const TEXTOS_NOTICIA = {
   noEncontradaAyuda: 'Puede que ya no esté publicada o que el enlace esté incompleto.',
 } as const;
 
-/** Notas de la franja «Lo que cuenta la comunidad». */
-export const CANTIDAD_COMUNIDAD = 3;
-
 export const TEXTOS_PORTADA = {
-  titulo: 'Noticias',
-  todas: 'Todas',
-  oficiales: 'Oficiales',
+  tuRegion: 'Tu región',
+  elegirMunicipio: 'Elegir municipio',
+  todas: 'Todos',
   cerrarSesion: 'Cerrar sesión',
-  enTuCiudad: 'En tu ciudad',
+  oficiales: 'Información oficial',
+  oficialesDescripcion: 'Publicada por los administradores del portal.',
   comunidad: 'Lo que cuenta la comunidad',
-  verTodo: 'Ver todo',
-  verMas: 'Ver más',
-  filtrar: 'Filtrar noticias',
-  recientes: 'Lo más reciente de tu ciudad',
-  tuCiudad: 'Tu ciudad',
+  comunidadDescripcion: 'Escrita por los vecinos de cada municipio.',
+  sinOficiales: 'Todavía no hay información oficial de este municipio.',
+  sinComunidad: 'Nadie de este municipio ha contado nada todavía.',
+  verMas: 'Ver más noticias',
   noticia: 'noticia',
   noticias: 'noticias',
   sinNoticias: 'Todavía no hay noticias publicadas.',
-  sinResultados: 'No hay noticias con este filtro.',
-  verTodas: 'Ver todas',
   actualizar: 'Actualizar',
   reintentar: 'Reintentar',
 } as const;

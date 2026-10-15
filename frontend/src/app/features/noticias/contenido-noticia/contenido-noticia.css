@@ -2,90 +2,69 @@
   display: block;
 }
 
-/* Imagen grande arriba: quien muestra la noticia le redondea las esquinas al recortarla. */
+/* Foto grande arriba. Quien muestra la noticia decide si lleva esquinas (--radio-imagen). */
 .imagen {
   aspect-ratio: 16 / 9;
-  max-height: 26rem;
+  max-height: 28rem;
   width: 100%;
   overflow: hidden;
+  border-radius: var(--radio-imagen, 0);
 }
 
 .cuerpo {
-  max-width: 44rem;
+  max-width: 42rem;
   margin: 0 auto;
   padding: var(--espacio-xl) clamp(var(--espacio-m), 6vw, 3.5rem);
 }
 
-/* Rojo de antetítulo: 5:1 sobre la tarjeta blanca. */
-.antetitulo {
+.seccion {
   margin-bottom: var(--espacio-s);
-  color: var(--color-urgente);
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--color-marca);
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .titulo {
   margin-bottom: var(--espacio-m);
-  font-family: var(--fuente-titulares-serif);
-  font-size: clamp(1.75rem, 5vw, 2.75rem);
-  line-height: 1.12;
-  letter-spacing: -0.015em;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   overflow-wrap: anywhere;
 }
 
-/*
-  Datos separados por puntos que no leen los lectores de pantalla. El punto va en el margen
-  izquierdo de cada dato, que el overflow recorta cuando el dato empieza un renglón: así
-  nunca queda un punto suelto al comienzo.
-*/
 .datos {
-  margin-bottom: var(--espacio-l);
-  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs) var(--espacio-l);
+  margin-bottom: var(--espacio-xl);
+  padding-bottom: var(--espacio-l);
+  border-bottom: 1px solid var(--color-linea);
   color: var(--color-texto-suave);
   font-size: 0.9rem;
 }
 
-.datos-lista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-xs) 0;
-  margin: 0 0 0 -1.2em;
-}
-
-.datos-lista > * {
-  position: relative;
-  padding-left: 1.2em;
-}
-
-.datos-lista > *::before {
-  content: '·';
-  content: '·' / '';
-  position: absolute;
-  left: 0.45em;
-}
-
 .oficial {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
   color: var(--color-marca);
   font-weight: 700;
 }
 
-/* Resumen destacado, con el filete ámbar de la marca al lado. */
+/* El resumen abre la nota, más grande que el cuerpo. */
 .resumen {
-  margin-bottom: var(--espacio-xl);
-  padding-left: var(--espacio-l);
-  border-left: 5px solid var(--color-sol);
-  font-size: clamp(1.1rem, 2.6vw, 1.25rem);
+  margin-bottom: var(--espacio-l);
+  font-size: clamp(1.15rem, 2.6vw, 1.35rem);
   font-weight: 600;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
+/* Cuerpo en serif, alineado a la izquierda y con renglones de unos 65 caracteres. */
 .parrafo {
   margin-bottom: var(--espacio-l);
-  font-family: var(--fuente-titulares-serif);
+  font-family: var(--fuente-titulos);
   font-size: 1.15rem;
-  line-height: 1.8;
+  line-height: 1.75;
   overflow-wrap: anywhere;
 }
 
@@ -93,20 +72,12 @@
   margin-bottom: 0;
 }
 
-/* Letra capital en el primer párrafo del cuerpo. */
+/* Letra capital de tres renglones en el primer párrafo. */
 .resumen + .parrafo::first-letter {
   float: left;
-  margin: 0.08em 0.12em 0 0;
+  margin: 0.06em 0.1em 0 0;
   color: var(--color-marca);
-  font-size: 4.2em;
-  font-weight: 800;
-  line-height: 0.8;
-}
-
-/* Justificado solo donde la línea es larga: en pantallas angostas deja huecos entre palabras. */
-@media (min-width: 40rem) {
-  .parrafo {
-    hyphens: auto;
-    text-align: justify;
-  }
+  font-size: 3.9em;
+  font-weight: 700;
+  line-height: 0.82;
 }

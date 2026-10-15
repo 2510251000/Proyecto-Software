@@ -3,31 +3,24 @@
   display: block;
 }
 
-/* Dos piezas que flotan sobre la página: el panel azul de marca y la tarjeta del formulario. */
+/* Dos mitades de borde a borde: el panel azul de marca y el formulario sobre el papel. */
 .pagina-auth {
   display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: var(--espacio-m);
+  grid-template-columns: 1.1fr 1fr;
   min-height: max(100vh, 460px);
-  padding: var(--espacio-m);
 }
 
 .panel-formulario {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--espacio-l) clamp(0rem, 3vw, 2.5rem);
+  padding: var(--espacio-xl) clamp(var(--espacio-l), 5vw, 4rem);
 }
 
-/* La tarjeta blanca del formulario. */
 .tarjeta-formulario {
   width: 100%;
-  max-width: 27rem;
+  max-width: 24rem;
   margin-inline: auto;
-  padding: var(--espacio-xl) clamp(var(--espacio-l), 4vw, var(--espacio-xl));
-  border-radius: var(--radio-g);
-  background: var(--color-tarjeta);
-  box-shadow: var(--sombra-2);
 }
 
 /* Por debajo de 760 px, una columna: el panel de marca se vuelve una banda superior. */
@@ -35,25 +28,22 @@
   .pagina-auth {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto 1fr;
-    padding: var(--espacio-s);
   }
 
   .panel-formulario {
     justify-content: flex-start;
-    padding: 0 0 var(--espacio-l);
+    padding: var(--espacio-xl) var(--espacio-l);
   }
 
   .tarjeta-formulario {
     max-width: none;
-    padding: var(--espacio-l);
-    border-radius: var(--radio-m);
   }
 }
 
 /* El espacio bajo el título es el mismo se muestre o no un aviso. */
 h1 {
   margin-bottom: var(--espacio-l);
-  font-size: 1.9rem;
+  font-size: 2.2rem;
 }
 
 .aviso,

@@ -19,18 +19,25 @@
   text-decoration: underline;
 }
 
+/* Sobre la banda azul. */
+.volver,
+.volver:hover {
+  color: var(--color-sobre-marca);
+}
+
+.volver:focus-visible {
+  outline-color: var(--color-sol);
+}
+
 .pagina {
   max-width: 54rem;
   margin: 0 auto;
   padding: var(--espacio-l) var(--espacio-m) var(--espacio-xl);
 }
 
-/* La noticia es una sola tarjeta blanca; recorta la imagen con sus esquinas. */
+/* La noticia va directo sobre el papel: la foto con esquinas suaves y el texto debajo. */
 .hoja {
-  overflow: hidden;
-  border-radius: var(--radio-g);
-  background: var(--color-tarjeta);
-  box-shadow: var(--sombra-1);
+  --radio-imagen: var(--radio-s);
 }
 
 .aviso {
@@ -97,12 +104,6 @@
 @keyframes respirar {
   50% {
     opacity: 0.55;
-  }
-}
-
-@media (max-width: 40rem) {
-  .hoja {
-    border-radius: var(--radio-m);
   }
 }
 

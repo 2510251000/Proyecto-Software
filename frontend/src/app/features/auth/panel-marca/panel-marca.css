@@ -2,32 +2,20 @@
   display: block;
 }
 
-/* Pieza azul de marca con las esquinas redondeadas. */
+/* La mitad azul de la pantalla, de borde a borde: el cielo antes del amanecer. */
 .panel {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--espacio-xl);
   height: 100%;
-  padding: var(--espacio-xl) clamp(var(--espacio-l), 5vw, 4rem);
+  padding: var(--espacio-xl) clamp(var(--espacio-l), 5vw, 4.5rem) 0;
   overflow: hidden;
-  border-radius: var(--radio-g);
   background: var(--color-marca);
-  box-shadow: var(--sombra-2);
   color: var(--color-sobre-marca);
 }
 
-/* El isotipo ampliado, casi transparente y recortado en la esquina. Es solo decoración. */
-.decoracion {
-  position: absolute;
-  right: -70px;
-  bottom: -70px;
-  opacity: 0.09;
-  pointer-events: none;
-}
-
 .lockup {
-  position: relative;
   margin: 0;
   font-size: 1.6rem;
 }
@@ -39,72 +27,88 @@
 }
 
 .mensaje {
-  position: relative;
   margin: auto 0;
 }
 
 .titular {
-  max-width: 16ch;
+  max-width: 14ch;
   margin: 0 0 var(--espacio-m);
   font-family: var(--fuente-titulos);
-  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.2rem, 4.4vw, 3.6rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
-/* Blanco al 85 % sobre el azul: 11.1:1. */
 .bajada {
-  max-width: 34ch;
+  max-width: 32ch;
   margin: 0;
-  opacity: 0.85;
-  font-size: 1.05rem;
+  color: var(--color-sobre-marca-suave);
+  font-size: 1.1rem;
 }
 
-.datos {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-l) var(--espacio-xl);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+/* El sol, apoyado en el borde de abajo. Sale una vez al abrir la pantalla. */
+.decoracion {
+  align-self: flex-end;
+  width: min(100%, 24rem);
+  height: auto;
+  margin-right: clamp(-4rem, -3vw, -1rem);
 }
 
-.datos li {
-  display: flex;
-  flex-direction: column;
+.disco {
+  fill: var(--color-sol);
+  animation: salir 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-/* Ámbar sobre el azul: 7:1. */
-.valor {
-  color: var(--color-sol);
-  font-family: var(--fuente-titulos);
-  font-size: 1.6rem;
-  font-weight: 800;
-  line-height: 1.1;
+.horizonte {
+  fill: var(--color-marca-oscuro);
 }
 
-.texto {
-  opacity: 0.85;
-  font-size: 0.85rem;
+@keyframes salir {
+  from {
+    transform: translateY(60px);
+  }
 }
 
-/* En móvil el panel es una banda superior: menos aire y sin los datos. */
+@media (prefers-reduced-motion: reduce) {
+  .disco {
+    animation: none;
+  }
+}
+
+/* En móvil el panel es una banda superior: menos aire y el sol pequeño. */
 @media (max-width: 760px) {
   .panel {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
     gap: var(--espacio-m);
-    padding: var(--espacio-l);
-    border-radius: var(--radio-m);
+    padding: var(--espacio-l) var(--espacio-l) 0;
+  }
+
+  .lockup {
+    flex-basis: 100%;
+  }
+
+  .mensaje {
+    flex: 1;
+    margin: 0 0 var(--espacio-l);
   }
 
   .titular {
     max-width: none;
-    font-size: 1.5rem;
+    margin-bottom: var(--espacio-s);
+    font-size: 1.6rem;
   }
 
-  .datos {
-    display: none;
+  .bajada {
+    font-size: 0.95rem;
+  }
+
+  .decoracion {
+    flex: none;
+    width: 7rem;
+    margin-right: calc(-1 * var(--espacio-l));
   }
 }

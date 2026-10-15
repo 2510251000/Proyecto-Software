@@ -2,46 +2,35 @@
   display: block;
 }
 
+/* La misma forma de la portada: la noticia principal y dos columnas de notas. */
 .esqueleto {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-xl);
+  gap: clamp(var(--espacio-xl), 5vw, 4rem);
 }
 
 .apertura {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
-  gap: var(--espacio-l);
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: clamp(var(--espacio-l), 4vw, 3rem);
+  align-items: center;
 }
 
-.secundarias {
-  display: flex;
-  flex-direction: column;
+.columnas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(var(--espacio-xl), 5vw, 4rem);
+}
+
+.columna {
+  border-top: 4px solid var(--color-superficie-2);
+}
+
+.nota {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6.5rem;
   gap: var(--espacio-m);
-}
-
-/* Las mismas tarjetas blancas de la portada, vacías. */
-.tarjeta {
-  padding: var(--espacio-m);
-  border-radius: var(--radio-g);
-  background: var(--color-tarjeta);
-  box-shadow: var(--sombra-1);
-}
-
-.horizontal {
-  display: grid;
-  flex: 1;
-  grid-template-columns: 96px 1fr;
-  align-content: start;
-  gap: var(--espacio-s) var(--espacio-m);
-  padding: 0.75rem;
-  border-radius: var(--radio-m);
-}
-
-.rejilla {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
-  gap: var(--espacio-l);
+  padding: var(--espacio-l) 0;
 }
 
 .bloque {
@@ -51,14 +40,11 @@
 }
 
 .imagen {
-  aspect-ratio: 16 / 9;
-  margin-bottom: var(--espacio-m);
-  border-radius: var(--radio-m);
+  aspect-ratio: 4 / 3;
 }
 
 .miniatura {
-  grid-row: span 2;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1;
 }
 
 .linea {
@@ -67,11 +53,11 @@
 }
 
 .titulo {
-  height: 1.8rem;
+  height: 2.6rem;
 }
 
 .corta {
-  width: 40%;
+  width: 35%;
 }
 
 @keyframes respirar {
@@ -80,8 +66,9 @@
   }
 }
 
-@media (max-width: 40rem) {
-  .apertura {
+@media (max-width: 48rem) {
+  .apertura,
+  .columnas {
     grid-template-columns: minmax(0, 1fr);
   }
 }

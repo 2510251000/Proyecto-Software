@@ -1,211 +1,72 @@
 :host {
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 
-/* Tarjeta blanca que flota sobre la página. Ocupa toda la altura de su fila. */
-.tarjeta {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--espacio-s);
-  padding: var(--espacio-m);
-  border-radius: var(--radio-g);
-  background: var(--color-tarjeta);
-  box-shadow: var(--sombra-1);
+/* Una fila de lista: el texto manda y la foto acompaña a la derecha. Sin caja ni sombra. */
+.nota {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6.5rem;
+  gap: var(--espacio-m);
+  align-items: start;
+  padding: var(--espacio-l) 0;
   color: inherit;
   text-decoration: none;
 }
 
-.tarjeta:hover,
-.tarjeta:focus-visible {
-  box-shadow: var(--sombra-2);
-}
-
-/* La imagen flota dentro de la tarjeta: radio y sombra propios. */
-.imagen {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  margin-bottom: var(--espacio-s);
-  border-radius: var(--radio-m);
-  box-shadow: var(--sombra-2);
-}
-
-.imagen app-miniatura {
-  height: 100%;
-}
-
-.etiqueta,
-.lectura {
-  position: absolute;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  color: var(--color-sobre-marca);
-  font-size: 0.72rem;
+.seccion {
+  margin-bottom: var(--espacio-xs);
+  color: var(--color-marca);
+  font-size: 0.82rem;
   font-weight: 700;
 }
 
-.etiqueta {
-  top: var(--espacio-s);
-  left: var(--espacio-s);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3em;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-/* Blanco sobre el rojo: 5:1. */
-.etiqueta-urgente {
-  background: var(--color-urgente);
-}
-
-/* Blanco sobre el azul de marca: 15:1. */
-.etiqueta-oficial {
-  background: var(--color-marca);
-}
-
-/* Blanco sobre el azul oscuro: 17.3:1, igual que el asomo. */
-.lectura {
-  right: var(--espacio-s);
-  bottom: var(--espacio-s);
-  background: var(--color-marca-oscuro);
-  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
-  font-weight: 400;
-}
-
-/* Asomo: el resumen sube desde abajo al pasar el mouse. */
-.asomo {
-  position: absolute;
-  inset: auto 0 0;
-  margin: 0;
-  padding: var(--espacio-m);
-  background: var(--color-marca-oscuro);
-  color: var(--color-sobre-marca);
-  font-size: 0.85rem;
-  line-height: 1.4;
-  transform: translateY(101%);
-  transition: transform 180ms ease-out;
-}
-
-.tarjeta:hover .asomo,
-.tarjeta:focus-visible .asomo {
-  transform: translateY(0);
-}
-
-.antetitulo {
-  margin: 0;
-  color: var(--color-marca);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+/* «Última hora» en rojo: 5:1 sobre el papel. */
+.urgente {
+  margin-right: 0.4em;
+  color: var(--color-urgente);
 }
 
 .titulo {
-  display: -webkit-box;
-  overflow: hidden;
-  margin: 0;
-  font-family: var(--fuente-titulares-serif);
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  margin-bottom: var(--espacio-xs);
+  font-size: 1.3rem;
+  line-height: 1.2;
   overflow-wrap: anywhere;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
 }
 
-/* Horizontal: miniatura de 96 px a la izquierda y el texto al lado. */
-.tarjeta-horizontal {
-  display: grid;
-  grid-template-columns: 96px 1fr;
-  grid-template-rows: auto auto 1fr;
-  gap: var(--espacio-xs) var(--espacio-m);
-  padding: 0.75rem;
-  border-radius: var(--radio-m);
+.nota:hover .titulo {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
 }
 
-.tarjeta-horizontal .imagen {
-  grid-row: span 3;
-  aspect-ratio: 4 / 3;
-  margin-bottom: 0;
-  border-radius: var(--radio-s);
-  box-shadow: var(--sombra-1);
-}
-
-.tarjeta-horizontal .titulo {
-  font-size: 1rem;
-}
-
-/*
-  Siempre "ciudad · hora", pegado al fondo de la tarjeta. Si no caben en una línea, la
-  hora baja completa. El punto se dibuja a la izquierda de la hora, en un margen que
-  queda recortado por overflow cuando la hora empieza una línea: así nunca queda suelto.
-*/
-.datos {
-  margin-top: auto;
+/* El resumen en dos renglones como máximo. */
+.resumen {
+  display: -webkit-box;
+  margin-bottom: var(--espacio-s);
   overflow: hidden;
+  color: var(--color-texto);
+  font-size: 0.95rem;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.datos {
+  margin: 0;
   color: var(--color-texto-suave);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
 }
 
-.datos-lista {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 0 0 -1.2em;
+.imagen {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radio-s);
 }
 
-.datos-lista > * {
-  position: relative;
-  padding-left: 1.2em;
-}
-
-.ciudad {
-  font-weight: 600;
-}
-
-time {
-  white-space: nowrap;
-}
-
-time::before {
-  content: '·';
-  content: '·' / ''; /* texto alternativo vacío: los lectores de pantalla no lo leen */
-  position: absolute;
-  left: 0.5em;
-}
-
-/*
-  Inclinación 3D: solo con mouse y si no se pidió menos movimiento. Los giros los pone el
-  componente según la posición del mouse; la imagen se adelanta un poco para que flote.
-*/
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  :host {
-    perspective: 1200px;
+@media (max-width: 30rem) {
+  .nota {
+    grid-template-columns: minmax(0, 1fr) 5rem;
   }
 
-  .tarjeta {
-    transform: rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
-    transform-style: preserve-3d;
-    transition:
-      transform 150ms ease-out,
-      box-shadow 250ms ease;
-  }
-
-  .imagen {
-    transition: transform 250ms ease;
-  }
-
-  .tarjeta:not(.tarjeta-horizontal):hover .imagen {
-    transform: translateZ(24px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .asomo {
-    display: none;
+  .titulo {
+    font-size: 1.15rem;
   }
 }

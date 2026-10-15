@@ -70,11 +70,12 @@ describe('Listado', () => {
     expect(buscar('app-tarjeta-noticia')).toBeNull();
   });
 
-  it('abre con la noticia más reciente en grande y la siguiente al lado', async () => {
+  it('abre con la noticia más reciente en grande y las demás en su columna', async () => {
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
     expect(buscar('app-apertura .principal')?.textContent).toContain('Primera noticia');
-    expect(buscar('app-apertura app-tarjeta-noticia')?.textContent).toContain('Segunda noticia');
+    expect(buscar('#columna-comunidad')?.closest('section')?.textContent).toContain('Segunda noticia');
+    expect(buscar('app-columna-noticias')?.textContent).toContain(TEXTOS_PORTADA.sinOficiales);
     expect(raiz().textContent).toContain('Soacha');
     expect(buscar('[role="status"]')).toBeNull();
   });
@@ -159,15 +160,11 @@ describe('Listado', () => {
       ciudad: CIUDADES[i % CIUDADES.length],
     }));
 
-    const rejillaCiudad = () =>
-      raiz().querySelectorAll('app-franja-seccion:first-of-type .rejilla app-tarjeta-noticia');
-    const chip = (texto: string) =>
-      [...raiz().querySelectorAll<HTMLButtonElement>('.chip')].find(
-        (boton) => boton.textContent?.trim() === texto,
-      ) as HTMLButtonElement;
-    const botonConTexto = (texto: string) =>
-      [...raiz().querySelectorAll<HTMLButtonElement>('button')].find((boton) =>
-        boton.textContent?.includes(texto),
+    const columna = (id: string) => buscar(`#${id}`)?.closest('section') as HTMLElement;
+    const notas = (id: string) => columna(id).querySelectorAll('app-tarjeta-noticia');
+    const municipio = (texto: string) =>
+      [...raiz().querySelectorAll<HTMLButtonElement>('.municipio')].find((boton) =>
+        boton.textContent?.trim().startsWith(texto),
       ) as HTMLButtonElement;
 
     beforeEach(async () => {
@@ -175,67 +172,54 @@ describe('Listado', () => {
       await fixture.whenStable();
     });
 
-    it('muestra 12 (4 en la apertura y 8 en la rejilla) y «Ver más» agrega 12', async () => {
-      expect(raiz().querySelectorAll('app-apertura app-tarjeta-noticia')).toHaveLength(3);
-      expect(rejillaCiudad()).toHaveLength(8);
-      botonConTexto(TEXTOS_PORTADA.verMas).click();
+    it('cada columna muestra 6 y «Ver más» agrega 6 a cada una', async () => {
+      expect(notas('columna-oficial')).toHaveLength(6);
+      expect(notas('columna-comunidad')).toHaveLength(6);
+      [...raiz().querySelectorAll<HTMLButtonElement>('button')]
+        .find((boton) => boton.textContent?.includes(TEXTOS_PORTADA.verMas))
+        ?.click();
       await fixture.whenStable();
-      expect(rejillaCiudad()).toHaveLength(20);
+      expect(notas('columna-oficial')).toHaveLength(12);
+      expect(notas('columna-comunidad')).toHaveLength(12);
     });
 
-    it('tiene chips fijos y uno por ciudad, en orden alfabético', () => {
-      const textos = [...raiz().querySelectorAll('.chip')].map((c) => c.textContent?.trim());
-      expect(textos).toEqual([
-        'Todas',
-        'Última hora',
-        'Oficiales',
-        'Comunidad',
-        'Fusagasugá',
-        'Soacha',
-        'Zipaquirá',
-      ]);
-      expect(chip('Todas').getAttribute('aria-pressed')).toBe('true');
-      expect(chip('Soacha').type).toBe('button');
+    it('separa lo oficial de lo de la comunidad y no repite la principal', () => {
+      expect(buscar('app-apertura')?.textContent).toContain('Noticia 1');
+      expect(columna('columna-oficial').textContent).toContain('Noticia 3');
+      expect(columna('columna-oficial').textContent).not.toContain('Noticia 2');
+      expect(columna('columna-comunidad').textContent).toContain('Noticia 2');
+      expect(raiz().querySelectorAll('a[href="/noticias/1"]')).toHaveLength(1);
     });
 
-    it('al elegir una ciudad solo quedan noticias de esa ciudad', async () => {
-      chip('Soacha').click();
+    it('la cabecera tiene «Todos» y un municipio por ciudad, en orden alfabético y con su cantidad', () => {
+      const textos = [...raiz().querySelectorAll('.municipio')].map((b) =>
+        b.textContent?.replace(/\s+/g, ' ').trim(),
+      );
+      expect(textos).toEqual(['Todos 30', 'Fusagasugá 10', 'Soacha 10', 'Zipaquirá 10']);
+      expect(municipio('Todos').getAttribute('aria-pressed')).toBe('true');
+      expect(municipio('Soacha').type).toBe('button');
+      expect(buscar('h1')?.textContent).toContain(TEXTOS_PORTADA.tuRegion);
+    });
+
+    it('al elegir un municipio su nombre es el titular y solo quedan sus noticias', async () => {
+      municipio('Soacha').click();
       await fixture.whenStable();
-      expect(chip('Soacha').getAttribute('aria-pressed')).toBe('true');
-      expect(chip('Todas').getAttribute('aria-pressed')).toBe('false');
-      const ciudades = [...raiz().querySelectorAll('app-apertura .datos, .rejilla .ciudad')];
-      expect(ciudades.length).toBeGreaterThan(0);
-      for (const ciudad of ciudades.slice(0, 5)) {
-        expect(ciudad.textContent).toContain('Soacha');
+      expect(municipio('Soacha').getAttribute('aria-pressed')).toBe('true');
+      expect(municipio('Todos').getAttribute('aria-pressed')).toBe('false');
+      expect(buscar('h1')?.textContent).toContain('Soacha');
+      const datos = [...raiz().querySelectorAll('app-apertura .datos, app-tarjeta-noticia .datos')];
+      expect(datos.length).toBeGreaterThan(0);
+      for (const dato of datos) {
+        expect(dato.textContent).toContain('Soacha');
       }
-    });
 
-    it('si el filtro no deja nada, lo dice y permite volver a ver todas', async () => {
-      chip('Última hora').click();
+      municipio('Todos').click();
       await fixture.whenStable();
-      expect(raiz().textContent).toContain(TEXTOS_PORTADA.sinResultados);
-      botonConTexto(TEXTOS_PORTADA.verTodas).click();
-      await fixture.whenStable();
-      expect(chip('Todas').getAttribute('aria-pressed')).toBe('true');
+      expect(buscar('h1')?.textContent).toContain(TEXTOS_PORTADA.tuRegion);
     });
 
     it('no muestra el cintillo si ninguna noticia es de última hora', () => {
       expect(buscar('app-cintillo')).toBeNull();
-    });
-
-    it('la franja de la comunidad solo trae noticias de la comunidad', () => {
-      const franja = raiz().querySelectorAll('app-franja-seccion')[1];
-      expect(franja.textContent).toContain(TEXTOS_PORTADA.comunidad);
-      expect(franja.querySelectorAll('app-tarjeta-noticia')).toHaveLength(3);
-      expect(franja.textContent).toContain('Noticia 2');
-      expect(franja.textContent).not.toContain('Noticia 1 ');
-    });
-
-    it('el lateral lista las más recientes y cuenta las noticias por ciudad', () => {
-      const lateral = buscar('app-lateral') as HTMLElement;
-      expect(lateral.textContent).toContain(TEXTOS_PORTADA.recientes);
-      expect(lateral.querySelectorAll('.recientes li')).toHaveLength(5);
-      expect(lateral.textContent).toContain('10 noticias');
     });
   });
 

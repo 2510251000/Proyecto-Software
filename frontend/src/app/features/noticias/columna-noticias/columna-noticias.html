@@ -1,0 +1,18 @@
+<section class="columna" [attr.aria-labelledby]="idTitulo()">
+  <h2 class="titulo" [id]="idTitulo()">{{ titulo() }}</h2>
+  @if (descripcion() !== '') {
+    <p class="descripcion">{{ descripcion() }}</p>
+  }
+
+  @if (noticias().length > 0) {
+    <ul class="lista">
+      @for (noticia of noticias(); track noticia.id) {
+        <li>
+          <app-tarjeta-noticia [noticia]="noticia" (abrir)="abrir.emit($event)" />
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="vacia">{{ vacia() }}</p>
+  }
+</section>
