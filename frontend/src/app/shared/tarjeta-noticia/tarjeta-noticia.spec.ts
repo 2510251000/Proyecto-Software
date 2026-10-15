@@ -21,12 +21,9 @@ describe('TarjetaNoticia', () => {
   const raiz = () => fixture.nativeElement as HTMLElement;
   const buscar = (selector: string) => raiz().querySelector(selector);
 
-  async function mostrar(noticia: Noticia, variante?: 'vertical' | 'horizontal'): Promise<void> {
+  async function mostrar(noticia: Noticia): Promise<void> {
     fixture = TestBed.createComponent(TarjetaNoticia);
     fixture.componentRef.setInput('noticia', noticia);
-    if (variante) {
-      fixture.componentRef.setInput('variante', variante);
-    }
     await fixture.whenStable();
   }
 
@@ -66,67 +63,18 @@ describe('TarjetaNoticia', () => {
     expect(buscar('app-miniatura img')?.getAttribute('src')).toMatch(/\/bici\.webp$/);
   });
 
-  it('muestra los minutos de lectura', async () => {
-    const contenido = Array.from({ length: 450 }, () => 'palabra').join(' ');
-    await mostrar({ ...NOTICIA, contenido });
-    expect(buscar('.lectura')?.textContent).toContain(`3 ${ETIQUETAS_NOTICIA.minutos}`);
-  });
-
-  it('una noticia de la comunidad no lleva etiqueta', async () => {
-    await mostrar(NOTICIA);
-    expect(buscar('.etiqueta')).toBeNull();
-  });
-
-  it('una noticia oficial lleva la etiqueta «Oficial»', async () => {
+  it('una noticia sin urgencia no lleva «Última hora»', async () => {
     await mostrar({ ...NOTICIA, oficial: true });
-    expect(buscar('.etiqueta-oficial')?.textContent).toContain(ETIQUETAS_NOTICIA.oficial);
+    expect(buscar('.urgente')).toBeNull();
   });
 
-  it('una noticia oficial de hace menos de tres horas es «Última hora»', async () => {
+  it('una noticia oficial de hace menos de tres horas lleva «Última hora»', async () => {
     await mostrar({ ...NOTICIA, oficial: true, fechaPublicacion: '2026-09-23T08:30:00' });
-    expect(buscar('.etiqueta-urgente')?.textContent).toContain(ETIQUETAS_NOTICIA.ultimaHora);
-    expect(buscar('.etiqueta-oficial')).toBeNull();
+    expect(buscar('.urgente')?.textContent).toContain(ETIQUETAS_NOTICIA.ultimaHora);
   });
 
-  it('lleva la sección de la noticia como antetítulo', async () => {
+  it('lleva la sección de la noticia encima del titular', async () => {
     await mostrar({ ...NOTICIA, titulo: 'Nueva ciclorruta en el centro' });
-    expect(buscar('.antetitulo')?.textContent).toContain('Movilidad');
-  });
-
-  describe('inclinación 3D', () => {
-    /** Simula el mouse en un punto de una tarjeta de 200 × 100 px. */
-    function moverMouse(x: number, y: number): void {
-      vi.spyOn(raiz(), 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 200, 100));
-      raiz().dispatchEvent(new MouseEvent('pointermove', { clientX: x, clientY: y }));
-    }
-    const giro = (eje: 'x' | 'y') => raiz().style.getPropertyValue(`--giro-${eje}`);
-
-    it('gira hacia el mouse y se endereza cuando el mouse sale', async () => {
-      await mostrar(NOTICIA);
-      moverMouse(200, 0);
-      await fixture.whenStable();
-      expect(giro('x')).toBe('5.00deg');
-      expect(giro('y')).toBe('5.00deg');
-
-      raiz().dispatchEvent(new MouseEvent('pointerleave'));
-      await fixture.whenStable();
-      expect(giro('x')).toBe('0deg');
-      expect(giro('y')).toBe('0deg');
-    });
-
-    it('la variante horizontal no se inclina', async () => {
-      await mostrar(NOTICIA, 'horizontal');
-      moverMouse(200, 0);
-      await fixture.whenStable();
-      expect(giro('y')).toBe('0deg');
-    });
-  });
-
-  it('la variante horizontal no pone etiquetas ni resumen encima de la miniatura', async () => {
-    await mostrar({ ...NOTICIA, oficial: true }, 'horizontal');
-    expect(buscar('.tarjeta-horizontal')).not.toBeNull();
-    expect(buscar('.etiqueta')).toBeNull();
-    expect(buscar('.asomo')).toBeNull();
-    expect(raiz().textContent).toContain('Arreglan la vía principal');
+    expect(buscar('.seccion')?.textContent).toContain('Movilidad');
   });
 });

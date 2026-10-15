@@ -1,40 +1,23 @@
-<!-- El enlace se anuncia con el titular; la sección, la ciudad y la hora van como descripción. -->
+<!-- El enlace se anuncia con el titular; la sección, el resumen y los datos van como descripción. -->
 <a
-  class="tarjeta"
-  [class.tarjeta-horizontal]="variante() === 'horizontal'"
+  class="nota"
   [appEnlaceNoticia]="noticia()"
   [attr.aria-labelledby]="idTitulo"
-  [attr.aria-describedby]="idAntetitulo + ' ' + idDatos"
+  [attr.aria-describedby]="idSeccion + ' ' + idDatos"
   (abrirNoticia)="abrir.emit($event)"
 >
-  <div class="imagen">
-    <app-miniatura [categoria]="categoria()" />
-    @if (variante() === 'vertical') {
+  <div class="texto">
+    <p class="seccion" [id]="idSeccion">
       @if (ultimaHora()) {
-        <span class="etiqueta etiqueta-urgente">{{ etiquetas.ultimaHora }}</span>
-      } @else if (noticia().oficial) {
-        <span class="etiqueta etiqueta-oficial">
-          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false">
-            <path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="2.4" />
-          </svg>
-          {{ etiquetas.oficial }}
-        </span>
+        <span class="urgente">{{ etiquetas.ultimaHora }}</span>
       }
-      <span class="lectura">
-        {{ minutosLectura() }} {{ etiquetas.minutos }}
-        <span class="solo-lectores-pantalla">{{ etiquetas.deLectura }}</span>
-      </span>
-      <p class="asomo">{{ noticia().resumen }}</p>
-    }
-  </div>
-  <p class="antetitulo" [id]="idAntetitulo">{{ seccion() }}</p>
-  <h3 class="titulo" [id]="idTitulo">{{ noticia().titulo }}</h3>
-  <div class="datos" [id]="idDatos">
-    <p class="datos-lista">
-      <span class="ciudad">{{ noticia().ciudad }}</span>
-      @if (cuando() !== '') {
-        <time [attr.datetime]="noticia().fechaPublicacion" [attr.title]="fecha()">{{ cuando() }}</time>
-      }
+      {{ seccion() }}
+    </p>
+    <h3 class="titulo" [id]="idTitulo">{{ noticia().titulo }}</h3>
+    <p class="resumen">{{ noticia().resumen }}</p>
+    <p class="datos" [id]="idDatos">
+      {{ noticia().ciudad }}@if (cuando() !== '') {, <time [attr.datetime]="noticia().fechaPublicacion" [attr.title]="fecha()">{{ cuando() }}</time>}
     </p>
   </div>
+  <app-miniatura class="imagen" [categoria]="categoria()" />
 </a>

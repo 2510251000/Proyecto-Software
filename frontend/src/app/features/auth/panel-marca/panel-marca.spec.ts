@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DATOS_PORTAL, NOMBRE_PORTAL, TEXTOS_PANEL_MARCA } from '../../../core/constants/marca.constants';
+import { NOMBRE_PORTAL, TEXTOS_PANEL_MARCA } from '../../../core/constants/marca.constants';
 import { PanelMarca } from './panel-marca';
 
 describe('PanelMarca', () => {
@@ -13,15 +13,14 @@ describe('PanelMarca', () => {
     await fixture.whenStable();
   });
 
-  it('muestra el nombre, el titular, la bajada y los tres datos', () => {
+  it('muestra el nombre, el titular y la bajada', () => {
     const texto = raiz().textContent ?? '';
     expect(texto).toContain(NOMBRE_PORTAL);
     expect(texto).toContain(TEXTOS_PANEL_MARCA.titularLogin);
     expect(texto).toContain(TEXTOS_PANEL_MARCA.bajada);
-    expect(raiz().querySelectorAll('.datos li')).toHaveLength(DATOS_PORTAL.length);
   });
 
-  it('el isotipo grande de fondo es solo decoración', () => {
+  it('el sol de fondo es solo decoración', () => {
     expect(raiz().querySelector('.decoracion')?.getAttribute('aria-hidden')).toBe('true');
   });
 });

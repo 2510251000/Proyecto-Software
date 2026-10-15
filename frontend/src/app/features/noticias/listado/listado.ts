@@ -1,52 +1,29 @@
-import { DOCUMENT } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
-import {
-  CANTIDAD_COMUNIDAD,
-  CANTIDAD_RECIENTES_LATERAL,
-  CANTIDAD_SECUNDARIAS,
-  NOTICIAS_POR_TANDA,
-  TEXTOS_PORTADA,
-} from '../../../core/constants/portada.constants';
+import { NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { Noticia } from '../../../core/models/noticia.model';
 import { esUltimaHora } from '../../../core/utils/noticia';
 import { AuthService } from '../../../core/services/auth.service';
 import { Boton } from '../../../shared/boton/boton';
-import { Encabezado } from '../../../shared/encabezado/encabezado';
-import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { Apertura } from '../apertura/apertura';
+import { CabeceraPortada, ConteoCiudad } from '../cabecera-portada/cabecera-portada';
 import { Cintillo } from '../cintillo/cintillo';
+import { ColumnaNoticias } from '../columna-noticias/columna-noticias';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
-import { FranjaSeccion } from '../franja-seccion/franja-seccion';
-import { ConteoCiudad, Lateral } from '../lateral/lateral';
 import { ModalNoticia } from '../modal-noticia/modal-noticia';
-import {
-  CHIPS_FIJOS,
-  ChipFiltro,
-  FILTRO_INICIAL,
-  FiltroPortada,
-  filtrarNoticias,
-  mismoFiltro,
-} from './filtro-portada';
-
-/** Primera nota de la rejilla: las anteriores ya salen en la apertura. */
-const INICIO_REJILLA = 1 + CANTIDAD_SECUNDARIAS;
-const ID_FRANJA_CIUDAD = 'franja-ciudad';
+import { FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada';
 
 @Component({
   selector: 'app-listado',
   imports: [
-    Encabezado,
     Boton,
-    TarjetaNoticia,
     Apertura,
+    CabeceraPortada,
     Cintillo,
+    ColumnaNoticias,
     EsqueletoPortada,
-    FranjaSeccion,
-    Lateral,
     ModalNoticia,
   ],
   templateUrl: './listado.html',
@@ -56,7 +33,6 @@ export class Listado implements OnInit {
   private readonly almacen = inject(AlmacenNoticias);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly documento = inject(DOCUMENT);
 
   // El listado vive en el almacén: la página de una noticia usa el mismo.
   protected readonly cargando = this.almacen.cargando;
@@ -64,60 +40,42 @@ export class Listado implements OnInit {
   protected readonly noticias = this.almacen.noticias;
   /** Noticia que se está viendo en la vista rápida; null si está cerrada. */
   protected readonly noticiaAbierta = signal<Noticia | null>(null);
-  protected readonly textos = TEXTOS_COMUNES;
   protected readonly textosPortada = TEXTOS_PORTADA;
-  protected readonly idFranjaCiudad = ID_FRANJA_CIUDAD;
 
   // Todo lo que muestra la portada sale de la misma lista, sin peticiones nuevas.
+  // Cada noticia aparece una sola vez: la principal no se repite en las columnas.
   protected readonly filtro = signal<FiltroPortada>(FILTRO_INICIAL);
-  protected readonly noticiasFiltradas = computed(() =>
-    filtrarNoticias(this.noticias(), this.filtro()),
-  );
-  protected readonly principal = computed(() => this.noticiasFiltradas()[0] ?? null);
-  protected readonly secundarias = computed(() =>
-    this.noticiasFiltradas().slice(1, INICIO_REJILLA),
-  );
+  protected readonly ciudadActiva = computed(() => {
+    const filtro = this.filtro();
+    return filtro.tipo === 'ciudad' ? filtro.ciudad : null;
+  });
+  private readonly filtradas = computed(() => filtrarNoticias(this.noticias(), this.filtro()));
+  protected readonly principal = computed(() => this.filtradas()[0] ?? null);
+  private readonly resto = computed(() => this.filtradas().slice(1));
+  private readonly todasOficiales = computed(() => this.resto().filter((n) => n.oficial));
+  private readonly todasComunidad = computed(() => this.resto().filter((n) => !n.oficial));
+
   protected readonly visibles = signal(NOTICIAS_POR_TANDA);
-  protected readonly mostradas = computed(() =>
-    this.noticiasFiltradas().slice(INICIO_REJILLA, this.visibles()),
+  protected readonly oficiales = computed(() => this.todasOficiales().slice(0, this.visibles()));
+  protected readonly comunidad = computed(() => this.todasComunidad().slice(0, this.visibles()));
+  protected readonly hayMas = computed(
+    () =>
+      this.todasOficiales().length > this.visibles() ||
+      this.todasComunidad().length > this.visibles(),
   );
-  protected readonly hayMas = computed(() => this.noticiasFiltradas().length > this.visibles());
-  private readonly todasComunidad = computed(() => this.noticias().filter((n) => !n.oficial));
-  protected readonly comunidad = computed(() =>
-    this.todasComunidad().slice(0, CANTIDAD_COMUNIDAD),
-  );
-  protected readonly hayMasComunidad = computed(
-    () => this.todasComunidad().length > CANTIDAD_COMUNIDAD,
-  );
-  protected readonly ciudades = computed(() =>
-    [...new Set(this.noticias().map((n) => n.ciudad))].sort((a, b) => a.localeCompare(b)),
-  );
+
   protected readonly ultimaHora = computed(() => this.noticias().find((n) => esUltimaHora(n)) ?? null);
 
-  protected readonly chips = computed<ChipFiltro[]>(() => [
-    ...CHIPS_FIJOS,
-    ...this.ciudades().map((ciudad) => ({
-      etiqueta: ciudad,
-      filtro: { tipo: 'ciudad', ciudad } as const,
-    })),
-  ]);
-
-  /** Si hay una ciudad elegida en los chips, el lateral muestra la de esa ciudad. */
-  protected readonly recientes = computed(() => {
-    const filtro = this.filtro();
-    const lista =
-      filtro.tipo === 'ciudad' ? filtrarNoticias(this.noticias(), filtro) : this.noticias();
-    return lista.slice(0, CANTIDAD_RECIENTES_LATERAL);
+  /** Municipios en orden alfabético, con cuántas noticias tiene cada uno. */
+  protected readonly conteo = computed<ConteoCiudad[]>(() => {
+    const cantidades = new Map<string, number>();
+    for (const noticia of this.noticias()) {
+      cantidades.set(noticia.ciudad, (cantidades.get(noticia.ciudad) ?? 0) + 1);
+    }
+    return [...cantidades]
+      .map(([ciudad, cantidad]) => ({ ciudad, cantidad }))
+      .sort((a, b) => a.ciudad.localeCompare(b.ciudad));
   });
-
-  protected readonly conteo = computed<ConteoCiudad[]>(() =>
-    this.ciudades()
-      .map((ciudad) => ({
-        ciudad,
-        cantidad: this.noticias().filter((n) => n.ciudad === ciudad).length,
-      }))
-      .sort((a, b) => b.cantidad - a.cantidad || a.ciudad.localeCompare(b.ciudad)),
-  );
 
   ngOnInit(): void {
     this.cargar();
@@ -136,30 +94,12 @@ export class Listado implements OnInit {
     void this.router.navigate([RUTAS.login]);
   }
 
-  protected esActivo(filtro: FiltroPortada): boolean {
-    return mismoFiltro(this.filtro(), filtro);
-  }
-
-  protected filtrar(filtro: FiltroPortada): void {
-    this.filtro.set(filtro);
+  protected elegirCiudad(ciudad: string | null): void {
+    this.filtro.set(ciudad === null ? FILTRO_INICIAL : { tipo: 'ciudad', ciudad });
     this.visibles.set(NOTICIAS_POR_TANDA);
-  }
-
-  protected quitarFiltro(): void {
-    this.filtrar(FILTRO_INICIAL);
   }
 
   protected verMas(): void {
     this.visibles.update((cantidad) => cantidad + NOTICIAS_POR_TANDA);
-  }
-
-  protected verTodoCiudad(): void {
-    this.visibles.set(this.noticiasFiltradas().length);
-  }
-
-  /** «Ver todo» de la comunidad: elige el chip «Comunidad» y lleva el foco a la sección. */
-  protected verTodoComunidad(): void {
-    this.filtrar({ tipo: 'comunidad' });
-    this.documento.getElementById(ID_FRANJA_CIUDAD)?.focus();
   }
 }

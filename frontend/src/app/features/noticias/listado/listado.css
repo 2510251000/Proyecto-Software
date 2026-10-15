@@ -3,95 +3,32 @@
 }
 
 .pagina {
-  max-width: var(--ancho-maximo);
-  margin: 0 auto;
-  padding: var(--espacio-l) var(--espacio-m) var(--espacio-xl);
-}
-
-/* Dos columnas: el contenido y un lateral de 252 px. Por debajo de 900 px se apilan. */
-.portada {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 252px;
-  gap: var(--espacio-xl);
-  margin-top: var(--espacio-l);
-}
-
-.contenido {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-xl);
-  min-width: 0;
+  gap: clamp(var(--espacio-xl), 5vw, 4rem);
+  max-width: var(--ancho-maximo);
+  margin: 0 auto;
+  padding: clamp(var(--espacio-l), 4vw, 3rem) var(--espacio-m) 4rem;
 }
 
-@media (max-width: 900px) {
-  .portada {
+/* Dos columnas parejas: lo oficial y lo de la comunidad. Se apilan en pantallas angostas. */
+.columnas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-xl) clamp(var(--espacio-xl), 5vw, 4rem);
+  align-items: start;
+}
+
+@media (max-width: 48rem) {
+  .columnas {
     grid-template-columns: minmax(0, 1fr);
   }
-}
-
-/*
-  Chips de filtro: se desplazan de lado si no caben, sin mover la página. El scroll
-  recorta lo que sobresale, así que se deja aire (6 px) para que el foco se vea completo.
-*/
-.chips {
-  display: flex;
-  gap: var(--espacio-s);
-  margin: -6px -6px calc(var(--espacio-l) - 6px);
-  padding: 6px;
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.chip {
-  flex: none;
-  min-height: var(--alto-control);
-  padding: 0 var(--espacio-l);
-  border: 1px solid var(--color-linea);
-  border-radius: 999px;
-  background: var(--color-tarjeta);
-  color: var(--color-texto);
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.chip:hover {
-  border-color: var(--color-borde);
-}
-
-/* Blanco sobre el azul de marca: 15:1. */
-.chip-activo,
-.chip-activo:hover {
-  border-color: var(--color-marca);
-  background: var(--color-marca);
-  color: var(--color-sobre-marca);
-}
-
-/* Una columna en móvil; se reparte en más columnas según el ancho disponible. */
-.rejilla {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
-  gap: var(--espacio-l);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Cada tarjeta se estira hasta la altura de su fila. */
-.rejilla > li {
-  display: flex;
-}
-
-.rejilla app-tarjeta-noticia {
-  flex: 1;
-  min-width: 0;
 }
 
 .ver-mas {
   display: flex;
   justify-content: center;
-  margin-top: var(--espacio-l);
+  margin-top: calc(-1 * var(--espacio-l));
 }
 
 .estado {
@@ -100,10 +37,6 @@
   align-items: center;
   gap: var(--espacio-s);
   padding: var(--espacio-xl) var(--espacio-l);
-  border: 1px solid transparent;
-  border-radius: var(--radio-g);
-  background: var(--color-tarjeta);
-  box-shadow: var(--sombra-1);
   color: var(--color-texto-suave);
   text-align: center;
 }
@@ -113,7 +46,8 @@
 }
 
 .estado-error {
-  border-color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radio-s);
   color: var(--color-error);
   font-weight: 600;
 }

@@ -40,7 +40,7 @@
   max-width: 50rem;
   margin: 0 auto;
   overflow: hidden;
-  border-radius: var(--radio-g);
+  border-radius: var(--radio-s);
   background: var(--color-tarjeta);
   box-shadow: var(--sombra-3);
 }

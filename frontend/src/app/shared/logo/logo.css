@@ -12,8 +12,8 @@
 /* Lockup: la palabra «Al Día» junto al isotipo. Toma el color y el tamaño de quien lo usa. */
 .nombre {
   font-family: var(--fuente-titulos);
-  font-weight: 800;
-  letter-spacing: -0.045em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1;
   white-space: nowrap;
 }
