@@ -1,1 +1,4 @@
 Claude outputs/
+
+# Variables de docker compose (copiar desde .env.example)
+.env

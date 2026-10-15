@@ -1,0 +1,57 @@
+# ============================================================================
+#  Al Día — versión liviana: base de datos + backend
+#
+#  El frontend NO va aquí: se corre aparte con `ng serve` (puerto 4200) para
+#  seguir editándolo con recarga automática.
+#
+#  Uso (desde la raíz del repositorio):
+#    1. Copiar .env.example como .env y completar los valores (una sola vez).
+#    2. docker compose -f docker-compose.lite.yml up --build
+#    3. En otra terminal: cd frontend && npx ng serve        → http://localhost:4200
+#
+#  Para apagar:            docker compose -f docker-compose.lite.yml down
+#  Para borrar los datos:  docker compose -f docker-compose.lite.yml down -v
+# ============================================================================
+
+name: aldia
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: aldia_db
+      POSTGRES_USER: ${DB_USUARIO:?Falta DB_USUARIO en el .env}
+      POSTGRES_PASSWORD: ${DB_CONTRASENA:?Falta DB_CONTRASENA en el .env}
+    volumes:
+      - datos-postgres:/var/lib/postgresql/data
+      # Los scripts de database/ se corren en orden alfabético (01, 02, 03…), pero
+      # solo la primera vez, cuando el volumen de datos está vacío.
+      - ./database:/docker-entrypoint-initdb.d:ro
+    ports:
+      # 5433 en la máquina: el 5432 ya lo usa el PostgreSQL instalado en Windows.
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d aldia_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      PERFIL_ACTIVO: dev
+      # Dentro de Docker la base se llama por el nombre del servicio, no por localhost.
+      DB_URL: jdbc:postgresql://db:5432/aldia_db
+      DB_USUARIO: ${DB_USUARIO}
+      DB_CONTRASENA: ${DB_CONTRASENA}
+      JWT_CLAVE_SECRETA: ${JWT_CLAVE_SECRETA:?Falta JWT_CLAVE_SECRETA en el .env}
+      # El navegador abre el frontend en el 4200; el backend solo acepta ese origen.
+      CORS_ORIGENES: http://localhost:4200
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  datos-postgres:
