@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  margin-top: var(--espacio-m);
+}
+
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-m);
+}
+
+.inactiva .nombre {
+  color: var(--color-texto-suave);
+}
+
+.datos {
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.nombre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-s);
+  margin: 0;
+  font-weight: 700;
+}
+
+.detalle {
+  margin: var(--espacio-xs) 0 0;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-s);
+}
+
+.nivel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-xs);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.selector {
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-s);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font: inherit;
+}

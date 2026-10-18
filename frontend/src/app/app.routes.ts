@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { PARAMETRO_ID_NOTICIA, RUTAS } from './core/constants/rutas.constants';
+import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -25,6 +26,31 @@ export const routes: Routes = [
     title: 'Noticia | Al Día',
     canActivate: [authGuard],
     loadComponent: () => import('./features/noticias/detalle/detalle').then((m) => m.Detalle),
+  },
+  {
+    path: RUTAS.publicar,
+    title: 'Publicar | Al Día',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/publicar/publicar').then((m) => m.Publicar),
+  },
+  {
+    path: RUTAS.perfil,
+    title: 'Mi perfil | Al Día',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil),
+  },
+  {
+    path: RUTAS.notificaciones,
+    title: 'Notificaciones | Al Día',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/notificaciones/notificaciones').then((m) => m.Notificaciones),
+  },
+  {
+    path: RUTAS.admin,
+    title: 'Administración | Al Día',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/admin').then((m) => m.Admin),
   },
   // Cualquier ruta desconocida va al listado; si no hay sesión, el guard la manda al login.
   { path: '**', redirectTo: RUTAS.noticias },

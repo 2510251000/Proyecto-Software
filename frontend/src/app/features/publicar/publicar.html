@@ -1,0 +1,64 @@
+<app-encabezado />
+
+<main class="pagina-interna">
+  <h1 class="titulo-pagina">{{ textos.titulo }}</h1>
+  <p class="bajada">{{ esAdministrador() ? textos.bajadaAdmin : textos.bajadaComun }}</p>
+
+  @if (perfil() === null && error() === null) {
+    <p role="status" class="texto-suave">{{ textosComunes.cargando }}</p>
+  }
+
+  @if (avisoCupo(); as aviso) {
+    <p class="aviso-cupo" [class.aviso-error-general]="sinCupo()" role="status">
+      {{ aviso }}
+      @if (sinCupo()) {
+        <span class="texto-suave"> {{ textos.sube }}</span>
+      }
+    </p>
+  }
+
+  <form class="seccion-papel" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+    @if (error(); as mensaje) {
+      <p class="aviso-error-general" role="alert">{{ mensaje }}</p>
+    }
+
+    <app-campo
+      idCampo="publicar-titulo"
+      [etiqueta]="textos.campoTitulo"
+      [maximo]="maximoTitulo"
+      [control]="formulario.controls.titulo"
+      [errores]="erroresTitulo"
+    />
+    <app-campo
+      idCampo="publicar-resumen"
+      [etiqueta]="textos.campoResumen"
+      [multilinea]="true"
+      [filas]="2"
+      [maximo]="maximoResumen"
+      [control]="formulario.controls.resumen"
+      [errores]="erroresResumen"
+    />
+    <app-campo
+      idCampo="publicar-contenido"
+      [etiqueta]="textos.campoContenido"
+      [multilinea]="true"
+      [filas]="10"
+      [ayuda]="textos.ayudaContenido"
+      [control]="formulario.controls.contenido"
+      [errores]="erroresContenido"
+    />
+
+    @if (perfil(); as datos) {
+      <app-selector-ciudad
+        idPrefijo="publicar-ciudad"
+        [inicial]="datos.ciudad"
+        [mostrarError]="formulario.controls.ciudadId.touched"
+        (elegida)="elegirCiudad($event)"
+      />
+    }
+
+    <app-boton tipo="submit" [cargando]="cargando()" [deshabilitado]="sinCupo() || perfil() === null">
+      {{ textos.publicar }}
+    </app-boton>
+  </form>
+</main>

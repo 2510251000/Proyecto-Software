@@ -1,0 +1,40 @@
+<app-encabezado />
+
+<main class="pagina-interna">
+  <div class="cabeza">
+    <h1 class="titulo-pagina">{{ textos.titulo }}</h1>
+    @if (hayNoLeidas()) {
+      <button type="button" class="accion" (click)="marcarTodas()">{{ textos.marcarTodas }}</button>
+    }
+  </div>
+
+  @if (error(); as mensaje) {
+    <p class="aviso-error-general" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (lista(); as notificaciones) {
+    @if (notificaciones.length === 0) {
+      <p class="texto-suave">{{ textos.vacio }}</p>
+    } @else {
+      <ul class="lista-filas seccion-papel">
+        @for (aviso of notificaciones; track aviso.id) {
+          <li class="aviso" [class.no-leida]="!aviso.leida">
+            <p class="meta">
+              <span class="chip" [class.chip-marca]="!aviso.leida">{{ etiquetas[aviso.tipo] }}</span>
+              <time class="texto-suave" [attr.datetime]="aviso.fecha">{{ cuando(aviso.fecha) }}</time>
+              @if (!aviso.leida) {
+                <span class="solo-lectores-pantalla">{{ textos.nueva }}</span>
+              }
+            </p>
+            <p class="mensaje">{{ aviso.mensaje }}</p>
+            @if (aviso.noticiaId !== null) {
+              <button type="button" class="accion" (click)="abrir(aviso)">{{ textos.verNoticia }}</button>
+            }
+          </li>
+        }
+      </ul>
+    }
+  } @else if (error() === null) {
+    <p role="status" class="texto-suave">{{ textosComunes.cargando }}</p>
+  }
+</main>

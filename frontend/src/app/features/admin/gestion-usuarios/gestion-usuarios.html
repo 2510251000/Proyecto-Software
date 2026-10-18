@@ -1,0 +1,53 @@
+@if (error(); as mensaje) {
+  <p class="aviso-error-general" role="alert">{{ mensaje }}</p>
+}
+
+@if (usuarios(); as lista) {
+  @if (lista.length === 0) {
+    <p class="texto-suave">{{ textos.sinUsuarios }}</p>
+  } @else {
+    <ul class="lista-filas">
+      @for (usuario of lista; track usuario.id) {
+        <li class="fila" [class.inactiva]="!usuario.activo">
+          <div class="datos">
+            <p class="nombre">
+              {{ usuario.nombre ?? usuario.correo }}
+              @if (usuario.rol === roles.administrador) {
+                <span class="chip chip-marca">{{ textos.admin }}</span>
+              }
+              @if (!usuario.activo) {
+                <span class="chip chip-alerta">{{ textos.inactivo }}</span>
+              }
+            </p>
+            <p class="texto-suave detalle">
+              {{ usuario.correo }} · {{ usuario.ciudad ?? '—' }} · {{ usuario.puntaje }} {{ textos.puntos }}
+            </p>
+          </div>
+          <div class="acciones">
+            <label class="nivel">
+              {{ textos.nivel }}
+              <select class="selector" [disabled]="ocupado() === usuario.id" (change)="cambiarNivel(usuario, $event)">
+                @for (nivel of niveles; track nivel) {
+                  <option [value]="nivel" [selected]="usuario.nivel === nivel">{{ nivel }}</option>
+                }
+              </select>
+            </label>
+            @if (usuario.id !== miId) {
+              <button
+                type="button"
+                class="accion"
+                [class.accion-peligro]="usuario.activo"
+                [disabled]="ocupado() === usuario.id"
+                (click)="alternarActivo(usuario)"
+              >
+                {{ usuario.activo ? textos.desactivar : textos.activar }}
+              </button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+} @else if (error() === null) {
+  <p role="status" class="texto-suave">{{ textosComunes.cargando }}</p>
+}
