@@ -1,41 +1,22 @@
 -- ============================================================================
 --  Al Día: Portal de Noticias
---  01-schema.sql — creación del esquema completo (10 tablas)
+--  V1 — esquema inicial (10 tablas)
 --
 --  Universidad de Cundinamarca — Ingeniería de Software
 --  Motor: PostgreSQL 14 o superior
 --
---  Uso:  psql -U postgres -d aldia_db -f 01-schema.sql
---  Este script asume que la base de datos 'aldia_db' ya existe.
+--  Migración de Flyway: el backend la aplica sola al arrancar, una única vez.
+--  Antes era database/01-schema.sql. Nunca se edita una migración ya aplicada:
+--  los cambios van en una migración nueva (V3, V4…).
 --
 --  Nombres: siguen la convención de JPA/Hibernate que usa el backend, para que
 --  las entidades coincidan sin anotaciones extra. Llave primaria: id.
 --  Llave foránea: <tabla>_id (usuario_id, noticia_id...). Campos en snake_case.
---
---  ADVERTENCIA: este script BORRA todas las tablas y todos sus datos antes de
---  crearlas de nuevo. Es solo para uso local; nunca se ejecuta en PRE ni PROD.
 -- ============================================================================
-
--- En Windows psql usa la codificación de la consola (WIN1252) y daña las tildes.
-SET client_encoding = 'UTF8';
-
--- Se borran las tablas en orden inverso a su creación para que las llaves
--- foráneas no impidan el borrado. Permite volver a correr el script desde cero.
-DROP TABLE IF EXISTS historial      CASCADE;
-DROP TABLE IF EXISTS notificacion   CASCADE;
-DROP TABLE IF EXISTS multimedia     CASCADE;
-DROP TABLE IF EXISTS reporte        CASCADE;
-DROP TABLE IF EXISTS calificacion   CASCADE;
-DROP TABLE IF EXISTS comentario     CASCADE;
-DROP TABLE IF EXISTS noticia        CASCADE;
-DROP TABLE IF EXISTS usuario        CASCADE;
-DROP TABLE IF EXISTS nivel          CASCADE;
-DROP TABLE IF EXISTS ciudad         CASCADE;
-
 
 -- ============================================================================
 --  CATÁLOGOS
---  Tablas de consulta. Cambian poco y las llena 02-datos-iniciales.sql.
+--  Tablas de consulta. Cambian poco y las llena V2__catalogos.sql.
 -- ============================================================================
 
 -- ---------------------------------------------------------------------------
@@ -100,7 +81,7 @@ CREATE TABLE usuario (
     fecha_registro TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     -- Todo usuario nuevo entra en el nivel 1 (Básico). Este DEFAULT y el backend
-    -- dependen de que 02-datos-iniciales.sql inserte 'Básico' primero.
+    -- dependen de que V2__catalogos.sql inserte 'Básico' primero.
     nivel_id       BIGINT       NOT NULL DEFAULT 1,
 
     CONSTRAINT ck_usuario_rol
