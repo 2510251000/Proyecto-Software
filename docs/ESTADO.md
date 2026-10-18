@@ -15,13 +15,13 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ falta
 
 ## Requisitos
 
-> La columna «Ahora» se va confirmando por bloques en «Avance» (abajo).
+> Todo lo de la columna «Ahora» quedó hecho y verificado el 2026-10-18 (ver «Verificación»).
 
 ## Avance
 - ✅ Bloque 1: backend (Flyway, yml, dominio, casos de uso, endpoints, geocodificación)
-- ✅ Bloque 2: pruebas del backend — 88 en verde (`backend/mvnw test`)
-- 🔄 Bloque 3: frontend (pantallas nuevas y pruebas)
-- ⬜ Bloque 4: verificación de punta a punta y documentación
+- ✅ Bloque 2: pruebas del backend — 89 en verde (`backend/mvnw test`)
+- ✅ Bloque 3: frontend — 180 pruebas en verde, lint y build de producción limpios
+- ✅ Bloque 4: verificación de punta a punta y documentación
 
 ### Usuarios y acceso
 | Requisito | Antes | Ahora |
@@ -79,6 +79,19 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ falta
 | Pruebas básicas del frontend | ✅ |
 | Datos de demo (admin, usuarios de varios niveles y ciudades, noticias) | ✅ |
 | Compilar, probar y recorrer la app completa | ✅ ver «Verificación» |
+
+## Verificación (2026-10-18)
+- Backend: `mvnw test` → 89 pruebas, 0 fallos.
+- Frontend: `ng test` → 180 pruebas en 26 archivos, 0 fallos; `ng lint` sin errores; `ng build` sin avisos.
+- App completa levantada (backend :8080 contra la base nueva `aldia_verificacion`, frontend :4200)
+  y recorrida con Edge automatizado:
+  1. Registro con «Usar mi ubicación» → Nominatim real devolvió Fusagasugá, Cundinamarca.
+  2. Portada con búsqueda «feria».
+  3. Publicar: «Te quedan 3 de 3 publicaciones hoy» → noticia publicada.
+  4. `vecina@aldia.com` (Fusagasugá) recibió la notificación; `lector@aldia.com` (Zipaquirá) no.
+  5. `admin@aldia.com` ocultó la noticia (el público recibe 404, el autor recibe aviso de moderación).
+  6. Celular (390 px): sin desplazamiento horizontal.
+- Capturas en `docs/capturas/`.
 
 ## Bitácora
 - Ver `git log --oneline origin/dev..feature/completar-app`.
