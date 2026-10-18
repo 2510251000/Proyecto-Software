@@ -45,7 +45,7 @@ class IniciarSesionServicioTest {
 
     private Usuario usuarioGuardado() {
         return new Usuario(1L, CORREO, CONTRASENA_CIFRADA, Usuario.Rol.USUARIO_COMUN,
-                new Nivel(1L, "Básico", 3), LocalDateTime.now());
+                new Nivel(1L, 1, "Básico", 0, 3), LocalDateTime.now());
     }
 
     @Test
@@ -85,7 +85,7 @@ class IniciarSesionServicioTest {
     @Test
     void rechazaCuentaDesactivadaAunqueLaContrasenaSeaCorrecta() {
         Usuario desactivado = new Usuario(1L, CORREO, CONTRASENA_CIFRADA, Usuario.Rol.USUARIO_COMUN,
-                new Nivel(1L, "Básico", 3), LocalDateTime.now(), false);
+                new Nivel(1L, 1, "Básico", 0, 3), LocalDateTime.now(), false);
         when(usuarioRepositorioPuerto.buscarPorCorreo(CORREO)).thenReturn(Optional.of(desactivado));
         when(cifradorPuerto.coincide(CONTRASENA, CONTRASENA_CIFRADA)).thenReturn(true);
 

@@ -29,7 +29,7 @@ class TokenJWTAdaptadorTest {
 
     private Usuario usuario() {
         return new Usuario(5L, "prueba@correo.com", "hash", Usuario.Rol.USUARIO_COMUN,
-                new Nivel(1L, "Básico", 3), LocalDateTime.now());
+                new Nivel(1L, 1, "Básico", 0, 3), LocalDateTime.now());
     }
 
     private Claims leer(String token, String clave) {

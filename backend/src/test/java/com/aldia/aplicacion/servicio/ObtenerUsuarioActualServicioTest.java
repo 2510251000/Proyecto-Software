@@ -33,7 +33,7 @@ class ObtenerUsuarioActualServicioTest {
     @Test
     void devuelveElUsuarioDelCorreo() {
         Usuario usuario = new Usuario(1L, CORREO, "hash", Usuario.Rol.USUARIO_COMUN,
-                new Nivel(1L, "Básico", 3), LocalDateTime.now());
+                new Nivel(1L, 1, "Básico", 0, 3), LocalDateTime.now());
         when(usuarioRepositorioPuerto.buscarPorCorreo(CORREO)).thenReturn(Optional.of(usuario));
 
         assertThat(servicio.obtenerPorCorreo(CORREO)).isSameAs(usuario);
@@ -50,7 +50,7 @@ class ObtenerUsuarioActualServicioTest {
     @Test
     void rechazaTokenDeUnaCuentaQueFueDesactivada() {
         Usuario desactivado = new Usuario(1L, CORREO, "hash", Usuario.Rol.USUARIO_COMUN,
-                new Nivel(1L, "Básico", 3), LocalDateTime.now(), false);
+                new Nivel(1L, 1, "Básico", 0, 3), LocalDateTime.now(), false);
         when(usuarioRepositorioPuerto.buscarPorCorreo(CORREO)).thenReturn(Optional.of(desactivado));
 
         assertThatThrownBy(() -> servicio.obtenerPorCorreo(CORREO))

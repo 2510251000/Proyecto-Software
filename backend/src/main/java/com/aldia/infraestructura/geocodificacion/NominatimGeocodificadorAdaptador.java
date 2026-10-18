@@ -38,9 +38,9 @@ public class NominatimGeocodificadorAdaptador implements GeocodificadorPuerto {
     private static final String PREFIJO_ID = "osm:";
     private static final int ESCALA_COORDENADAS = 8;
     private static final int MAXIMO_EN_CACHE = 500;
-    /** En Colombia los municipios tienen place_rank 12; el 8 es Bogotá D. C. y el 16 una ciudad pequeña. */
+    /** Límites administrativos de municipio: en Colombia place_rank 12 (Bogotá D. C. es 8). Los cascos urbanos (14) no. */
     private static final int RANGO_MINIMO_MUNICIPIO = 8;
-    private static final int RANGO_MAXIMO_MUNICIPIO = 16;
+    private static final int RANGO_MAXIMO_MUNICIPIO = 12;
     /** Zoom 8 de la geocodificación inversa: nivel de municipio. */
     private static final int ZOOM_MUNICIPIO = 8;
     private static final Set<String> TIPOS_DE_LUGAR = Set.of("city", "town", "village", "municipality");
