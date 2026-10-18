@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aldia.dominio.modelo.NuevoUsuario;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.entrada.IniciarSesionCasoDeUso;
 import com.aldia.dominio.puerto.entrada.RegistrarUsuarioCasoDeUso;
@@ -15,6 +16,7 @@ import com.aldia.infraestructura.web.dto.LoginResponseDTO;
 import com.aldia.infraestructura.web.dto.RegistroRequestDTO;
 import com.aldia.infraestructura.web.dto.RegistroResponseDTO;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,8 +33,10 @@ public class AutenticacionControlador {
     }
 
     @PostMapping("/registro")
+    @Operation(summary = "Registrar un usuario común (nivel 1) con su ciudad")
     public ResponseEntity<RegistroResponseDTO> registrar(@Valid @RequestBody RegistroRequestDTO request) {
-        Usuario usuario = registrarUsuarioCasoDeUso.registrar(request.getCorreo(), request.getContrasena());
+        Usuario usuario = registrarUsuarioCasoDeUso.registrar(new NuevoUsuario(
+                request.getCorreo(), request.getContrasena(), request.getNombre(), request.getCiudadId()));
 
         RegistroResponseDTO respuesta = new RegistroResponseDTO(
                 usuario.getId(),
@@ -44,6 +48,7 @@ public class AutenticacionControlador {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Iniciar sesión y recibir el token JWT")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         String token = iniciarSesionCasoDeUso.iniciarSesion(request.getCorreo(), request.getContrasena());
         return ResponseEntity.ok(new LoginResponseDTO(token));

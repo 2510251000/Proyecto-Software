@@ -11,7 +11,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import org.springframework.web.bind.MissingServletRequestParameterException;
+
+import com.aldia.dominio.excepcion.AccionNoPermitidaExcepcion;
 import com.aldia.dominio.excepcion.CiudadNoEncontradaExcepcion;
+import com.aldia.dominio.excepcion.DatosInvalidosExcepcion;
+import com.aldia.dominio.excepcion.NotificacionNoEncontradaExcepcion;
+import com.aldia.dominio.excepcion.ServicioUbicacionNoDisponibleExcepcion;
+import com.aldia.dominio.excepcion.UbicacionNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.CredencialesInvalidasExcepcion;
 import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.excepcion.LimiteDiarioAlcanzadoExcepcion;
@@ -43,6 +50,31 @@ public class ManejadorGlobalExcepciones {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponseDTO> manejarParametroInvalido(MethodArgumentTypeMismatchException ex) {
         return responder(HttpStatus.BAD_REQUEST, "El parámetro '" + ex.getName() + "' no tiene un valor válido");
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponseDTO> manejarParametroFaltante(MissingServletRequestParameterException ex) {
+        return responder(HttpStatus.BAD_REQUEST, "Falta el parámetro '" + ex.getParameterName() + "'");
+    }
+
+    @ExceptionHandler(DatosInvalidosExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarDatosInvalidos(DatosInvalidosExcepcion ex) {
+        return responder(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(AccionNoPermitidaExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarAccionNoPermitida(AccionNoPermitidaExcepcion ex) {
+        return responder(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    @ExceptionHandler({UbicacionNoEncontradaExcepcion.class, NotificacionNoEncontradaExcepcion.class})
+    public ResponseEntity<ErrorResponseDTO> manejarNoEncontrado(RuntimeException ex) {
+        return responder(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ServicioUbicacionNoDisponibleExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarUbicacionNoDisponible(ServicioUbicacionNoDisponibleExcepcion ex) {
+        return responder(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
     }
 
     @ExceptionHandler(CiudadNoEncontradaExcepcion.class)

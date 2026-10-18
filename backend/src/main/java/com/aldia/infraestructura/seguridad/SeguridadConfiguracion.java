@@ -16,10 +16,13 @@ public class SeguridadConfiguracion {
 
     private final FiltroJWT filtroJWT;
     private final PuntoEntradaNoAutorizado puntoEntradaNoAutorizado;
+    private final AccesoDenegadoManejador accesoDenegadoManejador;
 
-    public SeguridadConfiguracion(FiltroJWT filtroJWT, PuntoEntradaNoAutorizado puntoEntradaNoAutorizado) {
+    public SeguridadConfiguracion(FiltroJWT filtroJWT, PuntoEntradaNoAutorizado puntoEntradaNoAutorizado,
+                                  AccesoDenegadoManejador accesoDenegadoManejador) {
         this.filtroJWT = filtroJWT;
         this.puntoEntradaNoAutorizado = puntoEntradaNoAutorizado;
+        this.accesoDenegadoManejador = accesoDenegadoManejador;
     }
 
     @Bean
@@ -28,12 +31,17 @@ public class SeguridadConfiguracion {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(excepciones -> excepciones.authenticationEntryPoint(puntoEntradaNoAutorizado))
+                .exceptionHandling(excepciones -> excepciones
+                        .authenticationEntryPoint(puntoEntradaNoAutorizado)
+                        .accessDeniedHandler(accesoDenegadoManejador))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/error",
                                 "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         // Leer noticias es público; publicar (POST) y lo demás exige token.
                         .requestMatchers(HttpMethod.GET, "/api/noticias", "/api/noticias/**").permitAll()
+                        // La ubicación se usa en el registro, antes de tener sesión.
+                        .requestMatchers("/api/ubicacion/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMINISTRADOR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(filtroJWT, UsernamePasswordAuthenticationFilter.class);

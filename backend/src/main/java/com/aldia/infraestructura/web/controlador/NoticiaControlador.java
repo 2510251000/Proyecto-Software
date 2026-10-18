@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.aldia.dominio.modelo.FiltroNoticias;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.puerto.entrada.ListarNoticiasCasoDeUso;
 import com.aldia.dominio.puerto.entrada.ObtenerNoticiaCasoDeUso;
@@ -22,6 +24,7 @@ import com.aldia.infraestructura.web.dto.NoticiaResponseDTO;
 import com.aldia.infraestructura.web.dto.PublicarNoticiaRequestDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
@@ -42,9 +45,18 @@ public class NoticiaControlador {
     }
 
     @GetMapping
-    @Operation(summary = "Listar noticias publicadas, de la más reciente a la más antigua")
-    public ResponseEntity<List<NoticiaResponseDTO>> listar() {
-        List<NoticiaResponseDTO> noticias = listarNoticiasCasoDeUso.listarPublicadas()
+    @Operation(summary = "Listar noticias publicadas, con filtros y búsqueda opcionales")
+    public ResponseEntity<List<NoticiaResponseDTO>> listar(
+            @Parameter(description = "TODAS, OFICIALES o COMUNITARIAS")
+            @RequestParam(required = false) FiltroNoticias.Tipo tipo,
+            @Parameter(description = "Solo las de esta ciudad")
+            @RequestParam(required = false) Long ciudadId,
+            @Parameter(description = "Texto a buscar en el título, el resumen y el contenido")
+            @RequestParam(name = "q", required = false) String texto,
+            @Parameter(description = "RECIENTES (predeterminado) o RECOMENDADAS")
+            @RequestParam(required = false) FiltroNoticias.Orden orden) {
+        List<NoticiaResponseDTO> noticias = listarNoticiasCasoDeUso
+                .listarPublicadas(new FiltroNoticias(tipo, ciudadId, texto, orden))
                 .stream()
                 .map(NoticiaResponseDTO::desde)
                 .toList();
@@ -59,7 +71,7 @@ public class NoticiaControlador {
 
     @PostMapping
     @SecurityRequirement(name = OpenApiConfiguracion.ESQUEMA_JWT)
-    @Operation(summary = "Publicar una noticia (respeta el límite diario del nivel del autor)")
+    @Operation(summary = "Publicar una noticia (respeta el límite diario del nivel y avisa a los de la misma ciudad)")
     public ResponseEntity<NoticiaResponseDTO> publicar(@Valid @RequestBody PublicarNoticiaRequestDTO solicitud,
                                                        Authentication autenticacion) {
         Noticia publicada = publicarNoticiaCasoDeUso.publicar(autenticacion.getName(), solicitud.aDominio());
