@@ -1,11 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { MENSAJES_ERROR_HTTP, TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
 import { TEXTOS_NOTICIA } from '../../../core/constants/portada.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
 import { Noticia } from '../../../core/models/noticia.model';
+import { AuthService } from '../../../core/services/auth.service';
 import { NoticiaService } from '../../../core/services/noticia.service';
+import { campanaFalsa } from '../../../../testing/menu-falso';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { Detalle } from './detalle';
 
@@ -34,6 +36,7 @@ describe('Detalle', () => {
   let fixture: ComponentFixture<Detalle>;
   let respuesta: Subject<Noticia[]>;
   let listar: ReturnType<typeof vi.fn>;
+  let obtener: ReturnType<typeof vi.fn>;
 
   const raiz = () => fixture.nativeElement as HTMLElement;
   const buscar = <T extends Element>(selector: string) => raiz().querySelector<T>(selector);
@@ -42,11 +45,14 @@ describe('Detalle', () => {
   async function abrir(id: string, antes: () => void = () => undefined): Promise<void> {
     respuesta = new Subject<Noticia[]>();
     listar = vi.fn(() => respuesta);
+    obtener = vi.fn(() => throwError(() => ({ estado: 404, mensaje: 'La noticia no existe' })));
     await TestBed.configureTestingModule({
       imports: [Detalle],
       providers: [
         provideRouter([]),
-        { provide: NoticiaService, useValue: { listar } },
+        { provide: NoticiaService, useValue: { listar, obtener } },
+        { provide: AuthService, useValue: { obtenerContenidoToken: () => null, cerrarSesion: () => undefined } },
+        campanaFalsa(),
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ id })) } },
       ],
     }).compileComponents();

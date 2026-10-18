@@ -3,10 +3,16 @@
   [ciudadActiva]="ciudadActiva()"
   [total]="noticias().length"
   (elegir)="elegirCiudad($event)"
-  (cerrarSesion)="cerrarSesion()"
 />
 
 <main class="pagina">
+  <app-barra-busqueda
+    [textoActivo]="textoBuscado()"
+    [tipoActivo]="tipo()"
+    (buscar)="buscar($event)"
+    (tipo)="elegirTipo($event)"
+  />
+
   @if (cargando()) {
     <app-esqueleto-portada />
   } @else if (error(); as mensaje) {
@@ -18,9 +24,14 @@
     <div class="estado">
       <svg class="dibujo" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
         <path d="M42 40a18 18 0 0 1 36 0Z" fill="var(--color-sol)" />
-        <path d="M32 44h56M40 53h40M48 61h24" stroke="var(--color-marca)" stroke-width="4" stroke-linecap="round" />
+        <path
+          d="M32 44h56M40 53h40M48 61h24"
+          stroke="var(--color-marca)"
+          stroke-width="4"
+          stroke-linecap="round"
+        />
       </svg>
-      <p>{{ textosPortada.sinNoticias }}</p>
+      <p>{{ textoBuscado() === '' ? textosPortada.sinNoticias : textosPortada.sinResultados }}</p>
       <app-boton variante="secundaria" (click)="cargar()">{{ textosPortada.actualizar }}</app-boton>
     </div>
   } @else {
@@ -32,24 +43,28 @@
       <app-apertura [principal]="noticia" (abrir)="abrirNoticia($event)" />
     }
 
-    <div class="columnas">
-      <app-columna-noticias
-        [titulo]="textosPortada.oficiales"
-        idTitulo="columna-oficial"
-        [descripcion]="textosPortada.oficialesDescripcion"
-        [vacia]="textosPortada.sinOficiales"
-        [noticias]="oficiales()"
-        (abrir)="abrirNoticia($event)"
-      />
-      <app-columna-noticias
-        [titulo]="textosPortada.comunidad"
-        idTitulo="columna-comunidad"
-        origen="comunidad"
-        [descripcion]="textosPortada.comunidadDescripcion"
-        [vacia]="textosPortada.sinComunidad"
-        [noticias]="comunidad()"
-        (abrir)="abrirNoticia($event)"
-      />
+    <div class="columnas" [class.una]="tipo() !== 'TODAS'">
+      @if (tipo() !== 'COMUNITARIAS') {
+        <app-columna-noticias
+          [titulo]="textosPortada.oficiales"
+          idTitulo="columna-oficial"
+          [descripcion]="textosPortada.oficialesDescripcion"
+          [vacia]="textosPortada.sinOficiales"
+          [noticias]="oficiales()"
+          (abrir)="abrirNoticia($event)"
+        />
+      }
+      @if (tipo() !== 'OFICIALES') {
+        <app-columna-noticias
+          [titulo]="textosPortada.comunidad"
+          idTitulo="columna-comunidad"
+          origen="comunidad"
+          [descripcion]="textosPortada.comunidadDescripcion"
+          [vacia]="textosPortada.sinComunidad"
+          [noticias]="comunidad()"
+          (abrir)="abrirNoticia($event)"
+        />
+      }
     </div>
 
     @if (hayMas()) {

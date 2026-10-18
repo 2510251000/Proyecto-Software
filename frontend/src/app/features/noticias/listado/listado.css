@@ -19,6 +19,12 @@
   align-items: start;
 }
 
+/* Con un solo tipo elegido queda una columna de lectura cómoda. */
+.columnas.una {
+  grid-template-columns: minmax(0, 48rem);
+  justify-content: center;
+}
+
 @media (max-width: 48rem) {
   .columnas {
     grid-template-columns: minmax(0, 1fr);

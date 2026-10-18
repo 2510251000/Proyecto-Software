@@ -19,6 +19,9 @@
           {{ etiquetas.oficial }}
         </span>
       }
+      @if (noticia().autor; as autor) {
+        <span>{{ etiquetas.por }} {{ autor }}@if (!noticia().oficial && noticia().autorNivel; as nivel) {, {{ etiquetas.nivel }} {{ nivel }}}</span>
+      }
       @if (fecha() !== '') {
         <time [attr.datetime]="noticia().fechaPublicacion">{{ fecha() }}</time>
       }

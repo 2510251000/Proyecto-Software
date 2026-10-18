@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import {
   MENSAJES_ERROR_HTTP,
   MENSAJES_VALIDACION,
@@ -11,7 +11,19 @@ import { RUTAS } from '../../../core/constants/rutas.constants';
 import { ROLES } from '../../../core/constants/roles.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
 import { RespuestaRegistro } from '../../../core/models/respuesta-registro.model';
+import { CiudadResuelta } from '../../../core/models/ubicacion.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { GeolocalizacionService } from '../../../core/services/geolocalizacion.service';
+import { UbicacionService } from '../../../core/services/ubicacion.service';
+
+const FUSAGASUGA: CiudadResuelta = {
+  id: 7,
+  nombre: 'Fusagasugá',
+  departamento: 'Cundinamarca',
+  latitud: 4.3372,
+  longitud: -74.3639,
+  proveedor: 'nominatim',
+};
 import { Registro } from './registro';
 
 describe('Registro', () => {
@@ -28,7 +40,16 @@ describe('Registro', () => {
     registrar = vi.fn(() => respuesta);
     await TestBed.configureTestingModule({
       imports: [Registro],
-      providers: [provideRouter([]), { provide: AuthService, useValue: { registrar } }],
+      providers: [
+        provideRouter([]),
+        { provide: AuthService, useValue: { registrar } },
+        // La API de mapas y el GPS se simulan: el usuario «usa su ubicación» y sale Fusagasugá.
+        { provide: UbicacionService, useValue: { resolverCoordenadas: () => of(FUSAGASUGA) } },
+        {
+          provide: GeolocalizacionService,
+          useValue: { posicionActual: () => of({ latitud: 4.3372, longitud: -74.3639 }) },
+        },
+      ],
     }).compileComponents();
     navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(Registro);
@@ -51,6 +72,12 @@ describe('Registro', () => {
     await escribir('registro-correo', 'nuevo@correo.com');
     await escribir('registro-contrasena', 'unaContrasena123');
     await escribir('registro-confirmacion', confirmacion);
+    await usarMiUbicacion();
+  }
+
+  async function usarMiUbicacion(): Promise<void> {
+    buscar<HTMLButtonElement>('app-selector-ciudad button')?.click();
+    await fixture.whenStable();
   }
 
   it('muestra correo, contraseña, confirmación y el botón de crear cuenta', () => {
@@ -90,7 +117,22 @@ describe('Registro', () => {
     expect(registrar).not.toHaveBeenCalled();
   });
 
-  it('envía solo correo y contraseña, y bloquea el botón y el doble envío', async () => {
+  it('sin municipio no envía y pide elegirlo', async () => {
+    await escribir('registro-correo', 'nuevo@correo.com');
+    await escribir('registro-contrasena', 'unaContrasena123');
+    await escribir('registro-confirmacion', 'unaContrasena123');
+    await enviar();
+    expect(registrar).not.toHaveBeenCalled();
+    expect(buscar('app-selector-ciudad [role="alert"]')?.textContent).toContain('Elige tu municipio');
+  });
+
+  it('muestra el municipio que encontró la API de mapas', async () => {
+    await usarMiUbicacion();
+    expect(buscar('app-selector-ciudad [role="status"]')?.textContent).toContain('Fusagasugá');
+    expect(buscar('app-selector-ciudad')?.textContent).toContain('OpenStreetMap');
+  });
+
+  it('envía correo, contraseña y la ciudad, y bloquea el botón y el doble envío', async () => {
     await llenar();
     await enviar();
     await enviar();
@@ -98,6 +140,7 @@ describe('Registro', () => {
     expect(registrar).toHaveBeenCalledWith({
       correo: 'nuevo@correo.com',
       contrasena: 'unaContrasena123',
+      ciudadId: FUSAGASUGA.id,
     });
     expect(buscar<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(true);
   });

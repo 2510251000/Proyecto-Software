@@ -9,6 +9,7 @@ import { Noticia } from '../../../core/models/noticia.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { NoticiaService } from '../../../core/services/noticia.service';
 import { simularDialogoNativo } from '../modal-noticia/dialogo-de-prueba';
+import { campanaFalsa } from '../../../../testing/menu-falso';
 import { Listado } from './listado';
 
 const NOTICIAS: Noticia[] = [
@@ -51,7 +52,8 @@ describe('Listado', () => {
       providers: [
         provideRouter([]),
         { provide: NoticiaService, useValue: { listar } },
-        { provide: AuthService, useValue: { cerrarSesion } },
+        { provide: AuthService, useValue: { cerrarSesion, obtenerContenidoToken: () => null } },
+        campanaFalsa(),
       ],
     }).compileComponents();
     navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
@@ -139,6 +141,27 @@ describe('Listado', () => {
       await fixture.whenStable();
       expect(dialogo().textContent).toContain('Contenido uno');
     });
+  });
+
+  it('la búsqueda la hace el backend con la palabra escrita', async () => {
+    const entrada = buscar<HTMLInputElement>('#busqueda-noticias') as HTMLInputElement;
+    entrada.value = 'feria';
+    entrada.dispatchEvent(new Event('input'));
+    buscar<HTMLFormElement>('form[role="search"]')?.dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+    expect(listar).toHaveBeenLastCalledWith({ orden: 'RECOMENDADAS', texto: 'feria' });
+  });
+
+  it('el filtro «Comunidad» deja solo lo que cuentan los vecinos', async () => {
+    respuesta.next(NOTICIAS);
+    await fixture.whenStable();
+    const comunidad = [...raiz().querySelectorAll<HTMLButtonElement>('.tipo')].find((b) =>
+      b.textContent?.includes('Comunidad'),
+    );
+    comunidad?.click();
+    await fixture.whenStable();
+    expect(buscar('#columna-oficial')).toBeNull();
+    expect(buscar('app-apertura .principal')?.textContent).toContain('Segunda noticia');
   });
 
   it('cierra la sesión y vuelve al login', () => {

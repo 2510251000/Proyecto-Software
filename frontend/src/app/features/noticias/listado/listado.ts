@@ -1,13 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
-import { RUTAS } from '../../../core/constants/rutas.constants';
-import { Noticia } from '../../../core/models/noticia.model';
+import { Noticia, TipoNoticias } from '../../../core/models/noticia.model';
 import { esUltimaHora } from '../../../core/utils/noticia';
-import { AuthService } from '../../../core/services/auth.service';
 import { Boton } from '../../../shared/boton/boton';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { Apertura } from '../apertura/apertura';
+import { BarraBusqueda } from '../barra-busqueda/barra-busqueda';
 import { CabeceraPortada, ConteoCiudad } from '../cabecera-portada/cabecera-portada';
 import { Cintillo } from '../cintillo/cintillo';
 import { ColumnaNoticias } from '../columna-noticias/columna-noticias';
@@ -20,6 +18,7 @@ import { FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada
   imports: [
     Boton,
     Apertura,
+    BarraBusqueda,
     CabeceraPortada,
     Cintillo,
     ColumnaNoticias,
@@ -31,8 +30,6 @@ import { FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada
 })
 export class Listado implements OnInit {
   private readonly almacen = inject(AlmacenNoticias);
-  private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
 
   // El listado vive en el almacén: la página de una noticia usa el mismo.
   protected readonly cargando = this.almacen.cargando;
@@ -42,6 +39,10 @@ export class Listado implements OnInit {
   protected readonly noticiaAbierta = signal<Noticia | null>(null);
   protected readonly textosPortada = TEXTOS_PORTADA;
 
+  /** Palabra buscada (la búsqueda la hace el backend) y tipo elegido (oficial o comunidad). */
+  protected readonly textoBuscado = signal('');
+  protected readonly tipo = signal<TipoNoticias>('TODAS');
+
   // Todo lo que muestra la portada sale de la misma lista, sin peticiones nuevas.
   // Cada noticia aparece una sola vez: la principal no se repite en las columnas.
   protected readonly filtro = signal<FiltroPortada>(FILTRO_INICIAL);
@@ -49,7 +50,17 @@ export class Listado implements OnInit {
     const filtro = this.filtro();
     return filtro.tipo === 'ciudad' ? filtro.ciudad : null;
   });
-  private readonly filtradas = computed(() => filtrarNoticias(this.noticias(), this.filtro()));
+  private readonly filtradas = computed(() => {
+    const porCiudad = filtrarNoticias(this.noticias(), this.filtro());
+    switch (this.tipo()) {
+      case 'OFICIALES':
+        return porCiudad.filter((n) => n.oficial);
+      case 'COMUNITARIAS':
+        return porCiudad.filter((n) => !n.oficial);
+      default:
+        return porCiudad;
+    }
+  });
   protected readonly principal = computed(() => this.filtradas()[0] ?? null);
   private readonly resto = computed(() => this.filtradas().slice(1));
   private readonly todasOficiales = computed(() => this.resto().filter((n) => n.oficial));
@@ -82,16 +93,22 @@ export class Listado implements OnInit {
   }
 
   protected cargar(): void {
-    this.almacen.cargar();
+    this.almacen.cargar(this.textoBuscado() || undefined);
+  }
+
+  protected buscar(texto: string): void {
+    this.textoBuscado.set(texto);
+    this.visibles.set(NOTICIAS_POR_TANDA);
+    this.cargar();
+  }
+
+  protected elegirTipo(tipo: TipoNoticias): void {
+    this.tipo.set(tipo);
+    this.visibles.set(NOTICIAS_POR_TANDA);
   }
 
   protected abrirNoticia(noticia: Noticia): void {
     this.noticiaAbierta.set(noticia);
-  }
-
-  protected cerrarSesion(): void {
-    this.auth.cerrarSesion();
-    void this.router.navigate([RUTAS.login]);
   }
 
   protected elegirCiudad(ciudad: string | null): void {

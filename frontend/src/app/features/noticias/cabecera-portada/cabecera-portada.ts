@@ -2,6 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { IDIOMA } from '../../../core/constants/regional.constants';
 import { Logo } from '../../../shared/logo/logo';
+import { Navegacion } from '../../../shared/navegacion/navegacion';
 
 export interface ConteoCiudad {
   ciudad: string;
@@ -20,7 +21,7 @@ const FORMATO_DIA = new Intl.DateTimeFormat(IDIOMA, {
  */
 @Component({
   selector: 'app-cabecera-portada',
-  imports: [Logo],
+  imports: [Logo, Navegacion],
   templateUrl: './cabecera-portada.html',
   styleUrl: './cabecera-portada.css',
 })
@@ -30,7 +31,6 @@ export class CabeceraPortada {
   readonly ciudadActiva = input<string | null>(null);
   readonly total = input(0);
   readonly elegir = output<string | null>();
-  readonly cerrarSesion = output();
 
   protected readonly textos = TEXTOS_PORTADA;
 

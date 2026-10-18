@@ -1,0 +1,34 @@
+<form class="barra" role="search" (submit)="enviar($event)">
+  <label class="solo-lectores-pantalla" for="busqueda-noticias">{{ textos.etiqueta }}</label>
+  <div class="campo">
+    <svg class="lupa" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+      <circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2" />
+      <path d="m13 13 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+    </svg>
+    <input
+      id="busqueda-noticias"
+      class="entrada"
+      type="search"
+      autocomplete="off"
+      [placeholder]="textos.marcador"
+      [value]="escrito()"
+      (input)="escribir($event)"
+    />
+    <button type="submit" class="boton-buscar">{{ textos.buscar }}</button>
+  </div>
+
+  <div class="tipos" role="group" [attr.aria-label]="textos.tipos">
+    @for (opcion of tipos; track opcion) {
+      <button type="button" class="tipo" [attr.aria-pressed]="tipoActivo() === opcion" (click)="tipo.emit(opcion)">
+        {{ etiquetas[opcion] }}
+      </button>
+    }
+  </div>
+</form>
+
+@if (textoActivo() !== '') {
+  <p class="activa" role="status">
+    {{ textos.resultadosPara }} «{{ textoActivo() }}»
+    <button type="button" class="quitar" (click)="limpiar()">{{ textos.limpiar }}</button>
+  </p>
+}

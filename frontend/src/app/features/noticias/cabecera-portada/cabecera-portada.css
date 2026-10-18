@@ -20,6 +20,7 @@
 
 .barra {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--espacio-m);
@@ -34,24 +35,6 @@
 .marca app-logo {
   --color-marca: var(--color-sobre-marca);
   --color-fondo: var(--color-marca-oscuro);
-}
-
-.salir {
-  min-height: var(--alto-control);
-  padding: 0 var(--espacio-m);
-  border: 1px solid var(--color-sobre-marca-suave);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--color-sobre-marca);
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.salir:hover {
-  background: var(--color-sobre-marca);
-  color: var(--color-marca);
 }
 
 .dia {
@@ -117,8 +100,7 @@
 }
 
 .municipio :focus-visible,
-.municipio:focus-visible,
-.salir:focus-visible {
+.municipio:focus-visible {
   outline-color: var(--color-sol);
 }
 

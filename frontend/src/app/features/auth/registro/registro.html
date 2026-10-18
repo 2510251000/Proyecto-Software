@@ -11,6 +11,14 @@
         }
 
         <app-campo
+          idCampo="registro-nombre"
+          [etiqueta]="textos.nombre"
+          autocompletar="name"
+          [maximo]="longitudNombre"
+          [control]="formulario.controls.nombre"
+          [errores]="erroresNombre"
+        />
+        <app-campo
           idCampo="registro-correo"
           [etiqueta]="textos.correo"
           tipo="email"
@@ -34,6 +42,12 @@
           [control]="formulario.controls.confirmacion"
           [errores]="erroresConfirmacion"
           [errorExtra]="errorContrasenasDistintas()"
+        />
+
+        <app-selector-ciudad
+          idPrefijo="registro-ciudad"
+          [mostrarError]="formulario.controls.ciudadId.touched"
+          (elegida)="elegirCiudad($event)"
         />
 
         <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">{{ textos.crearCuenta }}</app-boton>
