@@ -72,7 +72,17 @@ public class UbicacionServicio implements UbicacionCasoDeUso {
             }
         }
         return ciudadRepositorioPuerto.buscarPorNombreYDepartamento(ubicacion.ciudad(), ubicacion.departamento())
+                .map(existente -> completarConLaApi(existente, ubicacion))
                 .orElseGet(() -> ciudadRepositorioPuerto.guardar(new Ciudad(null, ubicacion.ciudad(),
                         ubicacion.departamento(), ubicacion.latitud(), ubicacion.longitud(), ubicacion.idLugar())));
+    }
+
+    /** Las ciudades del catálogo inicial no traen coordenadas ni id de lugar: se completan la primera vez. */
+    private Ciudad completarConLaApi(Ciudad existente, UbicacionEncontrada ubicacion) {
+        if (existente.idLugar() != null || ubicacion.idLugar() == null) {
+            return existente;
+        }
+        return ciudadRepositorioPuerto.guardar(new Ciudad(existente.id(), existente.nombre(), existente.departamento(),
+                ubicacion.latitud(), ubicacion.longitud(), ubicacion.idLugar()));
     }
 }

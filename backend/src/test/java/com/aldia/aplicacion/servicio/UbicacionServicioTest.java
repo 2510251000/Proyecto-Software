@@ -45,12 +45,26 @@ class UbicacionServicioTest {
     }
 
     @Test
-    void conLasCoordenadasReutilizaLaCiudadQueYaEstabaEnElCatalogo() {
+    void conLasCoordenadasReutilizaLaCiudadDelCatalogoYLeCompletaLosDatosDeLaApi() {
         when(geocodificador.enCoordenadas(LAT, LNG)).thenReturn(Optional.of(FUSA));
         when(ciudades.buscarPorIdLugar("osm:R1414846")).thenReturn(Optional.empty());
         when(ciudades.buscarPorNombreYDepartamento("Fusagasugá", "Cundinamarca")).thenReturn(Optional.of(FUSA_CATALOGO));
+        when(ciudades.guardar(any(Ciudad.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        assertThat(servicio.resolverCoordenadas(LAT, LNG)).isEqualTo(FUSA_CATALOGO);
+        Ciudad resultado = servicio.resolverCoordenadas(LAT, LNG);
+
+        assertThat(resultado.id()).isEqualTo(FUSA_CATALOGO.id());
+        assertThat(resultado.idLugar()).isEqualTo("osm:R1414846");
+        assertThat(resultado.latitud()).isEqualByComparingTo(LAT);
+    }
+
+    @Test
+    void unaCiudadQueYaTieneIdDeLugarNoSeVuelveAGuardar() {
+        Ciudad completa = new Ciudad(1L, "Fusagasugá", "Cundinamarca", LAT, LNG, "osm:R1414846");
+        when(geocodificador.enCoordenadas(LAT, LNG)).thenReturn(Optional.of(FUSA));
+        when(ciudades.buscarPorIdLugar("osm:R1414846")).thenReturn(Optional.of(completa));
+
+        assertThat(servicio.resolverCoordenadas(LAT, LNG)).isEqualTo(completa);
         verify(ciudades, never()).guardar(any());
     }
 
