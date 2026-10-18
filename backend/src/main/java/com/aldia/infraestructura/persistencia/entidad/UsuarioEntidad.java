@@ -40,7 +40,40 @@ public class UsuarioEntidad {
     @Column(nullable = false)
     private boolean activo = true;
 
+    private String nombre;
+
+    @ManyToOne
+    @JoinColumn(name = "ciudad_id")
+    private CiudadEntidad ciudad;
+
+    @Column(nullable = false)
+    private int puntaje;
+
     public UsuarioEntidad() {
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public CiudadEntidad getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(CiudadEntidad ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public int getPuntaje() {
+        return puntaje;
+    }
+
+    public void setPuntaje(int puntaje) {
+        this.puntaje = puntaje;
     }
 
     public Long getId() {

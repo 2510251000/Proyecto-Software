@@ -1,5 +1,8 @@
 package com.aldia.infraestructura.persistencia.entidad;
 
+import java.math.BigDecimal;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +20,14 @@ public class CiudadEntidad {
     private String nombre;
 
     private String departamento;
+
+    @Column(precision = 10, scale = 8)
+    private BigDecimal latitud;
+
+    @Column(precision = 11, scale = 8)
+    private BigDecimal longitud;
+
+    private String idLugar;
 
     public CiudadEntidad() {
     }
@@ -43,5 +54,29 @@ public class CiudadEntidad {
 
     public void setDepartamento(String departamento) {
         this.departamento = departamento;
+    }
+
+    public BigDecimal getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(BigDecimal latitud) {
+        this.latitud = latitud;
+    }
+
+    public BigDecimal getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(BigDecimal longitud) {
+        this.longitud = longitud;
+    }
+
+    public String getIdLugar() {
+        return idLugar;
+    }
+
+    public void setIdLugar(String idLugar) {
+        this.idLugar = idLugar;
     }
 }
