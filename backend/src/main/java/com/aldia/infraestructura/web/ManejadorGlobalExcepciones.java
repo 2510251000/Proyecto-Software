@@ -8,10 +8,14 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import com.aldia.dominio.excepcion.CiudadNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.CredencialesInvalidasExcepcion;
 import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
+import com.aldia.dominio.excepcion.LimiteDiarioAlcanzadoExcepcion;
+import com.aldia.dominio.excepcion.NoticiaNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.UsuarioNoEncontradoExcepcion;
 import com.aldia.dominio.excepcion.UsuarioYaExisteExcepcion;
 import com.aldia.infraestructura.web.dto.ErrorResponseDTO;
@@ -34,6 +38,26 @@ public class ManejadorGlobalExcepciones {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDTO> manejarCuerpoInvalido(HttpMessageNotReadableException ex) {
         return responder(HttpStatus.BAD_REQUEST, "El cuerpo de la petición no es un JSON válido");
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponseDTO> manejarParametroInvalido(MethodArgumentTypeMismatchException ex) {
+        return responder(HttpStatus.BAD_REQUEST, "El parámetro '" + ex.getName() + "' no tiene un valor válido");
+    }
+
+    @ExceptionHandler(CiudadNoEncontradaExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarCiudadNoEncontrada(CiudadNoEncontradaExcepcion ex) {
+        return responder(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(NoticiaNoEncontradaExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarNoticiaNoEncontrada(NoticiaNoEncontradaExcepcion ex) {
+        return responder(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(LimiteDiarioAlcanzadoExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarLimiteDiario(LimiteDiarioAlcanzadoExcepcion ex) {
+        return responder(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
     }
 
     @ExceptionHandler(CredencialesInvalidasExcepcion.class)
