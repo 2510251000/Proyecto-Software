@@ -6,6 +6,7 @@ export const MENSAJES_ERROR_HTTP = {
   credencialesInvalidas: 'El correo o la contraseña son incorrectos.',
   correoRepetido: 'Ese correo ya está registrado.',
   generico: 'Ocurrió un error inesperado. Inténtalo de nuevo más tarde.',
+  sinConexion: 'No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.',
 } as const;
 
 export const MENSAJES_VALIDACION = {
@@ -28,6 +29,10 @@ export const ERRORES_CONTRASENA = {
   minlength: MENSAJES_VALIDACION.contrasenaCorta,
 } as const;
 
+export const ERRORES_NOMBRE = {
+  maxlength: 'El nombre es muy largo.',
+} as const;
+
 export const ERRORES_CONFIRMACION = {
   required: MENSAJES_VALIDACION.confirmacionObligatoria,
 } as const;
@@ -39,6 +44,7 @@ export const MENSAJES_EXITO = {
 /** Textos de las pantallas de login y registro. */
 export const TEXTOS_AUTH = {
   correo: 'Correo electrónico',
+  nombre: 'Tu nombre (opcional)',
   contrasena: 'Contraseña',
   confirmacion: 'Confirmar contraseña',
   tituloLogin: 'Iniciar sesión',

@@ -4,4 +4,6 @@
 export const environment = {
   production: true,
   apiUrl: 'http://localhost:8080',
+  /** Cada cuánto se pregunta al backend si hay notificaciones nuevas (milisegundos). */
+  intervaloNotificacionesMs: 30000,
 };

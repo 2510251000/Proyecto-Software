@@ -2,4 +2,6 @@
 export const environment = {
   production: true,
   apiUrl: 'https://api.aldia.example',
+  /** Cada cuánto se pregunta al backend si hay notificaciones nuevas (milisegundos). */
+  intervaloNotificacionesMs: 30000,
 };

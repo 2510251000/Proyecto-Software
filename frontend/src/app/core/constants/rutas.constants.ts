@@ -3,6 +3,9 @@ export const RUTAS = {
   login: 'login',
   registro: 'registro',
   noticias: 'noticias',
+  publicar: 'publicar',
+  perfil: 'perfil',
+  notificaciones: 'notificaciones',
   admin: 'admin',
 } as const;
 

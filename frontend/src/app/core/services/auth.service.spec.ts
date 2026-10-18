@@ -39,7 +39,7 @@ describe('AuthService', () => {
   });
 
   it('registra un usuario con POST', () => {
-    servicio.registrar({ correo: 'a@b.co', contrasena: '12345678' }).subscribe();
+    servicio.registrar({ correo: 'a@b.co', contrasena: '12345678', ciudadId: 1 }).subscribe();
     const peticion = http.expectOne(`${environment.apiUrl}${ENDPOINTS.registro}`);
     expect(peticion.request.method).toBe('POST');
     peticion.flush({ id: 3, correo: 'a@b.co', rol: ROLES.usuarioComun }, { status: 201, statusText: 'Created' });

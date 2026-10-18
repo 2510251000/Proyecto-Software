@@ -13,6 +13,8 @@ export const ETIQUETAS_NOTICIA = {
   comunidad: 'Comunidad',
   minutos: 'min',
   deLectura: 'de lectura',
+  por: 'Por',
+  nivel: 'nivel',
 } as const;
 
 /** Textos de la vista de una noticia: la vista rápida de la portada y su página propia. */
@@ -39,6 +41,7 @@ export const TEXTOS_PORTADA = {
   noticia: 'noticia',
   noticias: 'noticias',
   sinNoticias: 'Todavía no hay noticias publicadas.',
+  sinResultados: 'No encontramos noticias con esa búsqueda.',
   actualizar: 'Actualizar',
   reintentar: 'Reintentar',
 } as const;
