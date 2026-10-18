@@ -23,10 +23,8 @@ services:
       POSTGRES_USER: ${DB_USUARIO:?Falta DB_USUARIO en el .env}
       POSTGRES_PASSWORD: ${DB_CONTRASENA:?Falta DB_CONTRASENA en el .env}
     volumes:
+      # El esquema y los datos de demostración los crea el backend con Flyway al arrancar.
       - datos-postgres:/var/lib/postgresql/data
-      # Los scripts de database/ se corren en orden alfabético (01, 02, 03…), pero
-      # solo la primera vez, cuando el volumen de datos está vacío.
-      - ./database:/docker-entrypoint-initdb.d:ro
     ports:
       # 5433 en la máquina: el 5432 ya lo usa el PostgreSQL instalado en Windows.
       - "5433:5432"
@@ -47,6 +45,10 @@ services:
       JWT_CLAVE_SECRETA: ${JWT_CLAVE_SECRETA:?Falta JWT_CLAVE_SECRETA en el .env}
       # El navegador abre el frontend en el 4200; el backend solo acepta ese origen.
       CORS_ORIGENES: http://localhost:4200
+      # API de mapas: sin clave de Google se usa Nominatim (OpenStreetMap).
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+      GEO_PROVEEDOR: ${GEO_PROVEEDOR:-auto}
+      NOMINATIM_CORREO_CONTACTO: ${NOMINATIM_CORREO_CONTACTO:-}
     ports:
       - "8080:8080"
     depends_on:
