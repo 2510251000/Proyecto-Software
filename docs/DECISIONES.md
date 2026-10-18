@@ -76,3 +76,38 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
 24. Diseño: se siguió el estilo «Amanecer» ya definido en el proyecto (banda azul, Source Serif 4
     y Manrope, papel blanco con filetes). El menú principal va sobre la banda azul en todas las
     pantallas con sesión.
+
+## Principios SOLID
+25. El backend sigue la arquitectura hexagonal, que es la aplicación directa de SOLID. Rutas
+    relativas a `backend/src/main/java/com/aldia/`.
+    - **S — Responsabilidad única.** Cada caso de uso es una clase (`aplicacion/servicio/`:
+      `PublicarNoticiaServicio`, `ModerarNoticiaServicio`, `GestionarUsuariosServicio`,
+      `UbicacionServicio`…) y cada regla del negocio vive en un solo lugar del dominio
+      (`dominio/servicio/`): `ReglaLimiteDiario` (cupo del día), `CalculadoraNivel` (subir de
+      nivel), `PoliticaRecomendacion` (orden de la portada) y `AvisosPorCiudad` (a quién se
+      notifica). En el frontend, las llamadas HTTP solo están en `core/services/`; los
+      componentes solo muestran datos.
+    - **O — Abierto/cerrado.** La ubicación pasa por la interfaz
+      `dominio/puerto/salida/GeocodificadorPuerto`. Agregar un proveedor de mapas es escribir un
+      adaptador nuevo en `infraestructura/geocodificacion/` sin tocar los casos de uso (así
+      entraron Google Maps y Nominatim). Los niveles, límites y puntos son datos (tabla `nivel`)
+      y configuración (`application.yml`), no código.
+    - **L — Sustitución de Liskov.** `GoogleMapsGeocodificadorAdaptador` y
+      `NominatimGeocodificadorAdaptador` cumplen el mismo contrato y son intercambiables
+      (`GeocodificacionConfiguracion` elige uno con `GEO_PROVEEDOR`). Las pruebas de endpoints
+      (`ApiIntegracionTest`) usan un geocodificador falso y todo funciona igual.
+    - **I — Segregación de interfaces.** Puertos pequeños: uno por caso de uso de entrada
+      (`dominio/puerto/entrada/`, por ejemplo `ListarNoticiasCasoDeUso`,
+      `ModerarNoticiaCasoDeUso`) y uno por necesidad de salida (`dominio/puerto/salida/`:
+      `NoticiaRepositorioPuerto`, `CifradorPuerto`, `TokenPuerto`…). Ningún caso de uso depende
+      de métodos que no usa.
+    - **D — Inversión de dependencias.** Los casos de uso dependen solo de puertos
+      (interfaces), nunca de JPA, Spring ni de una API concreta. Las implementaciones se
+      conectan desde afuera en `infraestructura/configuracion/CasosDeUsoConfiguracion`. La prueba
+      `ArquitecturaHexagonalTest` (ArchUnit) falla si el dominio o los casos de uso importan
+      Spring, JPA o Jackson.
+    - **Límites conocidos.** `PublicarNoticiaServicio` coordina varias reglas (cupo,
+      historial, avisos y puntos); las reglas están en el dominio y el servicio solo las
+      orquesta, que es lo propio de un caso de uso. En Angular los componentes reciben los
+      servicios concretos con `inject()` (práctica habitual del framework); en las pruebas se
+      reemplazan por servicios falsos.
