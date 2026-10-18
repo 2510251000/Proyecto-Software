@@ -10,6 +10,7 @@
 
 .contenido {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--espacio-m);
@@ -27,6 +28,10 @@
 .marca app-logo {
   --color-marca: var(--color-sobre-marca);
   --color-fondo: var(--color-marca-oscuro);
+}
+
+.menu {
+  margin-left: auto;
 }
 
 .acciones {

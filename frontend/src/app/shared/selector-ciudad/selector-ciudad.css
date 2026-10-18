@@ -1,0 +1,148 @@
+:host {
+  display: block;
+  margin-bottom: var(--espacio-m);
+}
+
+.selector {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.etiqueta {
+  margin-bottom: var(--espacio-xs);
+  padding: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.ayuda,
+.fuente {
+  margin: 0 0 var(--espacio-s);
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+.fuente {
+  display: block;
+  margin: 0;
+}
+
+.elegida {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-s);
+  padding: var(--espacio-s) var(--espacio-m);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-superficie);
+}
+
+.elegida p {
+  margin: 0;
+}
+
+.principal,
+.secundario,
+.resultado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-s);
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-m);
+  border: 1px solid var(--color-marca);
+  border-radius: 999px;
+  background: var(--color-tarjeta);
+  color: var(--color-marca);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.principal {
+  width: 100%;
+  justify-content: center;
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.busqueda {
+  display: flex;
+  gap: var(--espacio-s);
+  margin-top: var(--espacio-s);
+}
+
+.entrada {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-m);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font: inherit;
+}
+
+.resultados {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+  margin: var(--espacio-s) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resultado {
+  width: 100%;
+  border-color: var(--color-borde);
+  border-radius: var(--radio-s);
+  color: var(--color-texto);
+  font-weight: 400;
+  text-align: left;
+}
+
+.resultado:hover {
+  border-color: var(--color-marca);
+}
+
+.catalogo {
+  display: block;
+  margin: var(--espacio-m) 0 var(--espacio-xs);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.aviso,
+.error {
+  margin: var(--espacio-s) 0 0;
+}
+
+.error {
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid var(--color-marca);
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    rotate: 360deg;
+  }
+}

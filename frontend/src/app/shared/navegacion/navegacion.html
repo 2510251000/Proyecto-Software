@@ -1,0 +1,15 @@
+<nav class="menu" [attr.aria-label]="textos.menu">
+  <button type="button" class="enlace salir" (click)="salir()">{{ textos.salir }}</button>
+  <a class="enlace" [routerLink]="['/', rutas.noticias]" routerLinkActive="activo" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">{{ textos.portada }}</a>
+  <a class="enlace" [routerLink]="['/', rutas.publicar]" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ textos.publicar }}</a>
+  <a class="enlace" [routerLink]="['/', rutas.notificaciones]" routerLinkActive="activo" ariaCurrentWhenActive="page">
+    {{ textos.notificaciones }}
+    @if (noLeidas() > 0) {
+      <span class="contador">{{ noLeidas() }}<span class="solo-lectores-pantalla"> {{ textos.sinLeer }}</span></span>
+    }
+  </a>
+  <a class="enlace" [routerLink]="['/', rutas.perfil]" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ textos.perfil }}</a>
+  @if (esAdministrador) {
+    <a class="enlace" [routerLink]="['/', rutas.admin]" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ textos.admin }}</a>
+  }
+</nav>

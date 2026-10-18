@@ -38,6 +38,20 @@
   border-width: 2px;
 }
 
+/* Texto largo: crece hacia abajo y deja el mismo relleno arriba y abajo. */
+.area {
+  min-height: 9rem;
+  padding: var(--espacio-s) var(--espacio-m);
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.ayuda {
+  margin: var(--espacio-xs) 0 0;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
 .mensaje-error {
   margin: var(--espacio-xs) 0 0;
   color: var(--color-error);
