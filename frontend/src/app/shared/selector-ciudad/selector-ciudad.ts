@@ -11,6 +11,9 @@ import { Ciudad, CiudadResuelta, LugarEncontrado } from '../../core/models/ubica
 import { GeolocalizacionService } from '../../core/services/geolocalizacion.service';
 import { UbicacionService } from '../../core/services/ubicacion.service';
 
+/** Errores sin código HTTP: los del GPS del navegador. */
+const ESTADO_SIN_HTTP = 0;
+
 /**
  * Elige el municipio con la API de mapas del backend: con el GPS del navegador
  * («Usar mi ubicación») o buscando por nombre. Si la API no responde, deja elegir entre
@@ -125,7 +128,8 @@ export class SelectorCiudad implements OnInit {
   private fallo(error: ErrorApi): void {
     this.cargando.set(false);
     this.error.set(error.mensaje);
-    if (error.estado === CODIGOS_HTTP.noDisponible && this.catalogo().length === 0) {
+    const sinGpsOSinApi = error.estado === ESTADO_SIN_HTTP || error.estado === CODIGOS_HTTP.noDisponible;
+    if (sinGpsOSinApi && this.catalogo().length === 0) {
       this.ubicacion.ciudades().subscribe({ next: (ciudades) => this.catalogo.set(ciudades) });
     }
   }
