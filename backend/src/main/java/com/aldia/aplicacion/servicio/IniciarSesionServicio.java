@@ -1,6 +1,5 @@
 package com.aldia.aplicacion.servicio;
 
-import org.springframework.stereotype.Service;
 
 import com.aldia.dominio.excepcion.CredencialesInvalidasExcepcion;
 import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
@@ -10,7 +9,6 @@ import com.aldia.dominio.puerto.salida.CifradorPuerto;
 import com.aldia.dominio.puerto.salida.TokenPuerto;
 import com.aldia.dominio.puerto.salida.UsuarioRepositorioPuerto;
 
-@Service
 public class IniciarSesionServicio implements IniciarSesionCasoDeUso {
 
     private final UsuarioRepositorioPuerto usuarioRepositorioPuerto;

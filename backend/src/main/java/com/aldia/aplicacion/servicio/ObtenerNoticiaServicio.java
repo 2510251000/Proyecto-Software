@@ -1,13 +1,11 @@
 package com.aldia.aplicacion.servicio;
 
-import org.springframework.stereotype.Service;
 
 import com.aldia.dominio.excepcion.NoticiaNoEncontradaExcepcion;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.puerto.entrada.ObtenerNoticiaCasoDeUso;
 import com.aldia.dominio.puerto.salida.NoticiaRepositorioPuerto;
 
-@Service
 public class ObtenerNoticiaServicio implements ObtenerNoticiaCasoDeUso {
 
     private final NoticiaRepositorioPuerto noticiaRepositorioPuerto;
