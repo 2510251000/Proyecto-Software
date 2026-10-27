@@ -1,0 +1,140 @@
+# ============================================================================
+#  Configuración del backend de Al Día.
+#  Todo lo que cambia entre equipos o ambientes sale de una variable de entorno
+#  (el .env de backend/ en local; ver .env.example). Lo que va después de ":"
+#  es el valor predeterminado.
+# ============================================================================
+
+spring:
+  application:
+    name: backend
+  profiles:
+    # dev (local), test o prod.
+    active: ${PERFIL_ACTIVO:dev}
+  datasource:
+    username: ${DB_USUARIO}
+    password: ${DB_CONTRASENA}
+    hikari:
+      # La base usa la misma zona que la app (aldia.zona-horaria). Si no, en un servidor en
+      # UTC (Docker, GitHub Actions) los DEFAULT CURRENT_TIMESTAMP quedan 5 horas adelante.
+      connection-init-sql: SET TIME ZONE '${ZONA_HORARIA:America/Bogota}'
+  jpa:
+    hibernate:
+      # El esquema lo crean las migraciones de Flyway. Hibernate solo verifica que coincida.
+      ddl-auto: validate
+    # Las consultas se hacen dentro de los adaptadores; no hace falta la sesión abierta en la vista.
+    open-in-view: false
+  flyway:
+    locations: ${FLYWAY_UBICACIONES:classpath:db/migration}
+    # Una base creada antes con los scripts sueltos de database/ (V1 y V2) se marca
+    # en la versión 2 y solo recibe las migraciones nuevas.
+    baseline-on-migrate: true
+    baseline-version: 2
+
+server:
+  port: ${PUERTO:8080}
+
+jwt:
+  clave-secreta: ${JWT_CLAVE_SECRETA}
+
+aldia:
+  # Define qué es "hoy" para el límite diario de publicaciones.
+  zona-horaria: ${ZONA_HORARIA:America/Bogota}
+
+  niveles:
+    # Regla para subir de nivel (ver docs/DECISIONES.md): cada noticia publicada suma
+    # puntos y cada noticia que el administrador oculta o borra los resta. El nivel es
+    # el más alto cuyo puntaje mínimo (tabla nivel) alcance el usuario.
+    puntos-por-publicacion: ${NIVEL_PUNTOS_PUBLICACION:10}
+    puntos-penalizacion-moderacion: ${NIVEL_PUNTOS_PENALIZACION:20}
+
+  recomendacion:
+    # En el orden "recomendadas", una noticia cuenta como si fuera tantas horas más
+    # reciente por cada nivel del autor por encima del 1, y otras tantas si es oficial.
+    horas-ventaja-por-nivel: ${RECOMENDACION_HORAS_POR_NIVEL:12}
+    horas-ventaja-oficial: ${RECOMENDACION_HORAS_OFICIAL:6}
+
+  noticias:
+    maximo-listado: ${NOTICIAS_MAXIMO_LISTADO:200}
+    # Las noticias oficiales no cuentan contra el límite diario del nivel.
+    administrador-sin-limite: ${ADMIN_SIN_LIMITE_DIARIO:true}
+
+  notificaciones:
+    maximo-listado: ${NOTIFICACIONES_MAXIMO_LISTADO:50}
+
+  geocodificacion:
+    # auto: Google Maps si hay GOOGLE_MAPS_API_KEY; si no, Nominatim (OpenStreetMap).
+    # google | nominatim: fuerza uno de los dos.
+    proveedor: ${GEO_PROVEEDOR:auto}
+    idioma: ${GEO_IDIOMA:es}
+    # Códigos ISO de país separados por coma (limita la búsqueda por nombre).
+    paises: ${GEO_PAISES:co}
+    tiempo-espera-ms: ${GEO_TIEMPO_ESPERA_MS:8000}
+    maximo-resultados: ${GEO_MAXIMO_RESULTADOS:5}
+    google:
+      url: ${GOOGLE_MAPS_URL:https://maps.googleapis.com/maps/api/geocode/json}
+      clave: ${GOOGLE_MAPS_API_KEY:}
+    nominatim:
+      url: ${NOMINATIM_URL:https://nominatim.openstreetmap.org}
+      # Política de uso de Nominatim: identificar la aplicación y no pasar de 1 petición por segundo.
+      agente: ${NOMINATIM_AGENTE:AlDia-PortalNoticias/1.0 (proyecto academico Universidad de Cundinamarca)}
+      correo-contacto: ${NOMINATIM_CORREO_CONTACTO:}
+      intervalo-minimo-ms: ${NOMINATIM_INTERVALO_MS:1100}
+
+---
+# ---- Perfil DEV: máquina local ----
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/aldia_db}
+  jpa:
+    show-sql: ${MOSTRAR_SQL:false}
+  flyway:
+    # En local también se cargan los datos de demostración (db/demo).
+    locations: ${FLYWAY_UBICACIONES:classpath:db/migration,classpath:db/demo}
+
+jwt:
+  expiracion-ms: ${JWT_EXPIRACION_MS:86400000}
+
+cors:
+  origenes-permitidos: ${CORS_ORIGENES:http://localhost:4200}
+
+---
+# ---- Perfil TEST: ambiente de pruebas ----
+# Sin valores predeterminados: si falta una variable, la aplicación no arranca.
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: ${DB_URL}
+
+jwt:
+  expiracion-ms: ${JWT_EXPIRACION_MS}
+
+cors:
+  origenes-permitidos: ${CORS_ORIGENES}
+
+---
+# ---- Perfil PROD: producción ----
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL}
+
+jwt:
+  expiracion-ms: ${JWT_EXPIRACION_MS}
+
+cors:
+  origenes-permitidos: ${CORS_ORIGENES}
+
+# Swagger apagado en producción.
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

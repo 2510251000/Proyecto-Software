@@ -1,0 +1,16 @@
+<section class="panel">
+  <p class="lockup"><app-logo [tamano]="40" [conNombre]="true" /></p>
+
+  <div class="mensaje">
+    <p class="titular">{{ titular() }}</p>
+    <p class="bajada">{{ bajada }}</p>
+  </div>
+
+  <!-- El sol del logo saliendo sobre el horizonte, el mismo de la portada. Solo decoración. -->
+  <svg class="decoracion" viewBox="0 0 320 170" aria-hidden="true" focusable="false">
+    <path class="disco" d="M70 120a90 90 0 0 1 180 0Z" />
+    <rect class="horizonte" x="20" y="128" width="280" height="10" rx="5" />
+    <rect class="horizonte" x="60" y="148" width="200" height="8" rx="4" />
+    <rect class="horizonte" x="100" y="164" width="120" height="6" rx="3" />
+  </svg>
+</section>

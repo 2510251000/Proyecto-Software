@@ -1,0 +1,23 @@
+<!-- El enlace se anuncia con el titular; la sección, el resumen y los datos van como descripción. -->
+<a
+  class="nota"
+  [appEnlaceNoticia]="noticia()"
+  [attr.aria-labelledby]="idTitulo"
+  [attr.aria-describedby]="idSeccion + ' ' + idDatos"
+  (abrirNoticia)="abrir.emit($event)"
+>
+  <div class="texto">
+    <p class="seccion" [id]="idSeccion">
+      @if (ultimaHora()) {
+        <span class="urgente">{{ etiquetas.ultimaHora }}</span>
+      }
+      {{ seccion() }}
+    </p>
+    <h3 class="titulo" [id]="idTitulo">{{ noticia().titulo }}</h3>
+    <p class="resumen">{{ noticia().resumen }}</p>
+    <p class="datos" [id]="idDatos">
+      {{ noticia().ciudad }}@if (cuando() !== '') {, <time [attr.datetime]="noticia().fechaPublicacion" [attr.title]="fecha()">{{ cuando() }}</time>}
+    </p>
+  </div>
+  <app-miniatura class="imagen" [categoria]="categoria()" />
+</a>

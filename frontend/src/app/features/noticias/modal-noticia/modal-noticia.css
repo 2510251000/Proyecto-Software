@@ -1,0 +1,125 @@
+/*
+  El <dialog> ocupa toda la pantalla y es transparente; lo que se ve es la hoja blanca.
+  Detrás de la hoja hay un botón invisible que cubre la pantalla: un clic fuera cierra.
+*/
+.modal {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: var(--espacio-l) var(--espacio-m);
+  overflow-y: auto;
+  border: 0;
+  background: transparent;
+  color: var(--color-texto);
+}
+
+.modal:not([open]) {
+  display: none;
+}
+
+/* Fondo: azul oscuro de marca al 60 %, con la portada desenfocada detrás. Decorativo: no hay texto encima. */
+.modal::backdrop {
+  background: rgba(9, 25, 58, 0.6);
+  backdrop-filter: blur(12px);
+}
+
+.fondo {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: none;
+  cursor: default;
+}
+
+.hoja {
+  position: relative;
+  max-width: 50rem;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: var(--radio-s);
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-3);
+}
+
+/* Botón redondo de 44 px sobre la foto. Texto oscuro sobre blanco: 17.7:1. */
+.cerrar {
+  position: absolute;
+  top: var(--espacio-m);
+  right: var(--espacio-m);
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--alto-control);
+  height: var(--alto-control);
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-1);
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+/* Blanco sobre el azul de marca: 15:1. */
+.cerrar:hover {
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+}
+
+/* El foco se dibuja doble (blanco y oscuro) para que se vea sobre cualquier foto. */
+.cerrar:focus-visible {
+  outline: 3px solid var(--color-texto);
+  box-shadow: 0 0 0 2px var(--color-tarjeta);
+}
+
+.pie {
+  margin: 0;
+  padding: 0 var(--espacio-m) var(--espacio-xl);
+  text-align: center;
+}
+
+.pagina {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-m);
+  border-radius: var(--radio-s);
+  font-weight: 700;
+}
+
+@media (max-width: 40rem) {
+  .modal {
+    padding: var(--espacio-s);
+  }
+
+  .hoja {
+    border-radius: var(--radio-m);
+  }
+}
+
+/* La hoja entra subiendo un poco; con «reducir movimiento» aparece sin más. */
+@media (prefers-reduced-motion: no-preference) {
+  .modal[open] .hoja {
+    animation: entrar 260ms ease-out;
+  }
+
+  .modal[open]::backdrop {
+    animation: aclarar 260ms ease-out;
+  }
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem) scale(0.97);
+  }
+}
+
+@keyframes aclarar {
+  from {
+    opacity: 0;
+  }
+}

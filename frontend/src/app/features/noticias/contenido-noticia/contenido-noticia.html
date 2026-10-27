@@ -1,0 +1,38 @@
+<article class="noticia">
+  <app-miniatura class="imagen" [categoria]="categoria()" />
+
+  <div class="cuerpo">
+    <p class="seccion">{{ seccion() }}, {{ noticia().ciudad }}</p>
+
+    @if (nivelTitulo() === 1) {
+      <h1 class="titulo" [id]="idTitulo()">{{ noticia().titulo }}</h1>
+    } @else {
+      <h2 class="titulo" [id]="idTitulo()">{{ noticia().titulo }}</h2>
+    }
+
+    <p class="datos">
+      @if (noticia().oficial) {
+        <span class="oficial">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+            <path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="2.4" />
+          </svg>
+          {{ etiquetas.oficial }}
+        </span>
+      }
+      @if (noticia().autor; as autor) {
+        <span>{{ etiquetas.por }} {{ autor }}@if (!noticia().oficial && noticia().autorNivel; as nivel) {, {{ etiquetas.nivel }} {{ nivel }}}</span>
+      }
+      @if (fecha() !== '') {
+        <time [attr.datetime]="noticia().fechaPublicacion">{{ fecha() }}</time>
+      }
+      <span>{{ minutosLectura() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}</span>
+    </p>
+
+    <p class="resumen">{{ noticia().resumen }}</p>
+
+    <!-- El contenido viene del backend: se interpola como texto, nunca como HTML. -->
+    @for (parrafo of parrafos(); track $index) {
+      <p class="parrafo">{{ parrafo }}</p>
+    }
+  </div>
+</article>

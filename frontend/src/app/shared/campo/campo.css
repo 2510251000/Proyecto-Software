@@ -1,0 +1,65 @@
+.campo {
+  margin-bottom: var(--espacio-m);
+}
+
+.etiqueta {
+  display: block;
+  margin-bottom: var(--espacio-xs);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+/* El borde del campo da 3.5:1 contra su relleno y 3.7:1 contra la tarjeta blanca. */
+.entrada {
+  display: block;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0 var(--espacio-m);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font: inherit; /* 16 px: evita el zoom automático en iOS */
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.entrada:hover,
+.entrada:focus {
+  border-color: var(--color-marca);
+  background: var(--color-tarjeta);
+}
+
+.entrada-invalida,
+.entrada-invalida:hover,
+.entrada-invalida:focus {
+  border-color: var(--color-error);
+  border-width: 2px;
+}
+
+/* Texto largo: crece hacia abajo y deja el mismo relleno arriba y abajo. */
+.area {
+  min-height: 4.5rem;
+  padding: var(--espacio-s) var(--espacio-m);
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.ayuda {
+  margin: var(--espacio-xs) 0 0;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+.mensaje-error {
+  margin: var(--espacio-xs) 0 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entrada {
+    transition: none;
+  }
+}

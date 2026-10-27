@@ -1,0 +1,73 @@
+:host {
+  display: block;
+}
+
+/* Sobre la banda azul. «Salir» va primero en el DOM (lo encuentran rápido los lectores
+   de pantalla y las pruebas) pero se dibuja al final. */
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--espacio-xs);
+}
+
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-xs);
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-s);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-sobre-marca);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.enlace:hover {
+  color: var(--color-sobre-marca);
+  text-decoration: underline;
+}
+
+.enlace:focus-visible {
+  outline-color: var(--color-sol);
+}
+
+.activo {
+  border-color: var(--color-sobre-marca-suave);
+}
+
+.salir {
+  order: 1;
+  border-color: var(--color-sobre-marca-suave);
+  padding-inline: var(--espacio-m);
+}
+
+.salir:hover {
+  background: var(--color-sobre-marca);
+  color: var(--color-marca);
+  text-decoration: none;
+}
+
+/* Cantidad sin leer: el sol sobre el azul (7:1). */
+.contador {
+  min-width: 1.4rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--color-sol);
+  color: var(--color-marca-oscuro);
+  font-size: 0.75rem;
+  line-height: 1.4rem;
+  text-align: center;
+}
+
+@media (max-width: 40rem) {
+  .menu {
+    justify-content: flex-start;
+  }
+}

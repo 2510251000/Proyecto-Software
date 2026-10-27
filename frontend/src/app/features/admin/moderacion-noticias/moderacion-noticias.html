@@ -1,0 +1,71 @@
+<div class="filtros">
+  <label>
+    {{ textos.filtroTipo }}
+    <select class="selector" (change)="cambiarTipoFiltro($event)">
+      @for (opcion of tipos; track opcion) {
+        <option [value]="opcion" [selected]="tipo() === opcion">{{ etiquetasTipo[opcion] }}</option>
+      }
+    </select>
+  </label>
+  <label>
+    {{ textos.filtroEstado }}
+    <select class="selector" (change)="cambiarEstadoFiltro($event)">
+      <option value="" [selected]="estado() === null">{{ textos.todos }}</option>
+      @for (opcion of estados; track opcion) {
+        <option [value]="opcion" [selected]="estado() === opcion">{{ etiquetasEstado[opcion] }}</option>
+      }
+    </select>
+  </label>
+</div>
+
+@if (error(); as mensaje) {
+  <p class="aviso-error-general" role="alert">{{ mensaje }}</p>
+}
+
+@if (noticias(); as lista) {
+  @if (lista.length === 0) {
+    <p class="texto-suave">{{ textos.sinNoticias }}</p>
+  } @else {
+    <ul class="lista-filas">
+      @for (noticia of lista; track noticia.id) {
+        <li class="fila">
+          <div class="datos">
+            <p class="meta">
+              <span class="chip" [class.chip-alerta]="noticia.estado === 'OCULTA'">
+                {{ noticia.estado ? etiquetasEstado[noticia.estado] : '' }}
+              </span>
+              <span class="chip" [class.chip-marca]="noticia.oficial">
+                {{ noticia.oficial ? textos.oficial : textos.comunidad }}
+              </span>
+              <span class="texto-suave">{{ noticia.ciudad }} · {{ cuando(noticia.fechaPublicacion) }}</span>
+            </p>
+            @if (noticia.estado === 'PUBLICADA') {
+              <a class="titulo" [routerLink]="['/', rutas.noticias, noticia.id]">{{ noticia.titulo }}</a>
+            } @else {
+              <span class="titulo">{{ noticia.titulo }}</span>
+            }
+            @if (noticia.autor) {
+              <p class="texto-suave autor">{{ textos.por }} {{ noticia.autor }}</p>
+            }
+          </div>
+          <div class="acciones">
+            @if (noticia.estado === 'PUBLICADA') {
+              <button type="button" class="accion" [disabled]="ocupada() === noticia.id" (click)="moderar(noticia, 'OCULTA')">
+                {{ textos.ocultar }}
+              </button>
+            } @else if (noticia.estado === 'OCULTA') {
+              <button type="button" class="accion" [disabled]="ocupada() === noticia.id" (click)="moderar(noticia, 'PUBLICADA')">
+                {{ textos.publicar }}
+              </button>
+            }
+            <button type="button" class="accion accion-peligro" [disabled]="ocupada() === noticia.id" (click)="borrar(noticia)">
+              {{ textos.borrar }}
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+} @else if (error() === null) {
+  <p role="status" class="texto-suave">{{ textosComunes.cargando }}</p>
+}

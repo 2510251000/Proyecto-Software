@@ -1,0 +1,40 @@
+<app-encabezado />
+
+<main class="pagina-interna pagina-interna-ancha">
+  <h1 class="titulo-pagina">{{ textos.titulo }}</h1>
+
+  <div class="pestanas" role="tablist" [attr.aria-label]="textos.pestanas">
+    <button
+      type="button"
+      role="tab"
+      id="pestana-noticias"
+      aria-controls="panel-noticias"
+      class="pestana"
+      [attr.aria-selected]="pestana() === 'noticias'"
+      (click)="pestana.set('noticias')"
+    >
+      {{ textos.noticias }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      id="pestana-usuarios"
+      aria-controls="panel-usuarios"
+      class="pestana"
+      [attr.aria-selected]="pestana() === 'usuarios'"
+      (click)="pestana.set('usuarios')"
+    >
+      {{ textos.usuarios }}
+    </button>
+  </div>
+
+  @if (pestana() === 'noticias') {
+    <section id="panel-noticias" role="tabpanel" aria-labelledby="pestana-noticias">
+      <app-moderacion-noticias />
+    </section>
+  } @else {
+    <section id="panel-usuarios" role="tabpanel" aria-labelledby="pestana-usuarios">
+      <app-gestion-usuarios />
+    </section>
+  }
+</main>

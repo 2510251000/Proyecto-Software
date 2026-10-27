@@ -1,0 +1,71 @@
+<fieldset class="selector" [attr.aria-describedby]="idPrefijo() + '-ayuda'">
+  <legend class="etiqueta">{{ textos.etiqueta }}</legend>
+  <p class="ayuda" [id]="idPrefijo() + '-ayuda'">{{ textos.ayuda }}</p>
+
+  @if (actual(); as ciudad) {
+    <div class="elegida" role="status">
+      <p>
+        <span class="solo-lectores-pantalla">{{ textos.elegida }}: </span>
+        <strong>{{ ciudad.nombre }}</strong>, {{ ciudad.departamento }}
+        @if (proveedor(); as clave) {
+          <span class="fuente">{{ textos.fuente }} {{ nombreProveedor(clave) }}</span>
+        }
+      </p>
+      <button type="button" class="secundario" (click)="cambiar()">{{ textos.cambiar }}</button>
+    </div>
+  } @else {
+    <button type="button" class="principal" [disabled]="cargando()" (click)="usarMiUbicacion()">
+      <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+        <circle cx="10" cy="10" r="3" fill="currentColor" />
+        <circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="2" />
+      </svg>
+      {{ textos.usarMiUbicacion }}
+    </button>
+
+    <div class="busqueda">
+      <label class="solo-lectores-pantalla" [for]="idPrefijo() + '-buscar'">{{ textos.buscarEtiqueta }}</label>
+      <input
+        class="entrada"
+        type="search"
+        autocomplete="off"
+        [id]="idPrefijo() + '-buscar'"
+        [placeholder]="textos.buscarEtiqueta"
+        [value]="texto()"
+        (input)="escribir($event)"
+        (keydown.enter)="buscar($event)"
+      />
+      <button type="button" class="secundario" [disabled]="cargando()" (click)="buscar()">{{ textos.buscar }}</button>
+    </div>
+
+    @if (resultados().length > 0) {
+      <ul class="resultados">
+        @for (lugar of resultados(); track lugar.idLugar) {
+          <li>
+            <button type="button" class="resultado" (click)="elegirLugar(lugar)">
+              <strong>{{ lugar.ciudad }}</strong>, {{ lugar.departamento }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    @if (catalogo().length > 0) {
+      <label class="catalogo" [for]="idPrefijo() + '-catalogo'">{{ textos.catalogo }}</label>
+      <select class="entrada" [id]="idPrefijo() + '-catalogo'" (change)="elegirDelCatalogo($event)">
+        <option value="">{{ textos.catalogoVacio }}</option>
+        @for (ciudad of catalogo(); track ciudad.id) {
+          <option [value]="ciudad.id">{{ ciudad.nombre }}, {{ ciudad.departamento }}</option>
+        }
+      </select>
+    }
+  }
+
+  @if (cargando()) {
+    <p class="aviso" role="status"><span class="spinner" aria-hidden="true"></span></p>
+  }
+  @if (error(); as mensaje) {
+    <p class="error" role="alert">{{ mensaje }}</p>
+  } @else if (mostrarError() && actual() === null) {
+    <p class="error" role="alert">{{ mensajes.ciudadObligatoria }}</p>
+  }
+</fieldset>

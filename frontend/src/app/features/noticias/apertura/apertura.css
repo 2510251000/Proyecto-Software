@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+/* La noticia del día: foto a la izquierda, titular grande a la derecha. Se apilan en móvil. */
+.principal {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: clamp(var(--espacio-l), 4vw, 3rem);
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.imagen {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radio-s);
+}
+
+/* La sección en el color de marca, en minúscula: dice de qué trata, no grita. */
+.seccion {
+  margin-bottom: var(--espacio-s);
+  color: var(--color-marca);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.titulo {
+  margin-bottom: var(--espacio-m);
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.principal:hover .titulo {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.12em;
+}
+
+.resumen {
+  max-width: 34rem;
+  margin-bottom: var(--espacio-l);
+  font-size: 1.1rem;
+  line-height: 1.55;
+}
+
+.datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs) var(--espacio-l);
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+/* Lo oficial lleva el visto de la alcaldía. */
+.oficial {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  color: var(--color-marca);
+  font-weight: 700;
+}
+
+@media (max-width: 48rem) {
+  .principal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .imagen {
+    aspect-ratio: 16 / 9;
+  }
+}

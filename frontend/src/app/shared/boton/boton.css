@@ -1,0 +1,83 @@
+:host {
+  display: inline-block;
+}
+
+/* Botón en forma de pastilla. Blanco sobre el azul de marca: 15:1. */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-s);
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-l);
+  border: 1px solid var(--color-marca);
+  border-radius: 999px;
+  background: var(--color-marca);
+  box-shadow: var(--sombra-1);
+  color: var(--color-sobre-marca);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.boton:hover:not(:disabled) {
+  border-color: var(--color-marca-oscuro);
+  background: var(--color-marca-oscuro);
+  box-shadow: var(--sombra-2);
+}
+
+.boton:disabled {
+  box-shadow: none;
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Secundario: blanco con borde y texto en azul de marca (15:1). Al pasar el mouse se invierte. */
+.boton-secundario {
+  border-color: var(--color-marca);
+  background: var(--color-tarjeta);
+  box-shadow: none;
+  color: var(--color-marca);
+}
+
+.boton-secundario:hover:not(:disabled) {
+  border-color: var(--color-marca);
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+}
+
+.boton-bloque {
+  width: 100%;
+}
+
+:host(:has(.boton-bloque)) {
+  display: block;
+}
+
+.spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boton {
+    transition: none;
+  }
+
+  .spinner {
+    animation-duration: 3s;
+  }
+}

@@ -1,0 +1,48 @@
+:host {
+  display: block;
+}
+
+.numero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--espacio-s);
+  margin: 0;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+}
+
+.nombre-nivel {
+  color: var(--color-texto-suave);
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.puntos {
+  margin: var(--espacio-xs) 0 var(--espacio-m);
+  font-size: 1.1rem;
+}
+
+/* Barra de avance hacia el siguiente nivel: el sol llenando el azul. */
+.barra {
+  overflow: hidden;
+  height: 0.75rem;
+  margin-bottom: var(--espacio-s);
+  border: 1px solid var(--color-marca);
+  border-radius: 999px;
+  background: var(--color-superficie);
+}
+
+.relleno {
+  display: block;
+  height: 100%;
+  background: var(--color-marca);
+}
+
+.cupo {
+  margin-top: var(--espacio-m);
+}
+
+.regla {
+  font-size: 0.9rem;
+}

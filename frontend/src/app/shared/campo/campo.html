@@ -1,0 +1,35 @@
+@let mensaje = mensajeError();
+
+<div class="campo">
+  <label class="etiqueta" [for]="idCampo()">{{ etiqueta() }}</label>
+  @if (multilinea()) {
+    <textarea
+      class="entrada area"
+      [class.entrada-invalida]="mensaje !== null"
+      [id]="idCampo()"
+      [rows]="filas()"
+      [attr.maxlength]="maximo()"
+      [formControl]="control()"
+      [attr.aria-invalid]="mensaje !== null"
+      [attr.aria-describedby]="descripcion(mensaje)"
+    ></textarea>
+  } @else {
+    <input
+      class="entrada"
+      [class.entrada-invalida]="mensaje !== null"
+      [id]="idCampo()"
+      [type]="tipo()"
+      [attr.autocomplete]="autocompletar()"
+      [attr.maxlength]="maximo()"
+      [formControl]="control()"
+      [attr.aria-invalid]="mensaje !== null"
+      [attr.aria-describedby]="descripcion(mensaje)"
+    />
+  }
+  @if (ayuda(); as texto) {
+    <p class="ayuda" [id]="idAyuda()">{{ texto }}</p>
+  }
+  @if (mensaje !== null) {
+    <p class="mensaje-error" [id]="idError()">{{ mensaje }}</p>
+  }
+</div>

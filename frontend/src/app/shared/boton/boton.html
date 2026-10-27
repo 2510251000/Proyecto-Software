@@ -1,0 +1,14 @@
+<button
+  class="boton"
+  [class.boton-bloque]="bloque()"
+  [class.boton-secundario]="variante() === 'secundaria'"
+  [type]="tipo()"
+  [disabled]="deshabilitado() || cargando()"
+  [attr.aria-busy]="cargando()"
+>
+  @if (cargando()) {
+    <span class="spinner" aria-hidden="true"></span>
+    <span class="solo-lectores-pantalla" role="status">{{ textos.cargando }}</span>
+  }
+  <ng-content />
+</button>
