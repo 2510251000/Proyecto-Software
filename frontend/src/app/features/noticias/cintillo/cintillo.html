@@ -1,0 +1,7 @@
+<aside class="cintillo" [attr.aria-label]="etiquetas.ultimaHora">
+  <span class="etiqueta">
+    <span class="punto" aria-hidden="true"></span>
+    {{ etiquetas.ultimaHora }}
+  </span>
+  <a class="titular" [appEnlaceNoticia]="noticia()" (abrirNoticia)="abrir.emit($event)">{{ noticia().titulo }}</a>
+</aside>

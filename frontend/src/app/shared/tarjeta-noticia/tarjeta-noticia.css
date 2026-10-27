@@ -1,0 +1,72 @@
+:host {
+  display: block;
+}
+
+/* Una fila de lista: el texto manda y la foto acompaña a la derecha. Sin caja ni sombra. */
+.nota {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6.5rem;
+  gap: var(--espacio-m);
+  align-items: start;
+  padding: var(--espacio-l) 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.seccion {
+  margin-bottom: var(--espacio-xs);
+  color: var(--color-marca);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* «Última hora» en rojo: 5:1 sobre el papel. */
+.urgente {
+  margin-right: 0.4em;
+  color: var(--color-urgente);
+}
+
+.titulo {
+  margin-bottom: var(--espacio-xs);
+  font-size: 1.3rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.nota:hover .titulo {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+/* El resumen en dos renglones como máximo. */
+.resumen {
+  display: -webkit-box;
+  margin-bottom: var(--espacio-s);
+  overflow: hidden;
+  color: var(--color-texto);
+  font-size: 0.95rem;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.datos {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+.imagen {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radio-s);
+}
+
+@media (max-width: 30rem) {
+  .nota {
+    grid-template-columns: minmax(0, 1fr) 5rem;
+  }
+
+  .titulo {
+    font-size: 1.15rem;
+  }
+}

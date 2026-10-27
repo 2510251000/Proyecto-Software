@@ -1,0 +1,33 @@
+# ============================================================================
+#  Al Día — versión completa: base de datos + backend + frontend
+#
+#  Reutiliza la base y el backend de docker-compose.lite.yml y les suma el
+#  frontend compilado y servido con nginx.
+#
+#  Uso (desde la raíz del repositorio):
+#    1. Copiar .env.example como .env y completar los valores (una sola vez).
+#    2. docker compose up --build
+#    3. Abrir http://localhost:4200
+#
+#  Quedan así:
+#    Frontend:       http://localhost:4200
+#    Backend:        http://localhost:8080 (documentación en /swagger-ui.html)
+#    Base de datos:  localhost:5433, base aldia_db
+#
+#  Para apagar:            docker compose down
+#  Para borrar los datos:  docker compose down -v
+# ============================================================================
+
+name: aldia
+
+include:
+  - docker-compose.lite.yml
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      # El 4200 de la máquina: es el único origen que el backend acepta (CORS).
+      - "4200:80"
+    depends_on:
+      - backend

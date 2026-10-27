@@ -1,0 +1,141 @@
+:host {
+  display: block;
+}
+
+/* Banda azul de lado a lado: el cielo antes del amanecer. */
+.cabecera {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+}
+
+.contenido {
+  position: relative;
+  z-index: 1;
+  max-width: var(--ancho-maximo);
+  margin: 0 auto;
+  padding: var(--espacio-m) var(--espacio-m) var(--espacio-l);
+}
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-m);
+}
+
+.marca {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+/* Sobre el azul, el isotipo se invierte: cuadro blanco y filetes azules. */
+.marca app-logo {
+  --color-marca: var(--color-sobre-marca);
+  --color-fondo: var(--color-marca-oscuro);
+}
+
+.dia {
+  margin: clamp(var(--espacio-l), 6vw, 4rem) 0 var(--espacio-l);
+}
+
+/* El municipio es el titular de la página. */
+.lugar {
+  margin: 0;
+  font-size: clamp(2.6rem, 9vw, 5.5rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.fecha {
+  margin: var(--espacio-s) 0 0;
+  color: var(--color-sobre-marca-suave);
+  font-size: 1.05rem;
+}
+
+/* Selector de municipios: se desplaza de lado si no cabe, sin mover la página. */
+.municipios {
+  display: flex;
+  gap: var(--espacio-s);
+  margin: 0 -6px;
+  padding: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.municipio {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.6em;
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-m);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-sobre-marca);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.municipio:hover {
+  border-color: var(--color-sobre-marca);
+}
+
+/* El municipio elegido se enciende con el sol (texto azul sobre ámbar: 6.9:1). */
+.municipio[aria-pressed='true'] {
+  border-color: var(--color-sol);
+  background: var(--color-sol);
+  color: var(--color-marca);
+}
+
+.cantidad {
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.municipio :focus-visible,
+.municipio:focus-visible {
+  outline-color: var(--color-sol);
+}
+
+/* El sol sale una sola vez al cargar la portada. En móvil no cabe junto al selector. */
+.sol {
+  position: absolute;
+  right: clamp(-6rem, -4vw, -1rem);
+  bottom: -0.5rem;
+  width: clamp(13rem, 34vw, 26rem);
+  height: auto;
+}
+
+.disco {
+  fill: var(--color-sol);
+  animation: salir 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.horizonte {
+  fill: var(--color-marca-oscuro);
+}
+
+@keyframes salir {
+  from {
+    transform: translateY(60px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disco {
+    animation: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  .sol {
+    display: none;
+  }
+}

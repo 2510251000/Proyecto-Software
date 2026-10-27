@@ -1,0 +1,66 @@
+<app-encabezado />
+
+<main class="pagina-interna">
+  <h1 class="titulo-pagina">{{ textos.titulo }}</h1>
+
+  @if (error(); as mensaje) {
+    <p class="aviso-error-general" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (datos(); as perfil) {
+    <p class="bajada">
+      {{ perfil.correo }}
+      @if (esAdministrador()) {
+        <span class="chip chip-marca">{{ textos.rolAdmin }}</span>
+      }
+    </p>
+
+    <section class="nivel seccion-papel" aria-labelledby="perfil-nivel">
+      <h2 id="perfil-nivel" class="numero">
+        {{ textos.nivel }} {{ perfil.nivelNumero }}
+        <span class="nombre-nivel">{{ perfil.nivel }}</span>
+      </h2>
+      <p class="puntos"><strong>{{ perfil.puntaje }}</strong> {{ textos.puntos }}</p>
+
+      @if (perfil.siguienteNivel; as siguiente) {
+        <div class="barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="progreso()" [attr.aria-label]="textos.para + ' ' + siguiente.numero">
+          <span class="relleno" [style.width.%]="progreso()"></span>
+        </div>
+        <p class="texto-suave">
+          {{ textos.siguiente }} {{ faltan() }} {{ textos.puntos }} {{ textos.para }} {{ siguiente.numero }}
+          ({{ siguiente.nombre }}: {{ siguiente.limiteNoticiasDiarias }} {{ textos.limiteDiario }}).
+        </p>
+      } @else {
+        <p class="texto-suave">{{ textos.maximo }}</p>
+      }
+
+      <p class="cupo">
+        <strong>{{ textos.hoy }}:</strong>
+        @if (perfil.cupo.ilimitado) {
+          {{ textos.sinLimite }}
+        } @else {
+          {{ perfil.cupo.publicadasHoy }} / {{ perfil.cupo.limite }} {{ textos.publicadas }}
+        }
+      </p>
+      <p class="texto-suave regla">{{ textos.regla }}</p>
+    </section>
+
+    <form class="seccion-papel" [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+      @if (guardado()) {
+        <p class="aviso-exito" role="status">{{ textos.guardado }}</p>
+      }
+      <app-campo
+        idCampo="perfil-nombre"
+        [etiqueta]="etiquetaNombre"
+        autocompletar="name"
+        [maximo]="longitudNombre"
+        [control]="formulario.controls.nombre"
+        [errores]="erroresNombre"
+      />
+      <app-selector-ciudad idPrefijo="perfil-ciudad" [inicial]="perfil.ciudad" (elegida)="elegirCiudad($event)" />
+      <app-boton tipo="submit" [cargando]="guardando()">{{ textos.guardar }}</app-boton>
+    </form>
+  } @else if (error() === null) {
+    <p role="status" class="texto-suave">{{ textosComunes.cargando }}</p>
+  }
+</main>

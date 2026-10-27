@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+.cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-m);
+}
+
+.aviso {
+  padding-left: var(--espacio-m) !important;
+  border-left: 4px solid transparent;
+}
+
+/* Las que no se han leído llevan el filete azul a la izquierda. */
+.no-leida {
+  border-left-color: var(--color-marca);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-s);
+  margin-bottom: var(--espacio-xs);
+  font-size: 0.875rem;
+}
+
+.mensaje {
+  margin-bottom: var(--espacio-s);
+  font-family: var(--fuente-titulos);
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.no-leida .mensaje {
+  font-weight: 700;
+}

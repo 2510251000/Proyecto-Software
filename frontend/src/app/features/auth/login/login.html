@@ -1,0 +1,42 @@
+<main class="pagina-auth">
+  <app-panel-marca [titular]="titular" />
+
+  <div class="panel-formulario">
+    <div class="tarjeta-formulario">
+      <h1>{{ textos.tituloLogin }}</h1>
+
+      @if (aviso) {
+        <p class="aviso" role="status">{{ aviso }}</p>
+      }
+
+      <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+        @if (error(); as mensaje) {
+          <p class="error-general" role="alert">{{ mensaje }}</p>
+        }
+
+        <app-campo
+          idCampo="login-correo"
+          [etiqueta]="textos.correo"
+          tipo="email"
+          autocompletar="email"
+          [control]="formulario.controls.correo"
+          [errores]="erroresCorreo"
+        />
+        <app-campo
+          idCampo="login-contrasena"
+          [etiqueta]="textos.contrasena"
+          tipo="password"
+          autocompletar="current-password"
+          [control]="formulario.controls.contrasena"
+          [errores]="erroresContrasena"
+        />
+
+        <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">{{ textos.entrar }}</app-boton>
+      </form>
+
+      <p class="enlace-alterno">
+        {{ textos.sinCuenta }} <a [routerLink]="['/', rutas.registro]">{{ textos.crearUna }}</a>
+      </p>
+    </div>
+  </div>
+</main>

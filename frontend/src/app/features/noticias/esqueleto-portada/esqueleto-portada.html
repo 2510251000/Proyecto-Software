@@ -1,0 +1,28 @@
+<div class="esqueleto" role="status">
+  <span class="solo-lectores-pantalla">{{ textos.cargando }}</span>
+  <div class="apertura" aria-hidden="true">
+    <div class="bloque imagen"></div>
+    <div>
+      <div class="bloque linea corta"></div>
+      <div class="bloque linea titulo"></div>
+      <div class="bloque linea"></div>
+      <div class="bloque linea"></div>
+    </div>
+  </div>
+  <div class="columnas" aria-hidden="true">
+    @for (columna of [1, 2]; track columna) {
+      <div class="columna">
+        @for (n of notas; track n) {
+          <div class="nota">
+            <div>
+              <div class="bloque linea corta"></div>
+              <div class="bloque linea"></div>
+              <div class="bloque linea"></div>
+            </div>
+            <div class="bloque miniatura"></div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

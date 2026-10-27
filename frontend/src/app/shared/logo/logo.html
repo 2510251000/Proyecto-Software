@@ -1,0 +1,25 @@
+<!-- Con la palabra al lado, el dibujo es decorativo: el nombre ya lo lee el texto. -->
+<svg
+  class="isotipo"
+  viewBox="0 0 64 64"
+  [attr.width]="tamano()"
+  [attr.height]="tamano()"
+  [attr.role]="conNombre() ? null : 'img'"
+  [attr.aria-label]="conNombre() ? null : nombre"
+  [attr.aria-hidden]="conNombre() ? 'true' : null"
+  focusable="false"
+>
+  <rect width="64" height="64" rx="9" fill="var(--color-marca)" />
+  @if (reducido()) {
+    <path d="M15 38a17 17 0 0 1 34 0Z" fill="var(--color-sol)" />
+    <rect x="10" y="40.5" width="44" height="5" rx="2.5" fill="var(--color-fondo)" />
+  } @else {
+    <path d="M18 35.6a14 14 0 0 1 28 0Z" fill="var(--color-sol)" />
+    <rect x="12" y="37.6" width="40" height="3.8" rx="1.9" fill="var(--color-fondo)" />
+    <rect x="17" y="45.2" width="30" height="2.9" rx="1.45" fill="var(--color-fondo)" />
+    <rect x="22.5" y="51" width="19" height="2.9" rx="1.45" fill="var(--color-fondo)" />
+  }
+</svg>
+@if (conNombre()) {
+  <span class="nombre">{{ nombre }}</span>
+}

@@ -1,0 +1,42 @@
+:host {
+  --filete: var(--color-marca);
+
+  display: block;
+  min-width: 0;
+}
+
+:host(.comunidad) {
+  --filete: var(--color-sol);
+}
+
+.columna {
+  padding-top: var(--espacio-m);
+  border-top: 4px solid var(--filete);
+}
+
+.titulo {
+  margin-bottom: var(--espacio-xs);
+  font-size: 1.6rem;
+}
+
+.descripcion {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Las notas se separan con un filete fino, sin cajas. */
+.lista > li + li {
+  border-top: 1px solid var(--color-linea);
+}
+
+.vacia {
+  margin: var(--espacio-l) 0 0;
+  color: var(--color-texto-suave);
+}

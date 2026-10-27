@@ -1,0 +1,43 @@
+<header class="cabecera">
+  <div class="contenido">
+    <div class="barra">
+      <p class="marca"><app-logo [tamano]="34" [conNombre]="true" /></p>
+      <app-navegacion />
+    </div>
+
+    <div class="dia">
+      <h1 class="lugar">{{ lugar() }}</h1>
+      <p class="fecha">{{ hoy() }}</p>
+    </div>
+
+    <div class="municipios" role="group" [attr.aria-label]="textos.elegirMunicipio">
+      <button
+        type="button"
+        class="municipio"
+        [attr.aria-pressed]="ciudadActiva() === null"
+        (click)="elegir.emit(null)"
+      >
+        {{ textos.todas }} <span class="cantidad">{{ total() }}</span>
+      </button>
+      @for (conteo of ciudades(); track conteo.ciudad) {
+        <button
+          type="button"
+          class="municipio"
+          [attr.aria-pressed]="ciudadActiva() === conteo.ciudad"
+          (click)="elegir.emit(conteo.ciudad)"
+        >
+          {{ conteo.ciudad }}
+          <span class="cantidad" [attr.aria-label]="cantidad(conteo.cantidad)">{{ conteo.cantidad }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- El sol del logo, saliendo sobre el horizonte. Solo decoración. -->
+  <svg class="sol" viewBox="0 0 320 170" aria-hidden="true" focusable="false">
+    <path class="disco" d="M70 120a90 90 0 0 1 180 0Z" />
+    <rect class="horizonte" x="20" y="128" width="280" height="10" rx="5" />
+    <rect class="horizonte" x="60" y="148" width="200" height="8" rx="4" />
+    <rect class="horizonte" x="100" y="164" width="120" height="6" rx="3" />
+  </svg>
+</header>

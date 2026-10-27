@@ -1,0 +1,17 @@
+{
+  "results": [
+    {
+      "address_components": [
+        { "long_name": "Fusagasugá", "short_name": "Fusagasugá", "types": ["locality", "political"] },
+        { "long_name": "Fusagasugá", "short_name": "Fusagasugá", "types": ["administrative_area_level_2", "political"] },
+        { "long_name": "Cundinamarca", "short_name": "Cundinamarca", "types": ["administrative_area_level_1", "political"] },
+        { "long_name": "Colombia", "short_name": "CO", "types": ["country", "political"] }
+      ],
+      "formatted_address": "Fusagasugá, Cundinamarca, Colombia",
+      "geometry": { "location": { "lat": 4.3364, "lng": -74.3638 }, "location_type": "APPROXIMATE" },
+      "place_id": "ChIJx7Qb3cRcP44RQ1u8eTPa6uE",
+      "types": ["locality", "political"]
+    }
+  ],
+  "status": "OK"
+}
