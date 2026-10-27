@@ -29,7 +29,9 @@ public class SeguridadConfiguracion {
     public SecurityFilterChain filtroSeguridad(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
+                // Sin CSRF a propósito: la API no usa cookies ni sesión; el JWT viaja en el
+                // encabezado Authorization, que el navegador no envía solo desde otro sitio.
+                .csrf(csrf -> csrf.disable()) // NOSONAR
                 .sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(excepciones -> excepciones
                         .authenticationEntryPoint(puntoEntradaNoAutorizado)
