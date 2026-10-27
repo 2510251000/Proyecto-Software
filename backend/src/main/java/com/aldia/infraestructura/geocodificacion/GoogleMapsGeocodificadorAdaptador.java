@@ -93,14 +93,14 @@ public class GoogleMapsGeocodificadorAdaptador implements GeocodificadorPuerto {
     private JsonNode consultar(UriComponentsBuilder uri) {
         try {
             JsonNode respuesta = cliente.get().uri(uri.encode().build().toUri()).retrieve().body(JsonNode.class);
-            String estado = respuesta == null ? "SIN_RESPUESTA" : respuesta.path("status").asText();
-            if (SIN_RESULTADOS.equals(estado)) {
-                return respuesta.path("results");
+            if (respuesta == null) {
+                LOG.warn("Google Maps respondió sin cuerpo");
+                throw new ServicioUbicacionNoDisponibleExcepcion(null);
             }
-            if (!ESTADO_OK.equals(estado)) {
+            String estado = respuesta.path("status").asText();
+            if (!ESTADO_OK.equals(estado) && !SIN_RESULTADOS.equals(estado)) {
                 // El mensaje de Google no incluye la clave; se registra para poder diagnosticar.
-                LOG.warn("Google Maps respondió {}: {}", estado,
-                        respuesta == null ? "" : respuesta.path("error_message").asText());
+                LOG.warn("Google Maps respondió {}: {}", estado, respuesta.path("error_message").asText());
                 throw new ServicioUbicacionNoDisponibleExcepcion(null);
             }
             return respuesta.path("results");
