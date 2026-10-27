@@ -82,6 +82,18 @@ noticia → entrar como `vecina@aldia.com` y ver la notificación → entrar com
 - Backend: `cd backend` y `.\mvnw.cmd test` (no necesita tu PostgreSQL: usa uno embebido).
 - Frontend: `cd frontend` y `npx ng test --watch=false`; lint con `npx ng lint`.
 
+## Calidad del código (SonarQube Cloud)
+
+En cada push a `dev` o `main` y en cada PR, GitHub Actions (`.github/workflows/sonar.yml`)
+corre las pruebas de los dos lados y envía el código y la cobertura a
+[SonarQube Cloud](https://sonarcloud.io/project/overview?id=2510251000_Proyecto-Software).
+Allí se ven los bugs, las vulnerabilidades, el código duplicado, la cobertura y el
+Quality Gate (aprobado / no aprobado). La configuración está en `sonar-project.properties`.
+
+Para ver la cobertura en tu equipo:
+- Backend: `cd backend` y `.\mvnw.cmd verify` → `backend/target/site/jacoco/index.html`.
+- Frontend: `cd frontend` y `npm run test:cobertura` → `frontend/coverage/aldia-app/lcov-report/index.html`.
+
 ## Advertencia: el frontend va en el puerto 4200
 
 Por defecto el backend solo acepta peticiones que vengan de `http://localhost:4200` (CORS,

@@ -76,6 +76,12 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
 24. Diseño: se siguió el estilo «Amanecer» ya definido en el proyecto (banda azul, Source Serif 4
     y Manrope, papel blanco con filetes). El menú principal va sobre la banda azul en todas las
     pantallas con sesión.
+25. **SonarQube Cloud** (gratis porque el repositorio es público) en lugar de un SonarQube
+    local: el análisis corre solo en GitHub Actions y todo el equipo ve el mismo informe. Backend
+    y frontend van en un solo proyecto de Sonar con el escáner genérico
+    (`sonar-project.properties`). La cobertura sale de JaCoCo (backend) y de
+    `@vitest/coverage-v8` en formato lcov (frontend). Quedan fuera de la cobertura el arranque, la
+    configuración, los DTO y las entidades JPA, que no tienen lógica propia.
 
 ## Principios SOLID
 25. El backend sigue la arquitectura hexagonal, que es la aplicación directa de SOLID. Rutas
