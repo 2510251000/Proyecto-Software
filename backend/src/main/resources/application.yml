@@ -14,6 +14,10 @@ spring:
   datasource:
     username: ${DB_USUARIO}
     password: ${DB_CONTRASENA}
+    hikari:
+      # La base usa la misma zona que la app (aldia.zona-horaria). Si no, en un servidor en
+      # UTC (Docker, GitHub Actions) los DEFAULT CURRENT_TIMESTAMP quedan 5 horas adelante.
+      connection-init-sql: SET TIME ZONE '${ZONA_HORARIA:America/Bogota}'
   jpa:
     hibernate:
       # El esquema lo crean las migraciones de Flyway. Hibernate solo verifica que coincida.
