@@ -18,6 +18,9 @@ spring:
       # La base usa la misma zona que la app (aldia.zona-horaria). Si no, en un servidor en
       # UTC (Docker, GitHub Actions) los DEFAULT CURRENT_TIMESTAMP quedan 5 horas adelante.
       connection-init-sql: SET TIME ZONE '${ZONA_HORARIA:America/Bogota}'
+  lifecycle:
+    # Tiempo máximo para terminar las peticiones en curso al apagar.
+    timeout-per-shutdown-phase: ${TIEMPO_APAGADO:20s}
   jpa:
     hibernate:
       # El esquema lo crean las migraciones de Flyway. Hibernate solo verifica que coincida.
@@ -39,6 +42,17 @@ spring:
 
 server:
   port: ${PUERTO:8080}
+  # Al apagar (docker stop, Ctrl+C) termina las peticiones en curso antes de cerrar (factor IX).
+  shutdown: graceful
+
+logging:
+  # Solo por consola, sin archivos (factor XI): Docker y el servidor recogen la salida.
+  level:
+    root: ${NIVEL_LOGS_GENERAL:INFO}
+    com.aldia: ${NIVEL_LOGS:INFO}
+  pattern:
+    # Fecha, nivel, hilo, clase y mensaje.
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{40} - %msg%n"
 
 jwt:
   clave-secreta: ${JWT_CLAVE_SECRETA}

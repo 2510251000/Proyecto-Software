@@ -109,14 +109,16 @@ public class CasosDeUsoConfiguracion {
                                                              NivelRepositorioPuerto niveles,
                                                              CiudadRepositorioPuerto ciudades,
                                                              CifradorPuerto cifrador,
-                                                             Clock reloj) {
-        return new RegistrarUsuarioServicio(usuarios, niveles, ciudades, cifrador, reloj);
+                                                             Clock reloj,
+                                                             HistorialRepositorioPuerto historial) {
+        return new RegistrarUsuarioServicio(usuarios, niveles, ciudades, cifrador, reloj, historial);
     }
 
     @Bean
     public IniciarSesionServicio iniciarSesionServicio(UsuarioRepositorioPuerto usuarios, CifradorPuerto cifrador,
-                                                       TokenPuerto token) {
-        return new IniciarSesionServicio(usuarios, cifrador, token);
+                                                       TokenPuerto token, HistorialRepositorioPuerto historial,
+                                                       Clock reloj) {
+        return new IniciarSesionServicio(usuarios, cifrador, token, historial, reloj);
     }
 
     @Bean

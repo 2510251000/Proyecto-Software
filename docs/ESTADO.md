@@ -14,7 +14,7 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
 | 3. Comentarios, calificaciones y reportes (MF03) | `feature/interaccion` | ✅ |
 | 4. Propuesta de la regla de niveles (MF04_001) | `feature/interaccion` | ✅ propuesta en `docs/PROPUESTA-NIVELES.md` (sin programar: decide el equipo) |
 | 5. Mapa de noticias (MF05_002) | `feature/mapa` | ✅ |
-| 6. Pendientes técnicos | `fix/pendientes-tecnicos` | ⬜ |
+| 6. Pendientes técnicos | `fix/pendientes-tecnicos` | ✅ |
 
 ### Fase 1 — qué quedó
 - **Login**: cielo de noche a pantalla completa con la tarjeta al centro. La primera vez de cada
@@ -73,6 +73,19 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
   ventanita con el titular y el enlace. Debajo, la misma lista en texto.
 - El modelo `Noticia` del frontend ganó `latitud` y `longitud` (el backend ya las enviaba).
 - Verificación: `ng test` 303 (38 archivos), lint y build limpios. Revisado en Edge.
+
+### Fase 6 — qué quedó
+- **Logs** solo por consola (factor XI): nivel de `com.aldia` con `NIVEL_LOGS` y del resto con
+  `NIVEL_LOGS_GENERAL`; formato con fecha, nivel, hilo y clase. Ningún log escribe contraseñas,
+  tokens ni la clave de Google (el adaptador de Google solo registra el tipo de error).
+- **Historial**: el registro (`REGISTRO`) y cada inicio de sesión correcto (`INICIO_SESION`).
+- **Spring Boot 3.3.4 → 3.5.16** y springdoc 2.6.0 → 2.8.17. Prueba nueva de `/v3/api-docs`.
+- **Frontend**: `npm audit fix` (sin `--force`): de 33 riesgos a 22 (ver `PENDIENTES.md`).
+- **SonarQube** también corre en los push a `pre`.
+- **12 factores**: `server.shutdown: graceful` y `TIEMPO_APAGADO`.
+- **Postman**: `backend/postman/AlDia.postman_collection.json` con los 28 endpoints (29
+  peticiones), token por variable y los ids que se guardan solos.
+- Verificación: `mvnw verify` 144 pruebas; `ng test` 303; lint y build limpios.
 
 ## Punto de partida (2026-10-18)
 

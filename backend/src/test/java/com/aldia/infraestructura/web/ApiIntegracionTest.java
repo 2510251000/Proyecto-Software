@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -72,6 +73,9 @@ class ApiIntegracionTest {
 
     @Autowired
     private ObjectMapper json;
+
+    @Autowired
+    private JdbcTemplate jdbc;
 
     private static EmbeddedPostgres arrancarBase() {
         try {
@@ -502,5 +506,26 @@ class ApiIntegracionTest {
         assertThat(revisado.get("estado").asText()).isEqualTo("REVISADO");
         leer(conToken(conJson(put("/api/admin/reportes/" + reporteId), Map.of("estado", "PENDIENTE")), admin), 400);
         leer(conToken(conJson(put("/api/admin/reportes/999999"), Map.of("estado", "DESCARTADO")), admin), 404);
+    }
+
+    @Test
+    void elRegistroYElInicioDeSesionQuedanEnElHistorial() throws Exception {
+        String correo = "historial-" + UUID.randomUUID() + "@correo.com";
+        leer(conJson(post("/api/auth/registro"), Map.of("correo", correo, "contrasena", "clave12345",
+                "ciudadId", idCiudad("Chía"))), 201);
+        token(correo, "clave12345");
+        mvc.perform(conJson(post("/api/auth/login"), Map.of("correo", correo, "contrasena", "equivocada")))
+                .andExpect(status().isUnauthorized());
+
+        List<String> acciones = jdbc.queryForList("SELECT h.accion FROM historial h JOIN usuario u ON u.id = h.usuario_id "
+                + "WHERE u.correo = ? ORDER BY h.id", String.class, correo);
+        assertThat(acciones).containsExactly("REGISTRO", "INICIO_SESION");
+    }
+
+    @Test
+    void laDocumentacionDeLaApiSigueDisponible() throws Exception {
+        JsonNode documento = leer(get("/v3/api-docs"), 200);
+        assertThat(documento.get("paths").has("/api/noticias/{noticiaId}/comentarios")).isTrue();
+        assertThat(documento.get("paths").has("/api/noticias/{id}/imagenes/{orden}")).isTrue();
     }
 }

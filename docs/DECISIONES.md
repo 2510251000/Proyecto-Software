@@ -230,3 +230,16 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     (decidido por Claude Code; revisar)
 58. El enlace de la ventanita navega con el router de Angular (sin recargar la página); los
     marcadores tienen `title` y se pueden enfocar con el teclado.
+
+## Fase 6 — Pendientes técnicos
+59. Logs **solo por consola** (factor XI), sin archivo: el nivel de la aplicación sale de
+    `NIVEL_LOGS` (INFO) y el de las librerías de `NIVEL_LOGS_GENERAL` (INFO).
+60. En el historial solo quedan los inicios de sesión **correctos**; los fallidos no, para no
+    llenar la tabla con intentos de terceros contra la cuenta de alguien. (decidido por Claude
+    Code; revisar)
+61. springdoc **2.8.17** (la última 2.8, compatible con Spring Boot 3.5). Las 2.9 y 2.10 no se
+    usaron porque no se confirmó su compatibilidad con Boot 3.5. (decidido por Claude Code; revisar)
+62. `npm audit fix` sin `--force` solo pudo arreglar lo que no exige cambiar de versión mayor
+    o mover todo Angular a la vez. Lo demás queda en `PENDIENTES.md`.
+63. Apagado ordenado: `server.shutdown: graceful` con hasta `TIEMPO_APAGADO` (20 s) para
+    terminar las peticiones en curso (factor IX).
