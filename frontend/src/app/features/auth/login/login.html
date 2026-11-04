@@ -1,8 +1,34 @@
-<main class="pagina-auth">
-  <app-panel-marca [titular]="titular" />
+<main
+  class="pagina-login"
+  [class.en-entrada]="fase() === 'entrada'"
+  [class.amaneciendo]="fase() === 'amanecer'"
+>
+  <!-- El cielo y todo lo que pasa en él es decoración: no se anuncia. -->
+  <div class="cielo" aria-hidden="true">
+    <div class="estrellas">
+      @for (estrella of estrellas; track $index) {
+        <span
+          class="estrella"
+          [style.left.%]="estrella.x"
+          [style.top.%]="estrella.y"
+          [style.width.px]="estrella.tamano"
+          [style.height.px]="estrella.tamano"
+          [style.--retraso-titileo.s]="estrella.retraso"
+        ></span>
+      }
+    </div>
 
-  <div class="panel-formulario">
-    <div class="tarjeta-formulario">
+    @if (fase() === 'entrada') {
+      <app-escena-atardecer />
+    }
+
+    @if (fase() === 'amanecer') {
+      <span class="sol-amanecer"></span>
+    }
+  </div>
+
+  <div class="contenedor-tarjeta">
+    <div class="tarjeta-formulario tarjeta-login" [inert]="!tarjetaLista() || fase() === 'amanecer'">
       <h1>{{ textos.tituloLogin }}</h1>
 
       @if (aviso) {
@@ -39,4 +65,14 @@
       </p>
     </div>
   </div>
+
+  @if (fase() === 'entrada') {
+    <button type="button" class="saltar" [attr.aria-label]="textosEntrada.saltarDescripcion" (click)="saltar()">
+      {{ textosEntrada.saltar }}
+    </button>
+  }
+
+  @if (fase() === 'amanecer') {
+    <p class="solo-lectores-pantalla" role="status">{{ textosEntrada.entrando }}</p>
+  }
 </main>

@@ -49,7 +49,7 @@ describe('rutas de la aplicación', () => {
       expect(await ir(url)).toBe('/login');
     });
 
-    it.each(['/publicar', '/perfil', '/notificaciones', '/admin'])('%s pide sesión', async (url) => {
+    it.each(['/hoy', '/publicar', '/perfil', '/notificaciones', '/admin'])('%s pide sesión', async (url) => {
       expect(await ir(url)).toBe('/login');
     });
 

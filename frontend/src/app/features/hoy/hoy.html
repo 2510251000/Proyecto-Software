@@ -1,0 +1,72 @@
+<main class="pagina-hoy">
+  @switch (fase()) {
+    @case ('cargando') {
+      <p class="estado" role="status">{{ textos.cargando }}</p>
+    }
+
+    @case ('error') {
+      <div class="estado">
+        <p role="alert">{{ error() }}</p>
+        <button type="button" class="boton-claro" (click)="irAPortada()">{{ textos.irAPortada }}</button>
+      </div>
+    }
+
+    @case ('intro') {
+      <section class="intro" [class.sin-movimiento]="reducirMovimiento">
+        <div class="intro-texto">
+          <p class="saludo">{{ saludo() }}</p>
+          <h1 class="municipio-grande" [attr.aria-label]="municipio()">
+            @for (letra of letras(); track $index; let i = $index) {
+              <span class="letra" aria-hidden="true" [style.animation-delay.ms]="retrasoLetra(i)">{{ letra }}</span>
+            }
+          </h1>
+          <p class="subtitulo">{{ subtitulo() }}</p>
+          <button type="button" class="boton-claro empezar" (click)="empezar()">{{ textos.empezar }}</button>
+        </div>
+        <!-- La mitad de un sol saliendo, abajo. El texto nunca va encima. -->
+        <span class="sol-intro" aria-hidden="true"></span>
+      </section>
+    }
+
+    @case ('historias') {
+      <app-historias
+        [historias]="seleccion().historias"
+        [municipio]="municipio()"
+        [fecha]="fecha"
+        (terminar)="terminarHistorias()"
+      />
+    }
+
+    @case ('final') {
+      <section class="final" [class.sin-movimiento]="reducirMovimiento">
+        <div class="tarjeta-final">
+          <h1 class="titulo-final">{{ tituloFinal() }}</h1>
+          @if (seleccion().historias.length === 0) {
+            <p>{{ textos.subtituloVacio }}</p>
+          }
+
+          @if (cercanas().length > 0) {
+            <h2 class="cerca-titulo">{{ textos.cercaDeTi }}</h2>
+            <ul class="cercanas">
+              @for (noticia of cercanas(); track noticia.id; let i = $index) {
+                <li class="cercana" [style.animation-delay.ms]="retrasoCercana(i)">
+                  <a [routerLink]="['/', rutas.noticias, noticia.id]">
+                    <span class="cercana-ciudad">{{ noticia.ciudad }}</span>
+                    <span class="cercana-titulo">{{ noticia.titulo }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+
+          <div class="acciones">
+            @if (seleccion().historias.length > 0) {
+              <button type="button" class="boton-marca" (click)="verOtraVez()">{{ textos.verOtraVez }}</button>
+            }
+            <button type="button" class="boton-borde" (click)="irAPortada()">{{ textos.irAPortada }}</button>
+          </div>
+        </div>
+      </section>
+    }
+  }
+</main>

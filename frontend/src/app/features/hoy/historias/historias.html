@@ -1,0 +1,95 @@
+<div class="visor" [class.pausado]="pausado()" [class.sin-movimiento]="reducirMovimiento">
+  <!-- Escritorio: el municipio, la fecha y todos los titulares. -->
+  <app-lista-historias
+    [historias]="historias()"
+    [indice]="indice()"
+    [municipio]="municipio()"
+    [fecha]="fecha()"
+    (elegir)="irA($event)"
+  />
+
+  @for (historia of [actual()]; track vuelta()) {
+    <article class="historia" aria-labelledby="historia-titulo">
+      <div class="progreso" role="group" [attr.aria-label]="textos.progreso">
+        @for (otra of historias(); track $index; let i = $index) {
+          <span class="barra">
+            <span class="relleno" [class.completa]="i < indice()" [class.activa]="i === indice()"></span>
+          </span>
+        }
+      </div>
+
+      <div class="foto" aria-hidden="true">
+        <app-miniatura [categoria]="categoria()" />
+      </div>
+
+      <div class="controles">
+        <button
+          type="button"
+          class="control"
+          [attr.aria-label]="pausado() ? textos.reanudar : textos.pausar"
+          [attr.aria-pressed]="pausado()"
+          (click)="alternarPausa()"
+        >
+          @if (pausado()) {
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" /></svg>
+          } @else {
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>
+          }
+        </button>
+        <button type="button" class="control cerrar" [attr.aria-label]="textos.cerrar" (click)="cerrar()">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+
+      <p class="chip">
+        <span class="iniciales" aria-hidden="true">{{ inicialesAutor() }}</span>
+        <span class="autor">{{ autor() }}</span>
+        @if (nivelAutor(); as nivel) {
+          <span class="separador" aria-hidden="true">·</span>
+          <span>{{ textos.nivel }} {{ nivel }}</span>
+        }
+        @if (cuando() !== '') {
+          <span class="separador" aria-hidden="true">·</span>
+          <time [attr.datetime]="historia.fechaPublicacion">{{ cuando() }}</time>
+        }
+      </p>
+
+      @if (pausado()) {
+        <p class="aviso-pausa">{{ textos.enPausa }}</p>
+      }
+
+      <!-- Zonas de toque: el 35 % izquierdo va a la anterior y el resto a la siguiente. -->
+      <div class="zonas" (pointerdown)="presionar()" (pointerup)="soltar()" (pointercancel)="soltar()" (pointerleave)="soltar()" (contextmenu)="$event.preventDefault()">
+        <button
+          type="button"
+          class="zona zona-anterior"
+          tabindex="-1"
+          [style.width.%]="zonaAnterior"
+          [attr.aria-label]="textos.anterior"
+          (click)="tocar('anterior')"
+        ></button>
+        <button
+          type="button"
+          class="zona zona-siguiente"
+          tabindex="-1"
+          [attr.aria-label]="textos.siguiente"
+          (click)="tocar('siguiente')"
+        ></button>
+      </div>
+
+      <app-texto-historia [noticia]="historia" [sinMovimiento]="reducirMovimiento" />
+    </article>
+  }
+
+  <!-- Escritorio: la próxima historia, más tenue. -->
+  <aside class="proxima">
+    @if (siguiente(); as proxima) {
+      <p class="antetitulo">{{ textos.sigue }}</p>
+      <button type="button" class="titular-proximo" (click)="avanzar()">{{ proxima.titulo }}</button>
+    }
+  </aside>
+
+  <p class="solo-lectores-pantalla" aria-live="polite">{{ anuncio() }}</p>
+</div>

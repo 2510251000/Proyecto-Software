@@ -26,6 +26,22 @@
   --color-borde: #7a869c; /* bordes de campos: 3.5:1 sobre la superficie, 3.7:1 sobre blanco, 3.2:1 sobre la página */
   --color-error: #b3261e; /* errores de formulario: 6.5:1 sobre blanco, 5.8:1 sobre la página */
 
+  /*
+    El cielo de la entrada y de «Hoy». Todos llevan texto blanco encima, nunca gris claro.
+    Contraste del blanco: noche 16.4:1, alba 10.2:1, día 9.4:1, atardecer 7.6:1,
+    crepúsculo 13.4:1, anochecer 15.9:1, amanecer 8.5:1.
+  */
+  --color-noche: #0b1d40;
+  --color-cielo-alba: #1a3f7a;
+  --color-cielo-dia: #1f4580;
+  --color-cielo-atardecer: #8f3f27;
+  --color-cielo-crepusculo: #4f2140;
+  --color-cielo-anochecer: #1f1b3d;
+  --color-cielo-amanecer: #1f4a8a;
+  --color-sol-poniente: #e4572e; /* solo relleno: el sol cuando se oculta */
+  --color-velo-noche: rgba(11, 29, 64, 0.78); /* chip sobre la foto: el blanco queda por encima de 8:1 */
+  --color-papel-calido: #fdf7ee; /* tarjeta final de «Hoy»: el azul de marca encima da 14.2:1 */
+
   /* Espacios */
   --espacio-xs: 0.25rem;
   --espacio-s: 0.5rem;

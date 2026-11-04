@@ -3,6 +3,33 @@
 Se actualiza a medida que avanza el trabajo, para poder retomarlo si la sesión se corta.
 Leyenda: ✅ hecho · 🔄 en curso · ⬜ falta
 
+## Seis fases nuevas (desde 2026-11-04, Claude Code en modo autónomo)
+
+Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas prueba y sube.
+
+| Fase | Rama | Estado |
+|---|---|---|
+| 1. Entrada con atardecer y «Hoy» tipo historias | `feature/entrada-e-historias` | ✅ |
+| 2. Imágenes en las noticias (MF02_003) | `feature/imagenes-noticias` | ⬜ |
+| 3. Comentarios, calificaciones y reportes (MF03) | `feature/interaccion` | ⬜ |
+| 4. Propuesta de la regla de niveles (MF04_001) | `feature/interaccion` | ⬜ |
+| 5. Mapa de noticias (MF05_002) | `feature/mapa` | ⬜ |
+| 6. Pendientes técnicos | `fix/pendientes-tecnicos` | ⬜ |
+
+### Fase 1 — qué quedó
+- **Login**: cielo de noche a pantalla completa con la tarjeta al centro. La primera vez de cada
+  sesión del navegador corre la entrada de 4.8 s (el sol sale, se oculta tras las tres barras del
+  isotipo, salen las estrellas y aparece la tarjeta), con botón «Saltar». Al entrar, amanece
+  (1.6 s) y se abre «Hoy». Formulario, validación, errores y avisos siguen igual.
+- **Hoy** (`/hoy`, en el menú antes de «Portada»): saludo según la hora con el nombre, el
+  municipio letra por letra, y las noticias de hoy del municipio como historias de 5 s (barra de
+  progreso, foto que se acerca, titular palabra por palabra, toques a los lados, flechas,
+  barra espaciadora o botón para pausar, mantener presionado en el celular). Al final, «Ya estás
+  al día en…» con «Cerca de ti» (otros municipios).
+- Con «reducir movimiento» no hay animaciones ni avance automático.
+- Verificación: `ng test` 244 pruebas (32 archivos), `ng lint` limpio, `ng build` sin avisos;
+  `mvnw verify` en verde (el backend no cambió). Revisado en Edge a 1366 px y a 390 px.
+
 ## Punto de partida (2026-10-18)
 
 - `dev` (`cbe2b4b`): registro, login con JWT, listado de noticias y diseño «Amanecer».

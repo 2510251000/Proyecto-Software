@@ -1,6 +1,7 @@
 export const RUTAS = {
   raiz: '',
   login: 'login',
+  hoy: 'hoy',
   registro: 'registro',
   noticias: 'noticias',
   publicar: 'publicar',

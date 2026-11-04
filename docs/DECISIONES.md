@@ -117,3 +117,34 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
       orquesta, que es lo propio de un caso de uso. En Angular los componentes reciben los
       servicios concretos con `inject()` (práctica habitual del framework); en las pruebas se
       reemplazan por servicios falsos.
+
+## Fase 1 — Entrada con atardecer y «Hoy» (2026-11-04)
+26. Las animaciones son solo CSS (`@keyframes`) y señales; los tiempos que manda el código
+    (entrada, tarjeta, amanecer, intro, historia, retrasos de letras y palabras) están en
+    `core/constants/animaciones.constants.ts` y llegan al CSS como variables `--duracion-…`.
+    Los colores nuevos del cielo son tokens en `styles.css`. Los temporizadores pasan por
+    `core/utils/temporizadores.ts`, que los cancela con el `DestroyRef` del componente.
+27. «Reducir movimiento» se lee con `MovimientoService` (`matchMedia`), así las pruebas lo
+    simulan. Con esa preferencia no hay entrada, ni amanecer, ni avance de la intro o de las
+    historias: la intro de «Hoy» espera el botón «Ver las noticias». (decidido por Claude Code; revisar)
+28. Mientras la tarjeta del login no ha aparecido, el formulario está `inert` para que no se
+    pueda enfocar sin verse; al saltar o a los 3.9 s queda usable. (decidido por Claude Code; revisar)
+29. Si la navegación a «Hoy» no se da (un guard la redirige), el login vuelve al formulario
+    en lugar de quedarse en el amanecer. (decidido por Claude Code; revisar)
+30. El saludo usa solo el **primer nombre** del perfil («Buenos días, Laura»).
+    (decidido por Claude Code; revisar)
+31. Sin ciudad en el perfil, el nombre grande de la intro es «Al Día» y la tarjeta final dice
+    solo «Ya estás al día». «Cerca de ti» toma las más recientes que no salieron en las
+    historias. (decidido por Claude Code; revisar)
+32. Si no hay ninguna noticia publicada, la intro dice «Todavía no hay noticias publicadas» y
+    pasa directo a la tarjeta final, sin «Ver otra vez». (decidido por Claude Code; revisar)
+33. Además del toque largo y la barra espaciadora, cada historia tiene un **botón de pausa**
+    visible (WCAG 2.2.2: el contenido que se mueve solo debe poderse pausar). Las zonas de toque
+    no reciben foco (`tabindex="-1"`): con teclado se usan las flechas. La barra espaciadora no
+    pausa si el foco está en un botón o enlace, para no robarle su función.
+34. «Hoy» no muestra el menú principal (es a pantalla completa); se sale con «Cerrar» o
+    «Ir a la portada». La ruta raíz sigue llevando a la portada; solo el login lleva a «Hoy».
+    (decidido por Claude Code; revisar)
+35. Para respetar el presupuesto de 4 kB de estilos por componente, la escena del atardecer
+    (`features/auth/escena-atardecer`), la lista de titulares (`features/hoy/lista-historias`) y
+    el bloque de texto de cada historia (`features/hoy/texto-historia`) son subcomponentes.
