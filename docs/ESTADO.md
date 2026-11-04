@@ -12,7 +12,7 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
 | 1. Entrada con atardecer y «Hoy» tipo historias | `feature/entrada-e-historias` | ✅ |
 | 2. Imágenes en las noticias (MF02_003) | `feature/imagenes-noticias` | ✅ |
 | 3. Comentarios, calificaciones y reportes (MF03) | `feature/interaccion` | ✅ |
-| 4. Propuesta de la regla de niveles (MF04_001) | `feature/interaccion` | ⬜ |
+| 4. Propuesta de la regla de niveles (MF04_001) | `feature/interaccion` | ✅ propuesta en `docs/PROPUESTA-NIVELES.md` (sin programar: decide el equipo) |
 | 5. Mapa de noticias (MF05_002) | `feature/mapa` | ⬜ |
 | 6. Pendientes técnicos | `fix/pendientes-tecnicos` | ⬜ |
 
