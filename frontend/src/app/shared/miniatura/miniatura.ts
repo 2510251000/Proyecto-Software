@@ -1,6 +1,9 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
 import { RUTA_IMAGENES_NOTICIAS } from '../../core/constants/categorias.constants';
 import { CategoriaMiniatura } from '../../core/models/categoria-miniatura.model';
+import { ImagenNoticia } from '../../core/models/noticia.model';
+import { ImagenService } from '../../core/services/imagen.service';
+import { urlImagen } from '../../core/utils/imagenes';
 
 const TEXTO_ALTERNATIVO: Record<CategoriaMiniatura, string> = {
   bici: 'Personas en bicicleta por una ciclorruta arborizada',
@@ -14,8 +17,9 @@ const TEXTO_ALTERNATIVO: Record<CategoriaMiniatura, string> = {
 };
 
 /**
- * Foto de la categoría de la noticia. Mientras no exista la tabla multimedia (RF8)
- * es una foto por categoría; si no carga, se muestra el dibujo de esa categoría.
+ * Foto de una noticia: la foto real si la noticia tiene (`foto`); si no, o si no carga, la foto
+ * de su categoría; y si tampoco carga, el dibujo de esa categoría.
+ * Con `protegida`, la foto se pide con sesión (noticias ocultas en la moderación).
  */
 @Component({
   selector: 'app-miniatura',
@@ -23,10 +27,60 @@ const TEXTO_ALTERNATIVO: Record<CategoriaMiniatura, string> = {
   styleUrl: './miniatura.css',
 })
 export class Miniatura {
-  readonly categoria = input.required<CategoriaMiniatura>();
+  private readonly imagenes = inject(ImagenService);
 
-  /** Se enciende si la foto no carga; entonces se usa el dibujo. */
+  readonly categoria = input.required<CategoriaMiniatura>();
+  readonly foto = input<ImagenNoticia | null>(null);
+  readonly protegida = input(false);
+
+  /** La foto real no cargó: se usa la de la categoría. */
+  protected readonly falloFoto = signal(false);
+  /** Tampoco cargó la de la categoría: se usa el dibujo. */
   protected readonly fallo = signal(false);
-  protected readonly rutaFoto = computed(() => `${RUTA_IMAGENES_NOTICIAS}/${this.categoria()}.webp`);
-  protected readonly textoAlternativo = computed(() => TEXTO_ALTERNATIVO[this.categoria()]);
+  private readonly urlProtegida = signal<string | null>(null);
+
+  private readonly conFotoReal = computed(() => this.foto() !== null && !this.falloFoto());
+
+  /** Mientras llega una foto protegida no se muestra nada (sin saltos de la foto de categoría a la real). */
+  protected readonly esperando = computed(() => this.conFotoReal() && this.protegida() && this.urlProtegida() === null);
+
+  protected readonly rutaFoto = computed(() => {
+    const foto = this.foto();
+    if (foto !== null && !this.falloFoto()) {
+      return this.protegida() ? this.urlProtegida() : urlImagen(foto);
+    }
+    return this.fallo() ? null : `${RUTA_IMAGENES_NOTICIAS}/${this.categoria()}.webp`;
+  });
+
+  protected readonly textoAlternativo = computed(() =>
+    this.conFotoReal() ? (this.foto()?.textoAlternativo ?? '') : TEXTO_ALTERNATIVO[this.categoria()],
+  );
+
+  constructor() {
+    effect((alLimpiar) => {
+      const foto = this.foto();
+      if (foto === null || !this.protegida()) {
+        return;
+      }
+      const suscripcion = this.imagenes.obtenerProtegida(urlImagen(foto)).subscribe({
+        next: (blob) => this.urlProtegida.set(URL.createObjectURL(blob)),
+        error: () => this.falloFoto.set(true),
+      });
+      alLimpiar(() => suscripcion.unsubscribe());
+    });
+    inject(DestroyRef).onDestroy(() => {
+      const url = this.urlProtegida();
+      if (url !== null) {
+        URL.revokeObjectURL(url);
+      }
+    });
+  }
+
+  protected alFallar(): void {
+    if (this.conFotoReal()) {
+      this.falloFoto.set(true);
+    } else {
+      this.fallo.set(true);
+    }
+  }
 }

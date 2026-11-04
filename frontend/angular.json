@@ -95,6 +95,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "red": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.red.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -107,6 +118,9 @@
             },
             "development": {
               "buildTarget": "aldia-app:build:development"
+            },
+            "red": {
+              "buildTarget": "aldia-app:build:red"
             }
           },
           "defaultConfiguration": "development"

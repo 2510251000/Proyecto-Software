@@ -6,7 +6,7 @@
   aria-describedby="apertura-seccion apertura-resumen apertura-datos"
   (abrirNoticia)="abrir.emit($event)"
 >
-  <app-miniatura class="imagen" [categoria]="categoria()" />
+  <app-miniatura class="imagen" [categoria]="categoria()" [foto]="portada()" />
   <div class="texto">
     <p class="seccion" id="apertura-seccion">{{ seccion() }}</p>
     <h2 class="titulo" id="apertura-titulo">{{ principal().titulo }}</h2>

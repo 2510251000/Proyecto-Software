@@ -36,6 +36,15 @@
   gap: var(--espacio-m);
 }
 
+/* La portada de la noticia, pequeña, para reconocerla de un vistazo. */
+.miniatura-fila {
+  flex: none;
+  width: 5.5rem;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radio-s);
+}
+
 .datos {
   flex: 1 1 24rem;
   min-width: 0;

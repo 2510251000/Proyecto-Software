@@ -49,6 +49,13 @@ services:
       GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
       GEO_PROVEEDOR: ${GEO_PROVEEDOR:-auto}
       NOMINATIM_CORREO_CONTACTO: ${NOMINATIM_CORREO_CONTACTO:-}
+      # Fotos de las noticias: se guardan en el volumen «imagenes».
+      IMAGENES_DIRECTORIO: /app/imagenes
+      IMAGENES_MAXIMO_POR_NOTICIA: ${IMAGENES_MAXIMO_POR_NOTICIA:-4}
+      IMAGENES_TAMANO_MAXIMO_MB: ${IMAGENES_TAMANO_MAXIMO_MB:-5}
+      IMAGENES_TAMANO_MAXIMO_PETICION_MB: ${IMAGENES_TAMANO_MAXIMO_PETICION_MB:-25}
+    volumes:
+      - imagenes:/app/imagenes
     ports:
       - "8080:8080"
     depends_on:
@@ -57,3 +64,4 @@ services:
 
 volumes:
   datos-postgres:
+  imagenes:

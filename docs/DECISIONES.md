@@ -148,3 +148,48 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
 35. Para respetar el presupuesto de 4 kB de estilos por componente, la escena del atardecer
     (`features/auth/escena-atardecer`), la lista de titulares (`features/hoy/lista-historias`) y
     el bloque de texto de cada historia (`features/hoy/texto-historia`) son subcomponentes.
+
+## Fase 2 — Fotos de las noticias (MF02_003)
+36. **Almacenamiento detrás de un puerto.** `AlmacenImagenesPuerto` (guardar, leer, borrar) con un
+    primer adaptador en disco (`IMAGENES_DIRECTORIO`; en Docker, el volumen `imagenes`). **Con
+    varios servidores** el disco de uno no lo ve el otro: habría que cambiar a un adaptador de
+    almacenamiento en la nube (S3, Azure Blob, Cloudinary…). El puerto ya lo permite sin tocar
+    los casos de uso.
+37. En la columna `multimedia.url` se guarda la **clave del archivo** (un UUID con extensión), no
+    una URL pública: la API arma la URL (`/api/noticias/{id}/imagenes/{orden}`) y así puede
+    revisar permisos. El nombre que puso el usuario nunca se usa en el disco.
+38. **El tipo real sale de los primeros bytes** (firma del archivo), nunca del nombre ni del
+    `Content-Type`. Se aceptan JPEG, PNG y WebP. Las dimensiones se leen de la cabecera **antes**
+    de decodificar la foto, para que una imagen con dimensiones gigantes no agote la memoria.
+    Máximo 8000×8000 px (`IMAGENES_ANCHO_MAXIMO`, `IMAGENES_ALTO_MAXIMO`).
+    (decidido por Claude Code; revisar)
+39. **Sin metadatos.** JPEG y PNG se vuelven a codificar desde los píxeles con ImageIO (viene con
+    Java, no se agregó ninguna librería), así desaparecen EXIF (con la ubicación GPS), XMP y
+    comentarios. JPEG se guarda con calidad 0.9 (`IMAGENES_CALIDAD_JPEG`). Java no trae lector de
+    WebP: a esos archivos se les quitan los bloques `EXIF` y `XMP ` del contenedor RIFF sin
+    recodificarlos. (decidido por Claude Code; revisar)
+40. Al volver a codificar, la **orientación EXIF** se pierde. Desde la app no importa (el
+    navegador ya rota la foto antes de subirla), pero una foto subida directo a la API desde un
+    celular podría verse girada. (decidido por Claude Code; revisar)
+41. Orden de la publicación con fotos: se validan y limpian **antes** de tocar la base; los
+    archivos se guardan antes de la transacción y, si cualquier paso falla (base, cupo diario,
+    cuenta desactivada), se borran. Si falla el guardado de una foto, se borran las anteriores.
+42. Las fotos de una noticia **no publicada** responden 404 al público (igual que la noticia)
+    y `Cache-Control: no-store, private` a su autor y a los administradores. Las publicadas,
+    `public, max-age` (`IMAGENES_CACHE_SEGUNDOS`, 1 día).
+43. Un archivo más pesado que `IMAGENES_TAMANO_MAXIMO_MB` lo frena primero Spring
+    (`spring.servlet.multipart.max-file-size`); el manejador global responde **413** con un
+    mensaje claro. La petición completa admite hasta `IMAGENES_TAMANO_MAXIMO_PETICION_MB` (25).
+44. La descripción de cada foto viaja en el JSON de `datos` como `descripcionesImagenes` (en el
+    mismo orden de las partes) y se guarda en la columna nueva `multimedia.texto_alternativo`
+    (máximo 250). Sin descripción, la foto se muestra con `alt=""` porque el titular ya dice de
+    qué trata. (decidido por Claude Code; revisar)
+45. En el navegador cada foto se reduce con `createImageBitmap` (`imageOrientation: 'from-image'`)
+    y un canvas de máximo 1600 px exportado a JPEG 0.82, con fondo blanco para PNG
+    transparentes. Si el navegador no puede leerla (algunas HEIC), se explica cómo cambiarla.
+46. Las miniaturas de la moderación se piden **con sesión** (HttpClient + interceptor) y se
+    muestran con una URL `blob:`, porque las noticias ocultas no son públicas y un `<img>` no
+    manda el token. (decidido por Claude Code; revisar)
+47. **Probar desde el celular**: el ambiente `red` (`environment.red.ts`, `ng serve --configuration
+    red --host 0.0.0.0`) arma la URL de la API con el mismo equipo desde el que se abrió la
+    página, así la IP no queda escrita en el código. El origen se agrega a `CORS_ORIGENES`.

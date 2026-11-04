@@ -1,6 +1,7 @@
 package com.aldia.infraestructura.web.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.aldia.dominio.modelo.NuevaNoticia;
 
@@ -34,8 +35,18 @@ public record PublicarNoticiaRequestDTO(
         BigDecimal longitud,
 
         @Size(max = 255, message = "El id del lugar no puede tener más de 255 caracteres")
-        String idLugarGoogle
+        String idLugarGoogle,
+
+        /** Descripción de cada foto, en el mismo orden de las partes «imagenes» (solo con multipart). */
+        List<String> descripcionesImagenes
 ) {
+
+    /** La descripción de la foto número {@code posicion} (desde 0), o null si no la mandaron. */
+    public String descripcionImagen(int posicion) {
+        return descripcionesImagenes != null && posicion < descripcionesImagenes.size()
+                ? descripcionesImagenes.get(posicion)
+                : null;
+    }
 
     public NuevaNoticia aDominio() {
         return new NuevaNoticia(titulo, resumen, contenido, ciudadId, latitud, longitud, idLugarGoogle);

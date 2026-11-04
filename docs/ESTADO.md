@@ -10,7 +10,7 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
 | Fase | Rama | Estado |
 |---|---|---|
 | 1. Entrada con atardecer y «Hoy» tipo historias | `feature/entrada-e-historias` | ✅ |
-| 2. Imágenes en las noticias (MF02_003) | `feature/imagenes-noticias` | ⬜ |
+| 2. Imágenes en las noticias (MF02_003) | `feature/imagenes-noticias` | ✅ |
 | 3. Comentarios, calificaciones y reportes (MF03) | `feature/interaccion` | ⬜ |
 | 4. Propuesta de la regla de niveles (MF04_001) | `feature/interaccion` | ⬜ |
 | 5. Mapa de noticias (MF05_002) | `feature/mapa` | ⬜ |
@@ -29,6 +29,25 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
 - Con «reducir movimiento» no hay animaciones ni avance automático.
 - Verificación: `ng test` 244 pruebas (32 archivos), `ng lint` limpio, `ng build` sin avisos;
   `mvnw verify` en verde (el backend no cambió). Revisado en Edge a 1366 px y a 390 px.
+
+### Fase 2 — qué quedó
+- **Backend**: `POST /api/noticias` acepta además `multipart/form-data` (parte `datos` con el
+  mismo JSON y hasta 4 partes `imagenes`); el JSON solo sigue igual. Cada foto se valida por sus
+  primeros bytes (JPEG, PNG o WebP), por peso y por dimensiones, y se guarda **sin metadatos**
+  (JPEG y PNG se vuelven a codificar; a WebP se le quitan los bloques EXIF y XMP). Los archivos
+  van al puerto `AlmacenImagenesPuerto` (adaptador en disco, `IMAGENES_DIRECTORIO`; en Docker el
+  volumen `imagenes`). Si la base falla, se borran los archivos ya guardados.
+  `GET /api/noticias/{id}/imagenes/{orden}` las sirve con `Cache-Control`; si la noticia no está
+  publicada solo la ven su autor y los administradores. `NoticiaResponseDTO.imagenes`.
+  Migración `V4__imagenes_noticia.sql` (descripción de la foto y orden único por noticia).
+- **Frontend**: `selector-imagenes` en Publicar con «Tomar foto» (cámara del celular), «Elegir
+  fotos», arrastrar y soltar y Ctrl+V; vista previa, quitar, reordenar (la primera es la
+  portada) y «Describe la foto». Cada foto se reduce en el navegador (1600 px, JPEG 0.82, sin
+  EXIF, respetando la rotación) y se sube con barra de progreso. Las fotos reales se ven en la
+  portada, la apertura, el detalle (con galería), las historias de «Hoy» y la moderación.
+- `README.md`: cómo probar desde el celular en la misma Wi-Fi (ambiente `red`, sin IP escrita).
+- Verificación: `mvnw verify` 124 pruebas; `ng test` 270 pruebas (35 archivos); lint y build
+  limpios. Revisado en Edge (Publicar con fotos a 1280 y 390 px, detalle con galería).
 
 ## Punto de partida (2026-10-18)
 

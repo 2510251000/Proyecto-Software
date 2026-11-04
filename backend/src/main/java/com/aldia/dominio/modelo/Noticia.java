@@ -2,6 +2,7 @@ package com.aldia.dominio.modelo;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Noticia {
 
@@ -20,6 +21,8 @@ public class Noticia {
     private final int autorNivel;
     private final BigDecimal latitud;
     private final BigDecimal longitud;
+    /** Fotos en orden; la primera es la portada. Vacía si la noticia no tiene fotos. */
+    private final List<ImagenNoticia> imagenes;
 
     public Noticia(Long id, String titulo, String resumen, String contenido,
                    LocalDateTime fechaPublicacion, boolean oficial, Estado estado, String ciudad) {
@@ -31,6 +34,15 @@ public class Noticia {
                    LocalDateTime fechaPublicacion, boolean oficial, Estado estado, String ciudad,
                    Long ciudadId, Long autorId, String autorNombre, int autorNivel,
                    BigDecimal latitud, BigDecimal longitud) {
+        this(id, titulo, resumen, contenido, fechaPublicacion, oficial, estado, ciudad, ciudadId, autorId,
+                autorNombre, autorNivel, latitud, longitud, List.of());
+    }
+
+    @SuppressWarnings("java:S107") // Es el modelo completo de la noticia: un parámetro por dato.
+    public Noticia(Long id, String titulo, String resumen, String contenido,
+                   LocalDateTime fechaPublicacion, boolean oficial, Estado estado, String ciudad,
+                   Long ciudadId, Long autorId, String autorNombre, int autorNivel,
+                   BigDecimal latitud, BigDecimal longitud, List<ImagenNoticia> imagenes) {
         this.id = id;
         this.titulo = titulo;
         this.resumen = resumen;
@@ -45,6 +57,13 @@ public class Noticia {
         this.autorNivel = autorNivel;
         this.latitud = latitud;
         this.longitud = longitud;
+        this.imagenes = imagenes == null ? List.of() : List.copyOf(imagenes);
+    }
+
+    /** La misma noticia con estas fotos. */
+    public Noticia conImagenes(List<ImagenNoticia> nuevas) {
+        return new Noticia(id, titulo, resumen, contenido, fechaPublicacion, oficial, estado, ciudad, ciudadId,
+                autorId, autorNombre, autorNivel, latitud, longitud, nuevas);
     }
 
     public Long getId() {
@@ -101,6 +120,10 @@ public class Noticia {
 
     public BigDecimal getLongitud() {
         return longitud;
+    }
+
+    public List<ImagenNoticia> getImagenes() {
+        return imagenes;
     }
 
     public enum Estado {

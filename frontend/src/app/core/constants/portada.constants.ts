@@ -24,6 +24,7 @@ export const TEXTOS_NOTICIA = {
   volver: 'Volver a la portada',
   noEncontrada: 'No encontramos esta noticia',
   noEncontradaAyuda: 'Puede que ya no esté publicada o que el enlace esté incompleto.',
+  galeria: 'Más fotos de la noticia',
 } as const;
 
 export const TEXTOS_PORTADA = {

@@ -57,6 +57,15 @@
       />
     }
 
+    <app-selector-imagenes [deshabilitado]="cargando()" (cambio)="fotos.set($event)" />
+
+    @if (progreso() !== null) {
+      <div class="progreso-subida" role="status">
+        <label for="publicar-progreso">{{ textosFotos.subiendo }} {{ progreso() }} %</label>
+        <progress id="publicar-progreso" max="100" [value]="progreso()"></progress>
+      </div>
+    }
+
     <app-boton tipo="submit" [cargando]="cargando()" [deshabilitado]="sinCupo() || perfil() === null">
       {{ textos.publicar }}
     </app-boton>

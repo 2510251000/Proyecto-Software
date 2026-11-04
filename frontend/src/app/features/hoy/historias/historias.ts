@@ -6,6 +6,7 @@ import { RUTAS } from '../../../core/constants/rutas.constants';
 import { Noticia } from '../../../core/models/noticia.model';
 import { MovimientoService } from '../../../core/services/movimiento.service';
 import { categoriaDeNoticia } from '../../../core/utils/categoria-noticia';
+import { portadaDe } from '../../../core/utils/imagenes';
 import { tiempoRelativo } from '../../../core/utils/noticia';
 import { Temporizadores } from '../../../core/utils/temporizadores';
 import { Miniatura } from '../../../shared/miniatura/miniatura';
@@ -58,6 +59,7 @@ export class Historias implements OnInit {
   protected readonly inicialesAutor = computed(() => iniciales(this.autor()));
   protected readonly cuando = computed(() => tiempoRelativo(this.actual().fechaPublicacion));
   protected readonly categoria = computed(() => categoriaDeNoticia(this.actual().titulo));
+  protected readonly portada = computed(() => portadaDe(this.actual()));
   protected readonly anuncio = computed(
     () =>
       `${TEXTOS_HOY.historia} ${this.indice() + 1} ${TEXTOS_HOY.de} ${this.historias().length}: ${this.actual().titulo}`,

@@ -2,6 +2,7 @@ package com.aldia.infraestructura.web.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.aldia.dominio.modelo.Noticia;
 
@@ -18,7 +19,8 @@ public record NoticiaResponseDTO(
         int autorNivel,
         String estado,
         BigDecimal latitud,
-        BigDecimal longitud
+        BigDecimal longitud,
+        List<ImagenResponseDTO> imagenes
 ) {
     public static NoticiaResponseDTO desde(Noticia noticia) {
         return new NoticiaResponseDTO(
@@ -34,7 +36,8 @@ public record NoticiaResponseDTO(
                 noticia.getAutorNivel(),
                 noticia.getEstado() != null ? noticia.getEstado().name() : null,
                 noticia.getLatitud(),
-                noticia.getLongitud()
+                noticia.getLongitud(),
+                noticia.getImagenes().stream().map(i -> ImagenResponseDTO.desde(noticia.getId(), i)).toList()
         );
     }
 }

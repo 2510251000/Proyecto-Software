@@ -266,3 +266,17 @@ html:has(dialog:modal) {
 .texto-suave {
   color: var(--color-texto-suave);
 }
+
+/* Barra de progreso al subir las fotos de una noticia (Publicar). */
+.progreso-subida {
+  display: grid;
+  gap: var(--espacio-xs);
+  margin: var(--espacio-m) 0;
+  font-weight: 600;
+}
+
+.progreso-subida progress {
+  width: 100%;
+  height: 0.75rem;
+  accent-color: var(--color-marca);
+}

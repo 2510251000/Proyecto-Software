@@ -30,6 +30,12 @@ spring:
     # en la versión 2 y solo recibe las migraciones nuevas.
     baseline-on-migrate: true
     baseline-version: 2
+  servlet:
+    multipart:
+      # Límite de Spring para cada archivo y para la petición completa (todas las fotos + datos).
+      # El tamaño por foto lo revisa además el dominio con un mensaje claro (aldia.imagenes).
+      max-file-size: ${IMAGENES_TAMANO_MAXIMO_MB:5}MB
+      max-request-size: ${IMAGENES_TAMANO_MAXIMO_PETICION_MB:25}MB
 
 server:
   port: ${PUERTO:8080}
@@ -61,6 +67,20 @@ aldia:
 
   notificaciones:
     maximo-listado: ${NOTIFICACIONES_MAXIMO_LISTADO:50}
+
+  imagenes:
+    # Carpeta donde se guardan las fotos (relativa a donde arranca el backend). En Docker es
+    # el volumen «imagenes». Con varios servidores habría que cambiar de adaptador (ver DECISIONES).
+    directorio: ${IMAGENES_DIRECTORIO:imagenes}
+    maximo-por-noticia: ${IMAGENES_MAXIMO_POR_NOTICIA:4}
+    tamano-maximo-mb: ${IMAGENES_TAMANO_MAXIMO_MB:5}
+    ancho-maximo: ${IMAGENES_ANCHO_MAXIMO:8000}
+    alto-maximo: ${IMAGENES_ALTO_MAXIMO:8000}
+    largo-maximo-descripcion: ${IMAGENES_LARGO_DESCRIPCION:250}
+    # Calidad al volver a codificar los JPEG (0 a 1) para quitarles los metadatos.
+    calidad-jpeg: ${IMAGENES_CALIDAD_JPEG:0.9}
+    # Cuánto puede guardar el navegador una foto de una noticia publicada.
+    cache-segundos: ${IMAGENES_CACHE_SEGUNDOS:86400}
 
   geocodificacion:
     # auto: Google Maps si hay GOOGLE_MAPS_API_KEY; si no, Nominatim (OpenStreetMap).

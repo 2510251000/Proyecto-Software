@@ -4,6 +4,7 @@ import { ETIQUETAS_NOTICIA } from '../../core/constants/portada.constants';
 import { IDIOMA } from '../../core/constants/regional.constants';
 import { Noticia } from '../../core/models/noticia.model';
 import { categoriaDeNoticia } from '../../core/utils/categoria-noticia';
+import { portadaDe } from '../../core/utils/imagenes';
 import { esUltimaHora, tiempoRelativo } from '../../core/utils/noticia';
 import { EnlaceNoticia } from '../enlace-noticia/enlace-noticia';
 import { Miniatura } from '../miniatura/miniatura';
@@ -41,5 +42,6 @@ export class TarjetaNoticia {
   protected readonly cuando = computed(() => tiempoRelativo(this.noticia().fechaPublicacion));
   protected readonly ultimaHora = computed(() => esUltimaHora(this.noticia()));
   protected readonly categoria = computed(() => categoriaDeNoticia(this.noticia().titulo));
+  protected readonly portada = computed(() => portadaDe(this.noticia()));
   protected readonly seccion = computed(() => SECCION_POR_CATEGORIA[this.categoria()]);
 }
