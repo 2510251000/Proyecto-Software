@@ -30,6 +30,7 @@ describe('Navegacion', () => {
     expect(enlaces).toEqual([
       `/${RUTAS.hoy}`,
       `/${RUTAS.noticias}`,
+      `/${RUTAS.mapa}`,
       `/${RUTAS.publicar}`,
       `/${RUTAS.notificaciones}`,
       `/${RUTAS.perfil}`,

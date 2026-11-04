@@ -4,6 +4,7 @@ export const RUTAS = {
   hoy: 'hoy',
   registro: 'registro',
   noticias: 'noticias',
+  mapa: 'mapa',
   publicar: 'publicar',
   perfil: 'perfil',
   notificaciones: 'notificaciones',

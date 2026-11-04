@@ -2,6 +2,7 @@
   <button type="button" class="enlace salir" (click)="salir()">{{ textos.salir }}</button>
   <a class="enlace" [routerLink]="['/', rutas.hoy]" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ textos.hoy }}</a>
   <a class="enlace" [routerLink]="['/', rutas.noticias]" routerLinkActive="activo" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">{{ textos.portada }}</a>
+  <a class="enlace" [routerLink]="['/', rutas.mapa]" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ textos.mapa }}</a>
   <a class="enlace" [routerLink]="['/', rutas.publicar]" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ textos.publicar }}</a>
   <a class="enlace" [routerLink]="['/', rutas.notificaciones]" routerLinkActive="activo" ariaCurrentWhenActive="page">
     {{ textos.notificaciones }}

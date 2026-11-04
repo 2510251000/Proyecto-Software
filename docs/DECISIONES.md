@@ -214,3 +214,19 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     reporte como REVISADO. (decidido por Claude Code; revisar)
 54. `NoticiaResponseDTO` gana `autorId` (el id numérico, nunca el correo) para que la app sepa
     si la noticia es propia y no muestre las estrellas activas. (decidido por Claude Code; revisar)
+
+## Fase 5 — Mapa de noticias (MF05_002)
+55. **Leaflet 1.9.4 con teselas de OpenStreetMap** (gratis, sin clave). Su URL, la atribución y los
+    zooms están en `core/constants/mapa.constants.ts`. Se respeta la política de teselas de OSM:
+    atribución siempre visible, zoom máximo 19 y nada de descargas por adelantado ni sin
+    conexión. Para mucho tráfico habría que usar un proveedor de teselas propio o pagado.
+56. Leaflet solo se usa dentro de `MapaService`, que entrega un `MapaDibujado` (agregar y quitar
+    marcadores, centrar, destruir). Las pruebas del componente usan un mapa falso. Leaflet es
+    CommonJS: se declaró en `allowedCommonJsDependencies` de `angular.json`, y su hoja de estilos
+    va en `styles`.
+57. El filtro por tipo se aplica en el navegador sobre las noticias ya cargadas (las mismas
+    `RECIENTES` de la portada), sin pedirlas de nuevo. Las noticias sin coordenadas no salen en
+    el mapa ni en su lista. Sin ciudad con coordenadas, el mapa muestra Cundinamarca.
+    (decidido por Claude Code; revisar)
+58. El enlace de la ventanita navega con el router de Angular (sin recargar la página); los
+    marcadores tienen `title` y se pueden enfocar con el teclado.

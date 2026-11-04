@@ -6,6 +6,7 @@ export const TEXTOS_NAVEGACION = {
   menu: 'Menú principal',
   hoy: 'Hoy',
   portada: 'Portada',
+  mapa: 'Mapa',
   publicar: 'Publicar',
   notificaciones: 'Notificaciones',
   sinLeer: 'sin leer',

@@ -13,7 +13,7 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
 | 2. Imágenes en las noticias (MF02_003) | `feature/imagenes-noticias` | ✅ |
 | 3. Comentarios, calificaciones y reportes (MF03) | `feature/interaccion` | ✅ |
 | 4. Propuesta de la regla de niveles (MF04_001) | `feature/interaccion` | ✅ propuesta en `docs/PROPUESTA-NIVELES.md` (sin programar: decide el equipo) |
-| 5. Mapa de noticias (MF05_002) | `feature/mapa` | ⬜ |
+| 5. Mapa de noticias (MF05_002) | `feature/mapa` | ✅ |
 | 6. Pendientes técnicos | `fix/pendientes-tecnicos` | ⬜ |
 
 ### Fase 1 — qué quedó
@@ -65,6 +65,14 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
   noticia reportada con la moderación de siempre.
 - No hizo falta migración: las tablas `comentario`, `calificacion` y `reporte` ya existían en V1.
 - Verificación: `mvnw verify` 142 pruebas; `ng test` 292 (37 archivos); lint y build limpios.
+
+### Fase 5 — qué quedó
+- Ruta `mapa` (en el menú, después de «Portada») con Leaflet y teselas de OpenStreetMap: un
+  marcador por noticia con latitud y longitud (azul con borde ámbar si es oficial, blanco con
+  borde azul si es de la comunidad), centrado en la ciudad del usuario, filtro por tipo y una
+  ventanita con el titular y el enlace. Debajo, la misma lista en texto.
+- El modelo `Noticia` del frontend ganó `latitud` y `longitud` (el backend ya las enviaba).
+- Verificación: `ng test` 303 (38 archivos), lint y build limpios. Revisado en Edge.
 
 ## Punto de partida (2026-10-18)
 

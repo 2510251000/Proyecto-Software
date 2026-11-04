@@ -25,6 +25,9 @@ export interface Noticia {
   /** Nivel del autor, de 1 a 3. */
   autorNivel?: number;
   estado?: EstadoNoticia;
+  /** Punto de la noticia (el que dio la API de mapas); null si no tiene. */
+  latitud?: number | null;
+  longitud?: number | null;
   /** Fotos en orden; vacía o ausente si la noticia no tiene. */
   imagenes?: ImagenNoticia[];
   /** Promedio de 1 a 5 (0 si nadie ha calificado) y cuántas calificaciones tiene. */
