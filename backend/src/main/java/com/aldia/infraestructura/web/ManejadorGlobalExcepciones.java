@@ -18,7 +18,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.aldia.dominio.excepcion.AccionNoPermitidaExcepcion;
 import com.aldia.dominio.excepcion.CiudadNoEncontradaExcepcion;
+import com.aldia.dominio.excepcion.ComentarioNoEncontradoExcepcion;
 import com.aldia.dominio.excepcion.DatosInvalidosExcepcion;
+import com.aldia.dominio.excepcion.ReporteDuplicadoExcepcion;
+import com.aldia.dominio.excepcion.ReporteNoEncontradoExcepcion;
 import com.aldia.dominio.excepcion.ImagenNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.NotificacionNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.ServicioUbicacionNoDisponibleExcepcion;
@@ -90,7 +93,8 @@ public class ManejadorGlobalExcepciones {
     }
 
     @ExceptionHandler({UbicacionNoEncontradaExcepcion.class, NotificacionNoEncontradaExcepcion.class,
-            ImagenNoEncontradaExcepcion.class})
+            ImagenNoEncontradaExcepcion.class, ComentarioNoEncontradoExcepcion.class,
+            ReporteNoEncontradoExcepcion.class})
     public ResponseEntity<ErrorResponseDTO> manejarNoEncontrado(RuntimeException ex) {
         return responder(HttpStatus.NOT_FOUND, ex.getMessage());
     }
@@ -128,6 +132,11 @@ public class ManejadorGlobalExcepciones {
     @ExceptionHandler(UsuarioNoEncontradoExcepcion.class)
     public ResponseEntity<ErrorResponseDTO> manejarUsuarioNoEncontrado(UsuarioNoEncontradoExcepcion ex) {
         return responder(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ReporteDuplicadoExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarReporteDuplicado(ReporteDuplicadoExcepcion ex) {
+        return responder(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(UsuarioYaExisteExcepcion.class)

@@ -68,6 +68,13 @@ aldia:
   notificaciones:
     maximo-listado: ${NOTIFICACIONES_MAXIMO_LISTADO:50}
 
+  interaccion:
+    # Comentarios (HU MF03_001) y reportes (HU MF03_003).
+    largo-maximo-comentario: ${COMENTARIO_LARGO_MAXIMO:1000}
+    largo-maximo-descripcion-reporte: ${REPORTE_LARGO_DESCRIPCION:1000}
+    maximo-comentarios-listado: ${COMENTARIOS_MAXIMO_LISTADO:200}
+    maximo-reportes-listado: ${REPORTES_MAXIMO_LISTADO:200}
+
   imagenes:
     # Carpeta donde se guardan las fotos (relativa a donde arranca el backend). En Docker es
     # el volumen «imagenes». Con varios servidores habría que cambiar de adaptador (ver DECISIONES).

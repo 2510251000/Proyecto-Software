@@ -193,3 +193,24 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
 47. **Probar desde el celular**: el ambiente `red` (`environment.red.ts`, `ng serve --configuration
     red --host 0.0.0.0`) arma la URL de la API con el mismo equipo desde el que se abrió la
     página, así la IP no queda escrita en el código. El origen se agrega a `CORS_ORIGENES`.
+
+## Fase 3 — Comentarios, calificaciones y reportes (MF03)
+48. Las reglas (largo del comentario, valor de 1 a 5, no calificarse a sí mismo, quién borra,
+    que un reporte no vuelva a PENDIENTE y el texto de los avisos) están en
+    `dominio/servicio/ReglasInteraccion`. Los largos salen de `COMENTARIO_LARGO_MAXIMO` y
+    `REPORTE_LARGO_DESCRIPCION` (1000).
+49. Comentar, calificar y reportar exige la **cuenta activa** y una noticia **publicada** (las
+    ocultas responden 404, igual que en el detalle). (decidido por Claude Code; revisar)
+50. Al autor se le avisa la **primera** vez que alguien califica su noticia; si esa persona cambia
+    su calificación, no se le vuelve a avisar, para no llenarlo de avisos. Tampoco se avisa cuando
+    el autor comenta su propia noticia. (decidido por Claude Code; revisar)
+51. Borrar un comentario es un borrado **físico** (la fila desaparece), a diferencia de las
+    noticias. (decidido por Claude Code; revisar)
+52. El promedio se redondea a un decimal y las noticias sin calificaciones devuelven
+    `promedio: 0` y `cantidadCalificaciones: 0`. `miCalificacion` solo llega con sesión. El
+    promedio y la cantidad de todo un listado salen de una sola consulta agrupada.
+53. Revisar o descartar un reporte queda en el historial del administrador como `MODERACION`.
+    «Ocultar la noticia» desde la pestaña Reportes usa la moderación existente y marca el
+    reporte como REVISADO. (decidido por Claude Code; revisar)
+54. `NoticiaResponseDTO` gana `autorId` (el id numérico, nunca el correo) para que la app sepa
+    si la noticia es propia y no muestre las estrellas activas. (decidido por Claude Code; revisar)

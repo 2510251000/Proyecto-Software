@@ -76,3 +76,9 @@
   flex-wrap: wrap;
   gap: var(--espacio-s);
 }
+
+/* Lo que escribió quien reportó (pestaña Reportes). */
+.descripcion {
+  margin: var(--espacio-xs) 0;
+  white-space: pre-line;
+}

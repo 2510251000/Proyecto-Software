@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.aldia.aplicacion.servicio.ArchivosDeImagenes;
+import com.aldia.aplicacion.servicio.CalificarNoticiaServicio;
+import com.aldia.aplicacion.servicio.ComentariosServicio;
+import com.aldia.aplicacion.servicio.ReportesServicio;
 import com.aldia.aplicacion.servicio.GestionarUsuariosServicio;
 import com.aldia.aplicacion.servicio.ImagenesNoticiaServicio;
 import com.aldia.aplicacion.servicio.IniciarSesionServicio;
@@ -20,11 +23,14 @@ import com.aldia.aplicacion.servicio.PublicarNoticiaServicio;
 import com.aldia.aplicacion.servicio.RegistrarUsuarioServicio;
 import com.aldia.aplicacion.servicio.UbicacionServicio;
 import com.aldia.dominio.modelo.ParametrosImagenes;
+import com.aldia.dominio.modelo.ParametrosInteraccion;
 import com.aldia.dominio.modelo.ParametrosNiveles;
 import com.aldia.dominio.modelo.ParametrosRecomendacion;
 import com.aldia.dominio.puerto.salida.AlmacenImagenesPuerto;
+import com.aldia.dominio.puerto.salida.CalificacionRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.CifradorPuerto;
 import com.aldia.dominio.puerto.salida.CiudadRepositorioPuerto;
+import com.aldia.dominio.puerto.salida.ComentarioRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.EjecutorTransaccionalPuerto;
 import com.aldia.dominio.puerto.salida.GeocodificadorPuerto;
 import com.aldia.dominio.puerto.salida.HistorialRepositorioPuerto;
@@ -33,12 +39,14 @@ import com.aldia.dominio.puerto.salida.NivelRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NoticiaRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NotificacionRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.ProcesadorImagenesPuerto;
+import com.aldia.dominio.puerto.salida.ReporteRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.TokenPuerto;
 import com.aldia.dominio.puerto.salida.UsuarioRepositorioPuerto;
 import com.aldia.dominio.servicio.AvisosPorCiudad;
 import com.aldia.dominio.servicio.CalculadoraNivel;
 import com.aldia.dominio.servicio.PoliticaRecomendacion;
 import com.aldia.dominio.servicio.ReglaLimiteDiario;
+import com.aldia.dominio.servicio.ReglasInteraccion;
 import com.aldia.dominio.servicio.ValidadorImagenes;
 
 /**
@@ -193,6 +201,53 @@ public class CasosDeUsoConfiguracion {
                                                                Clock reloj) {
         return new GestionarUsuariosServicio(usuarios, niveles, notificaciones, historial, transaccion,
                 calculadoraNivel, reloj);
+    }
+
+    @Bean
+    public ReglasInteraccion reglasInteraccion(
+            @Value("${aldia.interaccion.largo-maximo-comentario}") int largoComentario,
+            @Value("${aldia.interaccion.largo-maximo-descripcion-reporte}") int largoReporte,
+            @Value("${aldia.interaccion.maximo-comentarios-listado}") int maximoComentarios,
+            @Value("${aldia.interaccion.maximo-reportes-listado}") int maximoReportes) {
+        return new ReglasInteraccion(new ParametrosInteraccion(largoComentario, largoReporte, maximoComentarios,
+                maximoReportes));
+    }
+
+    @Bean
+    public ComentariosServicio comentariosServicio(ComentarioRepositorioPuerto comentarios,
+                                                   NoticiaRepositorioPuerto noticias,
+                                                   UsuarioRepositorioPuerto usuarios,
+                                                   NotificacionRepositorioPuerto notificaciones,
+                                                   HistorialRepositorioPuerto historial,
+                                                   EjecutorTransaccionalPuerto transaccion,
+                                                   ReglasInteraccion reglas,
+                                                   Clock reloj) {
+        return new ComentariosServicio(comentarios, noticias, usuarios, notificaciones, historial, transaccion,
+                reglas, reloj);
+    }
+
+    @Bean
+    public CalificarNoticiaServicio calificarNoticiaServicio(CalificacionRepositorioPuerto calificaciones,
+                                                             NoticiaRepositorioPuerto noticias,
+                                                             UsuarioRepositorioPuerto usuarios,
+                                                             NotificacionRepositorioPuerto notificaciones,
+                                                             HistorialRepositorioPuerto historial,
+                                                             EjecutorTransaccionalPuerto transaccion,
+                                                             ReglasInteraccion reglas,
+                                                             Clock reloj) {
+        return new CalificarNoticiaServicio(calificaciones, noticias, usuarios, notificaciones, historial,
+                transaccion, reglas, reloj);
+    }
+
+    @Bean
+    public ReportesServicio reportesServicio(ReporteRepositorioPuerto reportes,
+                                             NoticiaRepositorioPuerto noticias,
+                                             UsuarioRepositorioPuerto usuarios,
+                                             HistorialRepositorioPuerto historial,
+                                             EjecutorTransaccionalPuerto transaccion,
+                                             ReglasInteraccion reglas,
+                                             Clock reloj) {
+        return new ReportesServicio(reportes, noticias, usuarios, historial, transaccion, reglas, reloj);
     }
 
     @Bean

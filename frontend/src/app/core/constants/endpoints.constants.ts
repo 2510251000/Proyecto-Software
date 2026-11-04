@@ -11,6 +11,7 @@ export const ENDPOINTS = {
   resolverUbicacion: '/api/ubicacion/resolver',
   adminNoticias: '/api/admin/noticias',
   adminUsuarios: '/api/admin/usuarios',
+  adminReportes: '/api/admin/reportes',
 } as const;
 
 /** Parámetros de búsqueda que entiende GET /api/noticias. */
@@ -26,4 +27,7 @@ export const PARAMETROS_NOTICIAS = {
 export const SUFIJOS = {
   leida: 'leida',
   estado: 'estado',
+  comentarios: 'comentarios',
+  calificacion: 'calificacion',
+  reportes: 'reportes',
 } as const;

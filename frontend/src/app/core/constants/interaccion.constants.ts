@@ -1,0 +1,74 @@
+import { EstadoReporte, MotivoReporte } from '../models/interaccion.model';
+
+/** Igual que COMENTARIO_LARGO_MAXIMO y REPORTE_LARGO_DESCRIPCION del backend. */
+export const LARGO_MAXIMO_COMENTARIO = 1000;
+export const LARGO_MAXIMO_DESCRIPCION_REPORTE = 1000;
+
+/** Valores posibles de una calificación. */
+export const ESTRELLAS: readonly number[] = [1, 2, 3, 4, 5];
+
+export const TEXTOS_CALIFICACION = {
+  titulo: 'Califica esta noticia',
+  estrella: 'estrella',
+  estrellas: 'estrellas',
+  promedio: 'Promedio',
+  sinCalificaciones: 'Todavía nadie la ha calificado.',
+  calificacion: 'calificación',
+  calificaciones: 'calificaciones',
+  tuCalificacion: 'Tu calificación',
+  propia: 'No puedes calificar tu propia noticia.',
+  gracias: 'Gracias, guardamos tu calificación.',
+} as const;
+
+export const TEXTOS_COMENTARIOS = {
+  titulo: 'Comentarios',
+  vacio: 'Todavía no hay comentarios. Sé el primero.',
+  campo: 'Escribe un comentario',
+  enviar: 'Comentar',
+  borrar: 'Borrar',
+  confirmarBorrado: '¿Borrar este comentario?',
+  obligatorio: 'Escribe un comentario.',
+  largo: `El comentario puede tener máximo ${LARGO_MAXIMO_COMENTARIO} caracteres.`,
+  nivel: 'nivel',
+} as const;
+
+export const TEXTOS_REPORTE = {
+  boton: 'Reportar',
+  titulo: 'Reportar esta noticia',
+  motivo: 'Motivo',
+  descripcion: 'Cuéntanos más (opcional)',
+  enviar: 'Enviar reporte',
+  cancelar: 'Cancelar',
+  gracias: 'Gracias. Un administrador va a revisar la noticia.',
+  eligeMotivo: 'Elige un motivo.',
+} as const;
+
+export const ETIQUETAS_MOTIVO: Readonly<Record<MotivoReporte, string>> = {
+  NOTICIA_FALSA: 'Es una noticia falsa',
+  CONTENIDO_OFENSIVO: 'Tiene contenido ofensivo',
+  SPAM: 'Es publicidad o spam',
+  OTRO: 'Otro motivo',
+};
+
+export const MOTIVOS_REPORTE: readonly MotivoReporte[] = ['NOTICIA_FALSA', 'CONTENIDO_OFENSIVO', 'SPAM', 'OTRO'];
+
+export const ETIQUETAS_ESTADO_REPORTE: Readonly<Record<EstadoReporte, string>> = {
+  PENDIENTE: 'Pendiente',
+  REVISADO: 'Revisado',
+  DESCARTADO: 'Descartado',
+};
+
+export const ESTADOS_REPORTE: readonly EstadoReporte[] = ['PENDIENTE', 'REVISADO', 'DESCARTADO'];
+
+export const TEXTOS_REPORTES_ADMIN = {
+  pestana: 'Reportes',
+  filtro: 'Estado',
+  todos: 'Todos',
+  vacio: 'No hay reportes con ese filtro.',
+  por: 'Reportado por',
+  revisado: 'Marcar revisado',
+  descartado: 'Descartar',
+  ocultarNoticia: 'Ocultar la noticia',
+  verNoticia: 'Ver la noticia',
+  noticiaOculta: 'La noticia ya está oculta',
+} as const;

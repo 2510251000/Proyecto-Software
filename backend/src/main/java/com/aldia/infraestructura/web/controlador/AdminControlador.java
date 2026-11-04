@@ -14,14 +14,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aldia.dominio.modelo.CambiosUsuario;
+import com.aldia.dominio.modelo.EstadoReporte;
 import com.aldia.dominio.modelo.FiltroNoticias;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.puerto.entrada.GestionarUsuariosCasoDeUso;
 import com.aldia.dominio.puerto.entrada.ModerarNoticiaCasoDeUso;
+import com.aldia.dominio.puerto.entrada.ReportesCasoDeUso;
 import com.aldia.infraestructura.configuracion.OpenApiConfiguracion;
 import com.aldia.infraestructura.web.dto.AdminDTOs.ActualizarUsuarioDTO;
 import com.aldia.infraestructura.web.dto.AdminDTOs.CambiarEstadoDTO;
 import com.aldia.infraestructura.web.dto.AdminDTOs.UsuarioAdminDTO;
+import com.aldia.infraestructura.web.dto.InteraccionDTOs.CambiarEstadoReporteDTO;
+import com.aldia.infraestructura.web.dto.InteraccionDTOs.ReporteDTO;
 import com.aldia.infraestructura.web.dto.NoticiaResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,11 +42,29 @@ public class AdminControlador {
 
     private final ModerarNoticiaCasoDeUso moderarNoticiaCasoDeUso;
     private final GestionarUsuariosCasoDeUso gestionarUsuariosCasoDeUso;
+    private final ReportesCasoDeUso reportesCasoDeUso;
 
     public AdminControlador(ModerarNoticiaCasoDeUso moderarNoticiaCasoDeUso,
-                            GestionarUsuariosCasoDeUso gestionarUsuariosCasoDeUso) {
+                            GestionarUsuariosCasoDeUso gestionarUsuariosCasoDeUso,
+                            ReportesCasoDeUso reportesCasoDeUso) {
         this.moderarNoticiaCasoDeUso = moderarNoticiaCasoDeUso;
         this.gestionarUsuariosCasoDeUso = gestionarUsuariosCasoDeUso;
+        this.reportesCasoDeUso = reportesCasoDeUso;
+    }
+
+    @GetMapping("/reportes")
+    @Operation(summary = "Reportes de noticias (todos, o los de un estado: PENDIENTE, REVISADO o DESCARTADO)")
+    public ResponseEntity<List<ReporteDTO>> reportes(@RequestParam(required = false) EstadoReporte estado) {
+        return ResponseEntity.ok(reportesCasoDeUso.listar(estado).stream().map(ReporteDTO::desde).toList());
+    }
+
+    @PutMapping("/reportes/{id}")
+    @Operation(summary = "Marcar un reporte como REVISADO o DESCARTADO")
+    public ResponseEntity<ReporteDTO> cambiarEstadoReporte(@PathVariable Long id,
+                                                           @Valid @RequestBody CambiarEstadoReporteDTO solicitud,
+                                                           Authentication autenticacion) {
+        return ResponseEntity.ok(ReporteDTO.desde(
+                reportesCasoDeUso.cambiarEstado(autenticacion.getName(), id, solicitud.estado())));
     }
 
     @GetMapping("/noticias")

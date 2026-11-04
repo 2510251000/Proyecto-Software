@@ -440,4 +440,67 @@ class ApiIntegracionTest {
                 .file(new MockMultipartFile("imagenes", "a.jpg", "image/jpeg", jpegConUbicacion())), autor), 400);
         assertThat(rechazo.get("mensaje").asText()).contains("datos");
     }
+
+    // ------------------------------------------------------------------ interacción (MF03)
+
+    @Test
+    void comentariosCalificacionesYReportesDeUnaNoticia() throws Exception {
+        String autor = usuarioNuevo("Fusagasugá");
+        String lector = usuarioNuevo("Fusagasugá");
+        String admin = token("admin@aldia.com", "Admin12345");
+        long id = publicar(autor, "Llegaron los buses nuevos", idCiudad("Fusagasugá"), 201).get("id").asLong();
+        String base = "/api/noticias/" + id;
+        long avisosAntes = noLeidas(autor);
+
+        // Comentarios: leer es público; comentar pide sesión y avisa al autor.
+        assertThat(leer(get(base + "/comentarios"), 200)).isEmpty();
+        mvc.perform(conJson(post(base + "/comentarios"), Map.of("contenido", "hola"))).andExpect(status().isUnauthorized());
+        JsonNode vacio = leer(conToken(conJson(post(base + "/comentarios"), Map.of("contenido", "  ")), lector), 400);
+        assertThat(vacio.get("mensaje").asText()).isEqualTo("Escribe un comentario");
+        leer(conToken(conJson(post(base + "/comentarios"), Map.of("contenido", "x".repeat(1001))), lector), 400);
+        JsonNode comentario = leer(conToken(conJson(post(base + "/comentarios"),
+                Map.of("contenido", "¡Por fin! Ya era hora.")), lector), 201);
+        assertThat(comentario.get("autor").asText()).isEqualTo("Vecino de prueba");
+        assertThat(lista(leer(get(base + "/comentarios"), 200))).hasSize(1);
+        assertThat(noLeidas(autor)).isEqualTo(avisosAntes + 1);
+
+        long comentarioId = comentario.get("id").asLong();
+        mvc.perform(conToken(delete(base + "/comentarios/" + comentarioId), autor)).andExpect(status().isForbidden());
+        leer(conToken(delete(base + "/comentarios/" + comentarioId), admin), 204);
+        assertThat(leer(get(base + "/comentarios"), 200)).isEmpty();
+
+        // Calificación: una por usuario; el autor no puede calificarse.
+        JsonNode calificacion = leer(conToken(conJson(put(base + "/calificacion"), Map.of("valor", 4)), lector), 200);
+        assertThat(calificacion.get("promedio").asDouble()).isEqualTo(4.0);
+        assertThat(calificacion.get("cantidadCalificaciones").asLong()).isEqualTo(1);
+        calificacion = leer(conToken(conJson(put(base + "/calificacion"), Map.of("valor", 2)), lector), 200);
+        assertThat(calificacion.get("promedio").asDouble()).isEqualTo(2.0);
+        assertThat(calificacion.get("cantidadCalificaciones").asLong()).isEqualTo(1);
+        leer(conToken(conJson(put(base + "/calificacion"), Map.of("valor", 6)), lector), 400);
+        leer(conToken(conJson(put(base + "/calificacion"), Map.of("valor", 5)), autor), 403);
+        assertThat(noLeidas(autor)).isEqualTo(avisosAntes + 2);
+
+        JsonNode vista = leer(conToken(get(base), lector), 200);
+        assertThat(vista.get("miCalificacion").asInt()).isEqualTo(2);
+        assertThat(leer(get(base), 200).get("miCalificacion").isNull()).isTrue();
+        assertThat(leer(get(base), 200).get("promedio").asDouble()).isEqualTo(2.0);
+
+        // Reportes: uno por usuario y noticia; el administrador los revisa.
+        JsonNode reporte = leer(conToken(conJson(post(base + "/reportes"),
+                Map.of("motivo", "NOTICIA_FALSA", "descripcion", "No es cierto")), lector), 201);
+        assertThat(reporte.get("estado").asText()).isEqualTo("PENDIENTE");
+        JsonNode repetido = leer(conToken(conJson(post(base + "/reportes"), Map.of("motivo", "SPAM")), lector), 409);
+        assertThat(repetido.get("mensaje").asText()).contains("Ya reportaste");
+        leer(conToken(conJson(post(base + "/reportes"), Map.of("motivo", "INVENTADO")), autor), 400);
+
+        mvc.perform(conToken(get("/api/admin/reportes"), lector)).andExpect(status().isForbidden());
+        List<JsonNode> pendientes = lista(leer(conToken(get("/api/admin/reportes").param("estado", "PENDIENTE"), admin), 200));
+        assertThat(pendientes).anySatisfy(r -> assertThat(r.get("noticiaId").asLong()).isEqualTo(id));
+        long reporteId = reporte.get("id").asLong();
+        JsonNode revisado = leer(conToken(conJson(put("/api/admin/reportes/" + reporteId),
+                Map.of("estado", "REVISADO")), admin), 200);
+        assertThat(revisado.get("estado").asText()).isEqualTo("REVISADO");
+        leer(conToken(conJson(put("/api/admin/reportes/" + reporteId), Map.of("estado", "PENDIENTE")), admin), 400);
+        leer(conToken(conJson(put("/api/admin/reportes/999999"), Map.of("estado", "DESCARTADO")), admin), 404);
+    }
 }

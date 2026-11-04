@@ -15,14 +15,23 @@ public record NoticiaResponseDTO(
         boolean oficial,
         String ciudad,
         Long ciudadId,
+        Long autorId,
         String autor,
         int autorNivel,
         String estado,
         BigDecimal latitud,
         BigDecimal longitud,
-        List<ImagenResponseDTO> imagenes
+        List<ImagenResponseDTO> imagenes,
+        double promedio,
+        long cantidadCalificaciones,
+        /** Lo que le dio el usuario de la sesión; null sin sesión o si no ha calificado. */
+        Integer miCalificacion
 ) {
     public static NoticiaResponseDTO desde(Noticia noticia) {
+        return desde(noticia, null);
+    }
+
+    public static NoticiaResponseDTO desde(Noticia noticia, Integer miCalificacion) {
         return new NoticiaResponseDTO(
                 noticia.getId(),
                 noticia.getTitulo(),
@@ -32,12 +41,16 @@ public record NoticiaResponseDTO(
                 noticia.isOficial(),
                 noticia.getCiudad(),
                 noticia.getCiudadId(),
+                noticia.getAutorId(),
                 noticia.getAutorNombre(),
                 noticia.getAutorNivel(),
                 noticia.getEstado() != null ? noticia.getEstado().name() : null,
                 noticia.getLatitud(),
                 noticia.getLongitud(),
-                noticia.getImagenes().stream().map(i -> ImagenResponseDTO.desde(noticia.getId(), i)).toList()
+                noticia.getImagenes().stream().map(i -> ImagenResponseDTO.desde(noticia.getId(), i)).toList(),
+                noticia.getCalificaciones().promedio(),
+                noticia.getCalificaciones().cantidad(),
+                miCalificacion
         );
     }
 }

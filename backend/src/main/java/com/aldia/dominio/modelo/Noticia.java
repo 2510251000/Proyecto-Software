@@ -23,6 +23,8 @@ public class Noticia {
     private final BigDecimal longitud;
     /** Fotos en orden; la primera es la portada. Vacía si la noticia no tiene fotos. */
     private final List<ImagenNoticia> imagenes;
+    /** Promedio y cantidad de calificaciones (VACIO si nadie la ha calificado). */
+    private ResumenCalificaciones calificaciones = ResumenCalificaciones.VACIO;
 
     public Noticia(Long id, String titulo, String resumen, String contenido,
                    LocalDateTime fechaPublicacion, boolean oficial, Estado estado, String ciudad) {
@@ -62,8 +64,17 @@ public class Noticia {
 
     /** La misma noticia con estas fotos. */
     public Noticia conImagenes(List<ImagenNoticia> nuevas) {
-        return new Noticia(id, titulo, resumen, contenido, fechaPublicacion, oficial, estado, ciudad, ciudadId,
+        Noticia copia = new Noticia(id, titulo, resumen, contenido, fechaPublicacion, oficial, estado, ciudad, ciudadId,
                 autorId, autorNombre, autorNivel, latitud, longitud, nuevas);
+        copia.calificaciones = calificaciones;
+        return copia;
+    }
+
+    /** La misma noticia con este resumen de calificaciones. */
+    public Noticia conCalificaciones(ResumenCalificaciones resumenNuevo) {
+        Noticia copia = conImagenes(imagenes);
+        copia.calificaciones = resumenNuevo == null ? ResumenCalificaciones.VACIO : resumenNuevo;
+        return copia;
     }
 
     public Long getId() {
@@ -124,6 +135,10 @@ public class Noticia {
 
     public List<ImagenNoticia> getImagenes() {
         return imagenes;
+    }
+
+    public ResumenCalificaciones getCalificaciones() {
+        return calificaciones;
     }
 
     public enum Estado {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.aldia.dominio.excepcion.ImagenInvalidaExcepcion;
 import com.aldia.dominio.modelo.ArchivoImagen;
 import com.aldia.dominio.modelo.ImagenSubida;
+import com.aldia.dominio.puerto.entrada.CalificarNoticiaCasoDeUso;
 import com.aldia.dominio.puerto.entrada.ImagenesNoticiaCasoDeUso;
 
 import com.aldia.dominio.modelo.FiltroNoticias;
@@ -52,17 +54,20 @@ public class NoticiaControlador {
     private final ObtenerNoticiaCasoDeUso obtenerNoticiaCasoDeUso;
     private final PublicarNoticiaCasoDeUso publicarNoticiaCasoDeUso;
     private final ImagenesNoticiaCasoDeUso imagenesNoticiaCasoDeUso;
+    private final CalificarNoticiaCasoDeUso calificarNoticiaCasoDeUso;
     private final long segundosCache;
 
     public NoticiaControlador(ListarNoticiasCasoDeUso listarNoticiasCasoDeUso,
                               ObtenerNoticiaCasoDeUso obtenerNoticiaCasoDeUso,
                               PublicarNoticiaCasoDeUso publicarNoticiaCasoDeUso,
                               ImagenesNoticiaCasoDeUso imagenesNoticiaCasoDeUso,
+                              CalificarNoticiaCasoDeUso calificarNoticiaCasoDeUso,
                               @Value("${aldia.imagenes.cache-segundos}") long segundosCache) {
         this.listarNoticiasCasoDeUso = listarNoticiasCasoDeUso;
         this.obtenerNoticiaCasoDeUso = obtenerNoticiaCasoDeUso;
         this.publicarNoticiaCasoDeUso = publicarNoticiaCasoDeUso;
         this.imagenesNoticiaCasoDeUso = imagenesNoticiaCasoDeUso;
+        this.calificarNoticiaCasoDeUso = calificarNoticiaCasoDeUso;
         this.segundosCache = segundosCache;
     }
 
@@ -76,19 +81,27 @@ public class NoticiaControlador {
             @Parameter(description = "Texto a buscar en el título, el resumen y el contenido")
             @RequestParam(name = "q", required = false) String texto,
             @Parameter(description = "RECIENTES (predeterminado) o RECOMENDADAS")
-            @RequestParam(required = false) FiltroNoticias.Orden orden) {
-        List<NoticiaResponseDTO> noticias = listarNoticiasCasoDeUso
-                .listarPublicadas(new FiltroNoticias(tipo, ciudadId, texto, orden))
-                .stream()
-                .map(NoticiaResponseDTO::desde)
-                .toList();
-        return ResponseEntity.ok(noticias);
+            @RequestParam(required = false) FiltroNoticias.Orden orden,
+            Authentication autenticacion) {
+        List<Noticia> noticias = listarNoticiasCasoDeUso.listarPublicadas(new FiltroNoticias(tipo, ciudadId, texto, orden));
+        Map<Long, Integer> mias = calificarNoticiaCasoDeUso.misCalificaciones(correoDe(autenticacion),
+                noticias.stream().map(Noticia::getId).toList());
+        return ResponseEntity.ok(noticias.stream().map(n -> NoticiaResponseDTO.desde(n, mias.get(n.getId()))).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Ver una noticia publicada (404 si no existe, está oculta o eliminada)")
-    public ResponseEntity<NoticiaResponseDTO> obtener(@PathVariable Long id) {
-        return ResponseEntity.ok(NoticiaResponseDTO.desde(obtenerNoticiaCasoDeUso.obtenerPublicada(id)));
+    public ResponseEntity<NoticiaResponseDTO> obtener(@PathVariable Long id, Authentication autenticacion) {
+        Noticia noticia = obtenerNoticiaCasoDeUso.obtenerPublicada(id);
+        Integer mia = calificarNoticiaCasoDeUso.misCalificaciones(correoDe(autenticacion), List.of(id)).get(id);
+        return ResponseEntity.ok(NoticiaResponseDTO.desde(noticia, mia));
+    }
+
+    /** Correo de la sesión, o null si la petición llegó sin token. */
+    private static String correoDe(Authentication autenticacion) {
+        return autenticacion == null || autenticacion instanceof AnonymousAuthenticationToken
+                ? null
+                : autenticacion.getName();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -119,11 +132,10 @@ public class NoticiaControlador {
     @Operation(summary = "Una foto de la noticia (1 = portada). Si la noticia no está publicada, solo la ven su autor "
             + "y los administradores")
     public ResponseEntity<byte[]> imagen(@PathVariable Long id, @PathVariable int orden, Authentication autenticacion) {
-        boolean conSesion = autenticacion != null && !(autenticacion instanceof AnonymousAuthenticationToken);
-        boolean esAdministrador = conSesion && autenticacion.getAuthorities().stream()
+        String correo = correoDe(autenticacion);
+        boolean esAdministrador = correo != null && autenticacion.getAuthorities().stream()
                 .anyMatch(permiso -> ROL_ADMINISTRADOR.equals(permiso.getAuthority()));
-        ArchivoImagen archivo = imagenesNoticiaCasoDeUso.leer(id, orden, conSesion ? autenticacion.getName() : null,
-                esAdministrador);
+        ArchivoImagen archivo = imagenesNoticiaCasoDeUso.leer(id, orden, correo, esAdministrador);
         // Las fotos de noticias publicadas se pueden guardar en caché; las demás son privadas.
         CacheControl cache = archivo.publica()
                 ? CacheControl.maxAge(segundosCache, TimeUnit.SECONDS).cachePublic()

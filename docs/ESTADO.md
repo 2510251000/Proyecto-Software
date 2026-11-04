@@ -11,7 +11,7 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
 |---|---|---|
 | 1. Entrada con atardecer y «Hoy» tipo historias | `feature/entrada-e-historias` | ✅ |
 | 2. Imágenes en las noticias (MF02_003) | `feature/imagenes-noticias` | ✅ |
-| 3. Comentarios, calificaciones y reportes (MF03) | `feature/interaccion` | ⬜ |
+| 3. Comentarios, calificaciones y reportes (MF03) | `feature/interaccion` | ✅ |
 | 4. Propuesta de la regla de niveles (MF04_001) | `feature/interaccion` | ⬜ |
 | 5. Mapa de noticias (MF05_002) | `feature/mapa` | ⬜ |
 | 6. Pendientes técnicos | `fix/pendientes-tecnicos` | ⬜ |
@@ -48,6 +48,23 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
 - `README.md`: cómo probar desde el celular en la misma Wi-Fi (ambiente `red`, sin IP escrita).
 - Verificación: `mvnw verify` 124 pruebas; `ng test` 270 pruebas (35 archivos); lint y build
   limpios. Revisado en Edge (Publicar con fotos a 1280 y 390 px, detalle con galería).
+
+### Fase 3 — qué quedó
+- **Comentarios**: `GET /api/noticias/{id}/comentarios` (público), `POST` con sesión (1 a 1000
+  caracteres), `DELETE …/comentarios/{id}` (su autor o un administrador). Aviso `COMENTARIO` al
+  autor de la noticia e historial `COMENTARIO`.
+- **Calificaciones**: `PUT /api/noticias/{id}/calificacion` con `valor` de 1 a 5; una por usuario
+  (si ya calificó, se cambia); el autor no puede calificarse (403). `NoticiaResponseDTO` trae
+  `promedio`, `cantidadCalificaciones`, `miCalificacion` y `autorId`. Aviso `CALIFICACION` (solo la
+  primera vez) e historial.
+- **Reportes**: `POST /api/noticias/{id}/reportes` (motivo y descripción opcional; repetir → 409),
+  `GET /api/admin/reportes?estado=` y `PUT /api/admin/reportes/{id}` (REVISADO o DESCARTADO).
+  Historial `REPORTE`.
+- **Frontend**: en el detalle, estrellas (grupo de radios), comentarios con su formulario y botón
+  «Reportar» con diálogo de motivos. En Administración, pestaña «Reportes» que también oculta la
+  noticia reportada con la moderación de siempre.
+- No hizo falta migración: las tablas `comentario`, `calificacion` y `reporte` ya existían en V1.
+- Verificación: `mvnw verify` 142 pruebas; `ng test` 292 (37 archivos); lint y build limpios.
 
 ## Punto de partida (2026-10-18)
 

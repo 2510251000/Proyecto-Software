@@ -19,6 +19,7 @@ export interface Noticia {
   oficial: boolean;
   ciudad: string;
   ciudadId?: number;
+  autorId?: number | null;
   /** Nombre visible del autor (nunca su correo). */
   autor?: string;
   /** Nivel del autor, de 1 a 3. */
@@ -26,6 +27,11 @@ export interface Noticia {
   estado?: EstadoNoticia;
   /** Fotos en orden; vacía o ausente si la noticia no tiene. */
   imagenes?: ImagenNoticia[];
+  /** Promedio de 1 a 5 (0 si nadie ha calificado) y cuántas calificaciones tiene. */
+  promedio?: number;
+  cantidadCalificaciones?: number;
+  /** Lo que le dio el usuario de la sesión; null si no ha calificado. */
+  miCalificacion?: number | null;
 }
 
 /** Cuerpo de POST /api/noticias. */

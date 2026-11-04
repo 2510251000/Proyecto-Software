@@ -17,6 +17,8 @@ import com.aldia.dominio.modelo.FiltroNoticias;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.modelo.NuevaNoticia;
 import com.aldia.dominio.modelo.ImagenNoticia;
+import com.aldia.dominio.modelo.ResumenCalificaciones;
+import com.aldia.dominio.puerto.salida.CalificacionRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.ImagenRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NoticiaRepositorioPuerto;
 import com.aldia.infraestructura.persistencia.entidad.NoticiaEntidad;
@@ -42,17 +44,20 @@ public class NoticiaRepositorioAdaptador implements NoticiaRepositorioPuerto {
     private final CiudadRepositorioJPA ciudadRepositorioJPA;
     private final NoticiaMapeador mapeador;
     private final ImagenRepositorioPuerto imagenes;
+    private final CalificacionRepositorioPuerto calificaciones;
 
     public NoticiaRepositorioAdaptador(NoticiaRepositorioJPA noticiaRepositorioJPA,
                                        UsuarioRepositorioJPA usuarioRepositorioJPA,
                                        CiudadRepositorioJPA ciudadRepositorioJPA,
                                        NoticiaMapeador mapeador,
-                                       ImagenRepositorioPuerto imagenes) {
+                                       ImagenRepositorioPuerto imagenes,
+                                       CalificacionRepositorioPuerto calificaciones) {
         this.noticiaRepositorioJPA = noticiaRepositorioJPA;
         this.usuarioRepositorioJPA = usuarioRepositorioJPA;
         this.ciudadRepositorioJPA = ciudadRepositorioJPA;
         this.mapeador = mapeador;
         this.imagenes = imagenes;
+        this.calificaciones = calificaciones;
     }
 
     @Override
@@ -156,15 +161,20 @@ public class NoticiaRepositorioAdaptador implements NoticiaRepositorioPuerto {
         noticiaRepositorioJPA.save(entidad);
     }
 
+    /** La noticia con sus fotos y su resumen de calificaciones. */
     private Noticia conImagenes(Noticia noticia) {
-        return noticia.conImagenes(imagenes.buscarDeNoticia(noticia.getId()));
+        return noticia.conImagenes(imagenes.buscarDeNoticia(noticia.getId()))
+                .conCalificaciones(calificaciones.resumen(noticia.getId()));
     }
 
-    /** Las fotos de todas las noticias con una sola consulta. */
+    /** Las fotos y las calificaciones de todas las noticias, con una consulta para cada cosa. */
     private List<Noticia> conImagenes(List<Noticia> noticias) {
-        Map<Long, List<ImagenNoticia>> porNoticia = imagenes.buscarDeNoticias(noticias.stream().map(Noticia::getId).toList());
+        List<Long> ids = noticias.stream().map(Noticia::getId).toList();
+        Map<Long, List<ImagenNoticia>> porNoticia = imagenes.buscarDeNoticias(ids);
+        Map<Long, ResumenCalificaciones> resumenes = calificaciones.resumenes(ids);
         return noticias.stream()
-                .map(n -> n.conImagenes(porNoticia.getOrDefault(n.getId(), List.of())))
+                .map(n -> n.conImagenes(porNoticia.getOrDefault(n.getId(), List.of()))
+                        .conCalificaciones(resumenes.get(n.getId())))
                 .toList();
     }
 
