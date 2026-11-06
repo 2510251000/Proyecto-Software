@@ -46,3 +46,14 @@
 .regla {
   font-size: 0.9rem;
 }
+
+.cuenta-movil {
+  display: none;
+}
+
+@media (max-width: 47.99rem) {
+  .cuenta-movil {
+    display: block;
+    margin-top: var(--espacio-l);
+  }
+}

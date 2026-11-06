@@ -1,4 +1,6 @@
 <div class="marco">
+  <app-barra-movil class="solo-celular" [perfil]="perfil()" />
+
   <aside class="lateral" [attr.aria-label]="textos.lateral">
     <a class="marca" [routerLink]="['/', rutas.noticias]">
       <app-logo [tamano]="36" [conNombre]="true" />
@@ -19,4 +21,6 @@
   <div class="contenido">
     <ng-content />
   </div>
+
+  <app-barra-inferior class="solo-celular" />
 </div>

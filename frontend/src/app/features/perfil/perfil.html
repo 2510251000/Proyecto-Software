@@ -59,6 +59,9 @@
         <app-selector-ciudad idPrefijo="perfil-ciudad" [inicial]="perfil.ciudad" (elegida)="elegirCiudad($event)" />
         <app-boton tipo="submit" [cargando]="guardando()">{{ textos.guardar }}</app-boton>
       </form>
+
+      <!-- En el celular no hay menú lateral: la cuenta y «Salir» quedan aquí. -->
+      <app-usuario-marco class="cuenta-movil" [perfil]="perfil" />
     } @else if (error() === null) {
       <p role="status" class="texto-suave">{{ textosComunes.cargando }}</p>
     }

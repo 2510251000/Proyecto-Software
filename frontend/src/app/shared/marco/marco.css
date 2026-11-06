@@ -60,19 +60,38 @@
 }
 
 .contenido {
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
 }
 
-/* Celular: por ahora el menú va arriba; el paso 3 lo vuelve barra inferior. */
+.lateral {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.solo-celular {
+  display: none;
+}
+
+/*
+  Celular: el menú lateral se esconde; arriba va la barra con el logo y abajo la barra
+  fija de 76px. El contenido deja ese espacio libre al final para no quedar tapado.
+*/
 @media (max-width: 47.99rem) {
   .marco {
-    grid-template-columns: minmax(0, 1fr);
+    display: block;
   }
 
   .lateral {
-    position: static;
-    height: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--color-linea);
+    display: none;
+  }
+
+  .solo-celular {
+    display: block;
+  }
+
+  .contenido {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
   }
 }

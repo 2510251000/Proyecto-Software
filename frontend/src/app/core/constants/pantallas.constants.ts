@@ -17,7 +17,11 @@ export const TEXTOS_NAVEGACION = {
   lateral: 'Menú',
   usuario: 'Tu cuenta',
   nivel: 'Nivel',
+  buscar: 'Buscar noticias',
 } as const;
+
+/** Id del campo de búsqueda de la portada: la lupa del celular lleva el foco ahí. */
+export const ID_BUSQUEDA_NOTICIAS = 'busqueda-noticias';
 
 export const TEXTOS_BUSQUEDA = {
   etiqueta: 'Buscar noticias',

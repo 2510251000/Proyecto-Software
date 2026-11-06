@@ -7,15 +7,18 @@ import { RUTAS } from '../../core/constants/rutas.constants';
 import { PerfilService } from '../../core/services/perfil.service';
 import { Logo } from '../logo/logo';
 import { Navegacion } from '../navegacion/navegacion';
+import { BarraInferior } from './barra-inferior/barra-inferior';
+import { BarraMovil } from './barra-movil/barra-movil';
 import { UsuarioMarco } from './usuario-marco/usuario-marco';
 
 /**
- * Marco común de las pantallas con sesión: el menú lateral (logo, destinos, «Publicar» y
- * la cuenta) y, a la derecha, el contenido de cada pantalla.
+ * Marco común de las pantallas con sesión. Desde tableta: el menú lateral (logo, destinos,
+ * «Publicar» y la cuenta) y, a la derecha, el contenido. En el celular: una barra arriba
+ * con el logo y las iniciales, y el menú fijo abajo.
  */
 @Component({
   selector: 'app-marco',
-  imports: [Logo, Navegacion, RouterLink, UsuarioMarco],
+  imports: [BarraInferior, BarraMovil, Logo, Navegacion, RouterLink, UsuarioMarco],
   templateUrl: './marco.html',
   styleUrl: './marco.css',
 })

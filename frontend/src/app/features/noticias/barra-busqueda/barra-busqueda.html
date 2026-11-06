@@ -1,12 +1,12 @@
 <form class="barra" role="search" (submit)="enviar($event)">
-  <label class="solo-lectores-pantalla" for="busqueda-noticias">{{ textos.etiqueta }}</label>
+  <label class="solo-lectores-pantalla" [for]="idCampo">{{ textos.etiqueta }}</label>
   <div class="campo">
     <svg class="lupa" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
       <circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2" />
       <path d="m13 13 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
     </svg>
     <input
-      id="busqueda-noticias"
+      [id]="idCampo"
       class="entrada"
       type="search"
       autocomplete="off"

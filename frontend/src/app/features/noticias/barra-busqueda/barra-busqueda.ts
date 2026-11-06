@@ -1,5 +1,5 @@
 import { Component, input, output, signal } from '@angular/core';
-import { ETIQUETAS_TIPO, TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
+import { ETIQUETAS_TIPO, ID_BUSQUEDA_NOTICIAS, TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
 import { TipoNoticias } from '../../../core/models/noticia.model';
 
 const TIPOS: readonly TipoNoticias[] = ['TODAS', 'OFICIALES', 'COMUNITARIAS'];
@@ -21,6 +21,7 @@ export class BarraBusqueda {
   readonly tipo = output<TipoNoticias>();
 
   protected readonly textos = TEXTOS_BUSQUEDA;
+  protected readonly idCampo = ID_BUSQUEDA_NOTICIAS;
   protected readonly etiquetas = ETIQUETAS_TIPO;
   protected readonly tipos = TIPOS;
   protected readonly escrito = signal('');
