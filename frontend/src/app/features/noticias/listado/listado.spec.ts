@@ -10,7 +10,7 @@ import { Noticia } from '../../../core/models/noticia.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { NoticiaService } from '../../../core/services/noticia.service';
 import { simularDialogoNativo } from '../modal-noticia/dialogo-de-prueba';
-import { campanaFalsa, perfilFalso } from '../../../../testing/menu-falso';
+import { avisosFalsos, campanaFalsa, perfilFalso } from '../../../../testing/menu-falso';
 import { Listado } from './listado';
 
 const NOTICIAS: Noticia[] = [
@@ -58,6 +58,7 @@ describe('Listado', () => {
         { provide: AuthService, useValue: { cerrarSesion, obtenerContenidoToken: () => null } },
         campanaFalsa(),
         perfilFalso(),
+        avisosFalsos(),
       ],
     }).compileComponents();
     navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
@@ -168,7 +169,7 @@ describe('Listado', () => {
     await fixture.whenStable();
     expect(destacadas()).toHaveLength(1);
     expect(destacadas()[0].textContent).toContain('Segunda noticia');
-    expect(raiz().textContent).not.toContain('Primera noticia');
+    expect(buscar('main')?.textContent).not.toContain('Primera noticia');
   });
 
   it('cierra la sesión y vuelve al login', () => {
@@ -216,7 +217,7 @@ describe('Listado', () => {
     it('respeta el orden de la API y no repite las destacadas abajo', () => {
       expect(destacadas().map((t) => t.querySelector('h3')?.textContent?.trim())).toEqual(['Noticia 1', 'Noticia 2']);
       expect(compactas()[0].textContent).toContain('Noticia 3');
-      expect(raiz().querySelectorAll('a[href="/noticias/1"]')).toHaveLength(1);
+      expect(raiz().querySelectorAll('main a[href="/noticias/1"]')).toHaveLength(1);
     });
 
     it('«Recientes» ordena por fecha sin pedir nada nuevo al backend', async () => {

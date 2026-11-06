@@ -1,0 +1,14 @@
+<section class="tarjeta-lateral nivel" aria-labelledby="columna-nivel">
+  <div class="encabezado">
+    <h2 id="columna-nivel">{{ textos.nivel }} {{ perfil().nivelNumero }}</h2>
+    <span class="puntos">
+      {{ perfil().puntaje }}@if (meta(); as meta) { / {{ meta }}} {{ textos.puntos }}
+    </span>
+  </div>
+  <div class="barra" role="img" [attr.aria-label]="etiquetaBarra()">
+    <span class="relleno" [style.width.%]="progreso()"></span>
+  </div>
+  <p class="faltan">{{ faltan() }}</p>
+  <p class="limite">{{ limite() }}</p>
+  <a class="ver-perfil" [routerLink]="rutaPerfil">{{ textos.verPerfil }}</a>
+</section>

@@ -1,4 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
 import { NOTICIAS_DESTACADAS, NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
 import { Boton } from '../../../shared/boton/boton';
@@ -6,6 +8,8 @@ import { AlmacenNoticias } from '../almacen-noticias';
 import { Marco } from '../../../shared/marco/marco';
 import { BarraPortada } from '../barra-portada/barra-portada';
 import { Bienvenida } from '../bienvenida/bienvenida';
+import { ColumnaDerecha } from '../columna-derecha/columna-derecha';
+import { PerfilService } from '../../../core/services/perfil.service';
 import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
 import { ModalNoticia } from '../modal-noticia/modal-noticia';
@@ -18,6 +22,7 @@ import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNot
     Marco,
     BarraPortada,
     Bienvenida,
+    ColumnaDerecha,
     TarjetaNoticia,
     EsqueletoPortada,
     ModalNoticia,
@@ -32,6 +37,13 @@ export class Listado implements OnInit {
   protected readonly cargando = this.almacen.cargando;
   protected readonly error = this.almacen.error;
   protected readonly noticias = this.almacen.noticias;
+  /** Perfil de la sesión para la bienvenida y «Tu nivel»; null si no carga. */
+  protected readonly perfil = toSignal(
+    inject(PerfilService)
+      .obtener()
+      .pipe(catchError(() => of(null))),
+    { initialValue: null },
+  );
   /** Noticia que se está viendo en la vista rápida; null si está cerrada. */
   protected readonly noticiaAbierta = signal<Noticia | null>(null);
   protected readonly textosPortada = TEXTOS_PORTADA;

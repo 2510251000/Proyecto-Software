@@ -1,5 +1,6 @@
 :host {
   display: block;
+  container-type: inline-size;
 }
 
 .bienvenida {
@@ -121,7 +122,8 @@
   font-size: 0.875rem;
 }
 
-@media (max-width: 47.99rem) {
+/* Bloque angosto (celular, o escritorio pequeño con la columna derecha): sol pequeño. */
+@container (max-width: 560px) {
   .bienvenida {
     gap: 12px;
     padding: 18px;
@@ -140,7 +142,7 @@
   }
 
   .titular {
-    max-width: 15.6rem;
+    max-width: calc(100% - 100px);
     font-size: 1.4375rem;
     line-height: 1.2;
   }

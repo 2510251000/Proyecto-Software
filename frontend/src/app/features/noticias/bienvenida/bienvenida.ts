@@ -1,7 +1,5 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { catchError, of } from 'rxjs';
 import { TEXTOS_PUBLICAR, textoCupo } from '../../../core/constants/pantallas.constants';
 import {
   preguntaPublicar,
@@ -11,7 +9,7 @@ import {
 } from '../../../core/constants/portada.constants';
 import { IDIOMA } from '../../../core/constants/regional.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
-import { PerfilService } from '../../../core/services/perfil.service';
+import { Perfil } from '../../../core/models/perfil.model';
 import { iniciales } from '../../../core/utils/texto';
 
 const FORMATO_DIA = new Intl.DateTimeFormat(IDIOMA, { weekday: 'long', day: 'numeric', month: 'long' });
@@ -33,13 +31,8 @@ export class Bienvenida {
   protected readonly textos = TEXTOS_BIENVENIDA;
   protected readonly rutaPublicar = ['/', RUTAS.publicar];
 
-  /** Si el perfil no llega, el bloque se muestra igual, sin el cupo. */
-  protected readonly perfil = toSignal(
-    inject(PerfilService)
-      .obtener()
-      .pipe(catchError(() => of(null))),
-    { initialValue: null },
-  );
+  /** null mientras llega o si no se pudo cargar: el bloque se muestra igual, sin el cupo. */
+  readonly perfil = input<Perfil | null>(null);
 
   protected readonly antetitulo = computed(() => {
     const lugar = this.ciudadActiva() ?? TEXTOS_PORTADA.tuRegion;

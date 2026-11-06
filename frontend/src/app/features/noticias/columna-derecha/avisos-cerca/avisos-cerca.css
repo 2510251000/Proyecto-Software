@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.titulo {
+  justify-content: space-between;
+}
+
+/* Contador ámbar con texto azul (6.96:1). */
+.contador {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: var(--radio-chip);
+  background: var(--color-sol);
+  color: var(--color-marca);
+  font-family: var(--fuente-texto);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.punto {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: var(--color-sol);
+}
+
+.vacio {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}

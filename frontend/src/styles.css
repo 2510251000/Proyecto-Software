@@ -176,6 +176,57 @@ html:has(dialog:modal) {
   border-top: 3px solid var(--color-marca);
 }
 
+/* Tarjeta de la columna derecha de la portada (Tu nivel, Avisos, De la alcaldía). */
+.tarjeta-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
+}
+
+.tarjeta-lateral h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  color: var(--color-marca);
+  font-size: 1.25rem;
+}
+
+/* Un renglón de la tarjeta lateral: titular en negrita y debajo el dato en gris. */
+.renglon-lateral {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.renglon-lateral + .renglon-lateral {
+  border-top: 1px solid var(--color-linea);
+}
+
+.renglon-lateral:hover .renglon-titulo {
+  text-decoration: underline;
+}
+
+.renglon-titulo {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.renglon-dato {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-texto-suave);
+  font-size: 0.8125rem;
+}
+
 .aviso-cupo,
 .aviso-exito,
 .aviso-error-general {

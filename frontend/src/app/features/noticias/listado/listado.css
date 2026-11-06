@@ -2,14 +2,31 @@
   display: block;
 }
 
-/* Columna central del feed: ancho máximo 1180px con 28px de margen. */
-.pagina {
+/*
+  Contenido: ancho máximo 1180px, 28px de margen y 28px entre columnas. La columna derecha
+  (280px) baja al final cuando no cabe al lado (tableta) y no se muestra en el celular.
+*/
+.cuerpo {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 28px;
   max-width: 1180px;
   padding: 28px;
+}
+
+.pagina {
+  display: flex;
+  flex: 999 1 420px;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
   container-type: inline-size;
+}
+
+.derecha {
+  flex: 1 1 280px;
+  min-width: 0;
 }
 
 .seccion {
@@ -80,9 +97,17 @@
 }
 
 @media (max-width: 47.99rem) {
+  .cuerpo {
+    padding: 14px 16px 24px;
+  }
+
   .pagina {
     gap: 14px;
-    padding: 14px 16px 24px;
+  }
+
+  /* En el celular «Tu nivel» está en Perfil y los avisos en la barra inferior. */
+  .derecha {
+    display: none;
   }
 
   .seccion {

@@ -1,6 +1,8 @@
 import { Provider, signal } from '@angular/core';
-import { NEVER } from 'rxjs';
+import { NEVER, of } from 'rxjs';
+import { Notificacion } from '../app/core/models/notificacion.model';
 import { CampanaNotificaciones } from '../app/core/services/campana-notificaciones';
+import { NotificacionService } from '../app/core/services/notificacion.service';
 import { PerfilService } from '../app/core/services/perfil.service';
 
 /**
@@ -24,4 +26,9 @@ export function campanaFalsa(noLeidas = 0): Provider {
  */
 export function perfilFalso(): Provider {
   return { provide: PerfilService, useValue: { obtener: () => NEVER } };
+}
+
+/** La columna derecha de la portada pide la bandeja de avisos; aquí responde con la lista dada. */
+export function avisosFalsos(avisos: Notificacion[] = []): Provider {
+  return { provide: NotificacionService, useValue: { listar: () => of(avisos) } };
 }
