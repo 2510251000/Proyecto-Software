@@ -1,0 +1,65 @@
+:host {
+  display: block;
+}
+
+.calificacion {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.titulo {
+  padding: 0;
+  font-weight: 700;
+}
+
+.estrellas {
+  display: flex;
+  gap: var(--espacio-xs);
+  margin: var(--espacio-s) 0;
+}
+
+/* Cada estrella es un objetivo táctil de 44 px. Vacía: borde gris (3.7:1); llena: azul de marca. */
+.estrella {
+  display: grid;
+  place-items: center;
+  width: var(--alto-control);
+  height: var(--alto-control);
+  border-radius: var(--radio-s);
+  cursor: pointer;
+}
+
+.estrella svg {
+  width: 30px;
+  height: 30px;
+  fill: transparent;
+  stroke: var(--color-borde);
+  stroke-width: 1.6;
+}
+
+.estrella.llena svg {
+  fill: var(--color-marca);
+  stroke: var(--color-marca);
+}
+
+.estrella:has(input:focus-visible) {
+  outline: 3px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+.calificacion:disabled .estrella {
+  cursor: default;
+}
+
+.resumen,
+.nota {
+  margin: 0;
+  color: var(--color-texto-suave);
+}
+
+.error {
+  margin: var(--espacio-xs) 0 0;
+  color: var(--color-error);
+  font-weight: 600;
+}

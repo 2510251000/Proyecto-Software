@@ -29,6 +29,12 @@
     <ul class="lista-filas">
       @for (noticia of lista; track noticia.id) {
         <li class="fila">
+          <app-miniatura
+            class="miniatura-fila"
+            [categoria]="categoriaDe(noticia)"
+            [foto]="portadaDe(noticia)"
+            [protegida]="noticia.estado !== 'PUBLICADA'"
+          />
           <div class="datos">
             <p class="meta">
               <span class="chip" [class.chip-alerta]="noticia.estado === 'OCULTA'">

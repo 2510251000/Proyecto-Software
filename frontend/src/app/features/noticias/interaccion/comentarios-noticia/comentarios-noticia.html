@@ -1,0 +1,47 @@
+<section class="comentarios" aria-labelledby="comentarios-titulo">
+  <h2 id="comentarios-titulo" class="titulo">
+    {{ textos.titulo }}
+    @if (comentarios(); as lista) {
+      <span class="cantidad">({{ lista.length }})</span>
+    }
+  </h2>
+
+  @if (error(); as mensaje) {
+    <p class="error" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (comentarios(); as lista) {
+    @if (lista.length === 0) {
+      <p class="vacio">{{ textos.vacio }}</p>
+    } @else {
+      <ol class="lista">
+        @for (comentario of lista; track comentario.id) {
+          <li class="comentario">
+            <p class="cabecera">
+              <span class="autor">{{ comentario.autor }}</span>
+              <span class="dato">{{ textos.nivel }} {{ comentario.autorNivel }}</span>
+              <time class="dato" [attr.datetime]="comentario.fecha">{{ cuando(comentario.fecha) }}</time>
+            </p>
+            <p class="texto">{{ comentario.contenido }}</p>
+            @if (puedeBorrar(comentario)) {
+              <button type="button" class="borrar" (click)="borrar(comentario)">{{ textos.borrar }}</button>
+            }
+          </li>
+        }
+      </ol>
+    }
+  }
+
+  <form class="formulario" (submit)="$event.preventDefault(); enviar()" novalidate>
+    <app-campo
+      idCampo="nuevo-comentario"
+      [etiqueta]="textos.campo"
+      [multilinea]="true"
+      [filas]="3"
+      [maximo]="largoMaximo"
+      [control]="control"
+      [errores]="errores"
+    />
+    <app-boton tipo="submit" [cargando]="enviando()">{{ textos.enviar }}</app-boton>
+  </form>
+</section>

@@ -1,0 +1,40 @@
+<app-encabezado />
+
+<main class="pagina-interna pagina-interna-ancha">
+  <h1 class="titulo-pagina">{{ textos.titulo }}</h1>
+  <p class="bajada">{{ textos.bajada }}</p>
+
+  <label class="filtro">
+    {{ textos.filtro }}
+    <select class="selector" (change)="cambiarTipo($event)">
+      @for (opcion of tipos; track opcion) {
+        <option [value]="opcion" [selected]="tipo() === opcion">{{ etiquetasTipo[opcion] }}</option>
+      }
+    </select>
+  </label>
+
+  @if (error(); as mensaje) {
+    <p class="aviso-error-general" role="alert">{{ mensaje }}</p>
+  }
+
+  <div #contenedorMapa class="mapa" role="region" [attr.aria-label]="textos.mapa"></div>
+
+  <section class="lista" aria-labelledby="mapa-lista">
+    <h2 id="mapa-lista" class="titulo-lista">{{ textos.lista }}</h2>
+    @if (cargando()) {
+      <p role="status" class="texto-suave">{{ textos.cargando }}</p>
+    } @else if (ubicadas().length === 0) {
+      <p class="texto-suave">{{ textos.vacio }}</p>
+    } @else {
+      <ul class="noticias">
+        @for (item of ubicadas(); track item.noticia.id) {
+          <li class="noticia">
+            <span class="tipo" [class.oficial]="item.noticia.oficial">{{ etiqueta(item.noticia) }}</span>
+            <a [routerLink]="['/', rutas.noticias, item.noticia.id]">{{ item.noticia.titulo }}</a>
+            <span class="texto-suave">{{ item.noticia.ciudad }}</span>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</main>

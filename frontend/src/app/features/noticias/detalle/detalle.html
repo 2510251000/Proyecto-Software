@@ -11,6 +11,13 @@
   @if (noticia(); as encontrada) {
     <div class="hoja">
       <app-contenido-noticia [noticia]="encontrada" [idTitulo]="idTitulo" [nivelTitulo]="1" />
+      <div class="interaccion">
+        <div class="interaccion-fila">
+          <app-calificacion-noticia [noticia]="encontrada" />
+          <app-reportar-noticia [noticiaId]="encontrada.id" />
+        </div>
+        <app-comentarios-noticia [noticiaId]="encontrada.id" />
+      </div>
     </div>
   } @else if (cargando()) {
     <div class="hoja estado" role="status">

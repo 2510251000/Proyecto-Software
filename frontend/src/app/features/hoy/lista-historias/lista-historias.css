@@ -1,0 +1,87 @@
+/* Sobre la noche: todo en blanco puro; la historia actual lleva la barra del sol. */
+:host {
+  display: block;
+  align-self: center;
+  max-height: calc(100dvh - 3rem);
+  overflow-y: auto;
+  color: var(--color-sobre-marca);
+}
+
+.antetitulo {
+  margin: 0 0 var(--espacio-xs);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.municipio {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.fecha {
+  margin: var(--espacio-xs) 0 var(--espacio-l);
+  font-size: 0.95rem;
+}
+
+.fecha::first-letter {
+  text-transform: uppercase;
+}
+
+.lista-titulares {
+  display: grid;
+  gap: var(--espacio-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.titular-lista {
+  display: flex;
+  gap: var(--espacio-s);
+  width: 100%;
+  min-height: var(--alto-control);
+  padding: var(--espacio-s) var(--espacio-m);
+  border: 0;
+  border-left: 4px solid transparent;
+  border-radius: 0 var(--radio-s) var(--radio-s) 0;
+  background: transparent;
+  color: var(--color-sobre-marca);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.titular-lista:hover,
+.titular-lista.actual {
+  background: var(--color-marca);
+}
+
+.titular-lista.actual {
+  border-left-color: var(--color-sol);
+  font-weight: 700;
+}
+
+.titular-lista:focus-visible {
+  outline: 3px solid var(--color-sobre-marca);
+  outline-offset: 2px;
+}
+
+.numero {
+  flex: none;
+  min-width: 1.4em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  :host {
+    display: none;
+  }
+}

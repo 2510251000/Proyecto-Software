@@ -7,13 +7,23 @@ import {
   MENSAJES_SESION,
   MENSAJES_VALIDACION,
   TEXTOS_AUTH,
+  TEXTOS_ENTRADA,
 } from '../../../core/constants/mensajes.constants';
 import { MOTIVOS_LOGIN, PARAMETROS_URL } from '../../../core/constants/navegacion.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
 import { RespuestaAutenticacion } from '../../../core/models/respuesta-autenticacion.model';
+import { TIEMPOS_ENTRADA } from '../../../core/constants/animaciones.constants';
 import { AuthService } from '../../../core/services/auth.service';
+import { EntradaService } from '../../../core/services/entrada.service';
+import { MovimientoService } from '../../../core/services/movimiento.service';
 import { Login } from './login';
+
+interface OpcionesLogin {
+  motivo?: string | null;
+  reducirMovimiento?: boolean;
+  entradaVista?: boolean;
+}
 
 describe('Login', () => {
   let fixture: ComponentFixture<Login>;
@@ -24,14 +34,36 @@ describe('Login', () => {
   const raiz = () => fixture.nativeElement as HTMLElement;
   const buscar = <T extends Element>(selector: string) => raiz().querySelector<T>(selector);
 
-  async function crear(motivo: string | null = null): Promise<void> {
+  let marcarVista: ReturnType<typeof vi.fn>;
+
+  afterEach(() => vi.useRealTimers());
+
+  /** Con temporizadores falsos, whenStable no termina: basta con detectar cambios. */
+  async function estabilizar(): Promise<void> {
+    if (vi.isFakeTimers()) {
+      fixture.detectChanges();
+      return;
+    }
+    await fixture.whenStable();
+  }
+
+  async function crear(motivoOOpciones: string | null | OpcionesLogin = null): Promise<void> {
+    const opciones: OpcionesLogin =
+      typeof motivoOOpciones === 'object' && motivoOOpciones !== null
+        ? motivoOOpciones
+        : { motivo: motivoOOpciones };
+    // Por defecto la entrada ya se vio: así las pruebas del formulario no esperan la animación.
+    const { motivo = null, reducirMovimiento = false, entradaVista = true } = opciones;
     respuesta = new Subject<RespuestaAutenticacion>();
     iniciarSesion = vi.fn(() => respuesta);
+    marcarVista = vi.fn();
     await TestBed.configureTestingModule({
       imports: [Login],
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: { iniciarSesion } },
+        { provide: MovimientoService, useValue: { reducirMovimiento: () => reducirMovimiento } },
+        { provide: EntradaService, useValue: { yaSeVio: () => entradaVista, marcarVista } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -44,19 +76,19 @@ describe('Login', () => {
     }).compileComponents();
     navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(Login);
-    await fixture.whenStable();
+    await estabilizar();
   }
 
   async function escribir(id: string, valor: string): Promise<void> {
     const entrada = buscar<HTMLInputElement>(`#${id}`) as HTMLInputElement;
     entrada.value = valor;
     entrada.dispatchEvent(new Event('input'));
-    await fixture.whenStable();
+    await estabilizar();
   }
 
   async function enviar(): Promise<void> {
     buscar<HTMLFormElement>('form')?.dispatchEvent(new Event('submit'));
-    await fixture.whenStable();
+    await estabilizar();
   }
 
   async function llenarValido(): Promise<void> {
@@ -105,13 +137,100 @@ describe('Login', () => {
     expect(buscar<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(true);
   });
 
-  it('con credenciales correctas redirige al listado de noticias', async () => {
+  it('con credenciales correctas amanece y después lleva a «Hoy»', async () => {
     await crear();
+    vi.useFakeTimers();
     await llenarValido();
     await enviar();
     respuesta.next({ token: 'abc' });
+    fixture.detectChanges();
+    expect(buscar('.pagina-login')?.classList).toContain('amaneciendo');
+    expect(buscar('.sol-amanecer')).not.toBeNull();
+    expect(navegar).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(TIEMPOS_ENTRADA.amanecer);
+    expect(navegar).toHaveBeenCalledWith([RUTAS.hoy]);
+  });
+
+  it('con «reducir movimiento» va a «Hoy» sin esperar el amanecer', async () => {
+    await crear({ reducirMovimiento: true });
+    await llenarValido();
+    await enviar();
+    respuesta.next({ token: 'abc' });
+    expect(navegar).toHaveBeenCalledWith([RUTAS.hoy]);
+  });
+
+  it('si la navegación a «Hoy» no se da, vuelve a mostrar el formulario', async () => {
+    await crear({ reducirMovimiento: true });
+    navegar.mockResolvedValue(false);
+    await llenarValido();
+    await enviar();
+    respuesta.next({ token: 'abc' });
+    await Promise.resolve();
     await fixture.whenStable();
-    expect(navegar).toHaveBeenCalledWith([RUTAS.noticias]);
+    expect(buscar('.pagina-login')?.classList).not.toContain('amaneciendo');
+    expect(buscar<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(false);
+  });
+
+  it('si se sale de la pantalla durante el amanecer, no navega después', async () => {
+    await crear();
+    vi.useFakeTimers();
+    await llenarValido();
+    await enviar();
+    respuesta.next({ token: 'abc' });
+    fixture.destroy();
+    vi.advanceTimersByTime(TIEMPOS_ENTRADA.amanecer);
+    expect(navegar).not.toHaveBeenCalled();
+  });
+
+  describe('entrada con el atardecer', () => {
+    it('la primera vez de la sesión muestra el sol, el botón «Saltar» y bloquea la tarjeta', async () => {
+      vi.useFakeTimers();
+      await crear({ entradaVista: false });
+      expect(marcarVista).toHaveBeenCalled();
+      expect(buscar('.pagina-login')?.classList).toContain('en-entrada');
+      expect(buscar('.sol')).not.toBeNull();
+      expect(buscar('.estrella')).not.toBeNull();
+      expect(buscar('.saltar')?.textContent).toContain(TEXTOS_ENTRADA.saltar);
+      expect(buscar<HTMLElement>('.tarjeta-login')?.inert).toBe(true);
+    });
+
+    it('la tarjeta se puede usar cuando aparece y la entrada termina sola', async () => {
+      vi.useFakeTimers();
+      await crear({ entradaVista: false });
+      vi.advanceTimersByTime(TIEMPOS_ENTRADA.tarjeta);
+      fixture.detectChanges();
+      expect(buscar<HTMLElement>('.tarjeta-login')?.inert).toBe(false);
+      expect(buscar('.saltar')).not.toBeNull();
+      vi.advanceTimersByTime(TIEMPOS_ENTRADA.total - TIEMPOS_ENTRADA.tarjeta);
+      fixture.detectChanges();
+      expect(buscar('.pagina-login')?.classList).not.toContain('en-entrada');
+      expect(buscar('.saltar')).toBeNull();
+      expect(buscar('.sol')).toBeNull();
+    });
+
+    it('«Saltar» muestra de una vez el formulario', async () => {
+      vi.useFakeTimers();
+      await crear({ entradaVista: false });
+      buscar<HTMLButtonElement>('.saltar')?.click();
+      fixture.detectChanges();
+      expect(buscar('.pagina-login')?.classList).not.toContain('en-entrada');
+      expect(buscar<HTMLElement>('.tarjeta-login')?.inert).toBe(false);
+      expect(buscar('.saltar')).toBeNull();
+    });
+
+    it('no se repite en la misma sesión del navegador', async () => {
+      await crear({ entradaVista: true });
+      expect(marcarVista).not.toHaveBeenCalled();
+      expect(buscar('.pagina-login')?.classList).not.toContain('en-entrada');
+      expect(buscar('.saltar')).toBeNull();
+    });
+
+    it('con «reducir movimiento» no hay entrada', async () => {
+      await crear({ entradaVista: false, reducirMovimiento: true });
+      expect(buscar('.pagina-login')?.classList).not.toContain('en-entrada');
+      expect(buscar('.sol')).toBeNull();
+      expect(buscar<HTMLElement>('.tarjeta-login')?.inert).toBe(false);
+    });
   });
 
   it('con credenciales incorrectas muestra el error y vuelve a habilitar el botón', async () => {

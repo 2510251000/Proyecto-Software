@@ -16,6 +16,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/registro/registro').then((m) => m.Registro),
   },
   {
+    path: RUTAS.hoy,
+    title: 'Hoy | Al Día',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/hoy/hoy').then((m) => m.Hoy),
+  },
+  {
     path: RUTAS.noticias,
     title: 'Noticias | Al Día',
     canActivate: [authGuard],
@@ -26,6 +32,12 @@ export const routes: Routes = [
     title: 'Noticia | Al Día',
     canActivate: [authGuard],
     loadComponent: () => import('./features/noticias/detalle/detalle').then((m) => m.Detalle),
+  },
+  {
+    path: RUTAS.mapa,
+    title: 'Mapa | Al Día',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/mapa/mapa').then((m) => m.Mapa),
   },
   {
     path: RUTAS.publicar,

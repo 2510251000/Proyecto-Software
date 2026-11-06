@@ -1,5 +1,5 @@
 <article class="noticia">
-  <app-miniatura class="imagen" [categoria]="categoria()" />
+  <app-miniatura class="imagen" [categoria]="categoria()" [foto]="portada()" />
 
   <div class="cuerpo">
     <p class="seccion">{{ seccion() }}, {{ noticia().ciudad }}</p>
@@ -33,6 +33,14 @@
     <!-- El contenido viene del backend: se interpola como texto, nunca como HTML. -->
     @for (parrafo of parrafos(); track $index) {
       <p class="parrafo">{{ parrafo }}</p>
+    }
+
+    @if (galeria().length > 0) {
+      <ul class="galeria" [attr.aria-label]="textoGaleria">
+        @for (foto of galeria(); track foto.orden) {
+          <li><app-miniatura class="foto-galeria" [categoria]="categoria()" [foto]="foto" /></li>
+        }
+      </ul>
     }
   </div>
 </article>

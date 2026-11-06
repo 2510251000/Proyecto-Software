@@ -8,6 +8,8 @@ import com.aldia.dominio.excepcion.CiudadNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.excepcion.UsuarioNoEncontradoExcepcion;
 import com.aldia.dominio.modelo.AccionHistorial;
+import com.aldia.dominio.modelo.ImagenNoticia;
+import com.aldia.dominio.modelo.ImagenSubida;
 import com.aldia.dominio.modelo.Nivel;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.modelo.Notificacion;
@@ -18,6 +20,7 @@ import com.aldia.dominio.puerto.entrada.PublicarNoticiaCasoDeUso;
 import com.aldia.dominio.puerto.salida.CiudadRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.EjecutorTransaccionalPuerto;
 import com.aldia.dominio.puerto.salida.HistorialRepositorioPuerto;
+import com.aldia.dominio.puerto.salida.ImagenRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NivelRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NoticiaRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NotificacionRepositorioPuerto;
@@ -39,7 +42,10 @@ public class PublicarNoticiaServicio implements PublicarNoticiaCasoDeUso {
     private final CalculadoraNivel calculadoraNivel;
     private final AvisosPorCiudad avisosPorCiudad;
     private final Clock reloj;
+    private final ArchivosDeImagenes archivosDeImagenes;
+    private final ImagenRepositorioPuerto imagenRepositorioPuerto;
 
+    @SuppressWarnings("java:S107") // Caso de uso que orquesta varias reglas: recibe un puerto por cada una.
     public PublicarNoticiaServicio(UsuarioRepositorioPuerto usuarioRepositorioPuerto,
                                    CiudadRepositorioPuerto ciudadRepositorioPuerto,
                                    NoticiaRepositorioPuerto noticiaRepositorioPuerto,
@@ -50,7 +56,9 @@ public class PublicarNoticiaServicio implements PublicarNoticiaCasoDeUso {
                                    ReglaLimiteDiario reglaLimiteDiario,
                                    CalculadoraNivel calculadoraNivel,
                                    AvisosPorCiudad avisosPorCiudad,
-                                   Clock reloj) {
+                                   Clock reloj,
+                                   ArchivosDeImagenes archivosDeImagenes,
+                                   ImagenRepositorioPuerto imagenRepositorioPuerto) {
         this.usuarioRepositorioPuerto = usuarioRepositorioPuerto;
         this.ciudadRepositorioPuerto = ciudadRepositorioPuerto;
         this.noticiaRepositorioPuerto = noticiaRepositorioPuerto;
@@ -62,18 +70,28 @@ public class PublicarNoticiaServicio implements PublicarNoticiaCasoDeUso {
         this.calculadoraNivel = calculadoraNivel;
         this.avisosPorCiudad = avisosPorCiudad;
         this.reloj = reloj;
+        this.archivosDeImagenes = archivosDeImagenes;
+        this.imagenRepositorioPuerto = imagenRepositorioPuerto;
     }
 
     /**
-     * Guarda la noticia, su registro en historial, los puntos del autor y los avisos a
-     * los vecinos dentro de una sola transacción: si algo falla, no queda nada a medias.
+     * Guarda la noticia, sus fotos, su registro en historial, los puntos del autor y los avisos
+     * a los vecinos dentro de una sola transacción: si algo falla, no queda nada a medias.
+     * Las fotos se validan y se limpian antes; sus archivos se guardan antes de la transacción
+     * y se borran si la base falla.
      */
     @Override
-    public Noticia publicar(String correoAutor, NuevaNoticia datos) {
-        return transaccion.ejecutar(() -> publicarEnTransaccion(correoAutor, datos));
+    public Noticia publicar(String correoAutor, NuevaNoticia datos, List<ImagenSubida> imagenes) {
+        List<ImagenNoticia> guardadas = archivosDeImagenes.guardar(archivosDeImagenes.preparar(imagenes));
+        try {
+            return transaccion.ejecutar(() -> publicarEnTransaccion(correoAutor, datos, guardadas));
+        } catch (RuntimeException error) {
+            archivosDeImagenes.borrar(guardadas);
+            throw error;
+        }
     }
 
-    private Noticia publicarEnTransaccion(String correoAutor, NuevaNoticia datos) {
+    private Noticia publicarEnTransaccion(String correoAutor, NuevaNoticia datos, List<ImagenNoticia> imagenes) {
         Usuario autor = usuarioRepositorioPuerto.buscarPorCorreo(correoAutor)
                 .orElseThrow(UsuarioNoEncontradoExcepcion::new);
 
@@ -94,6 +112,10 @@ public class PublicarNoticiaServicio implements PublicarNoticiaCasoDeUso {
 
         boolean oficial = autor.esAdministrador();
         Noticia publicada = noticiaRepositorioPuerto.guardarNueva(datos, autor.getId(), oficial, ahora);
+        if (!imagenes.isEmpty()) {
+            imagenRepositorioPuerto.guardarTodas(publicada.getId(), imagenes);
+            publicada = publicada.conImagenes(imagenes);
+        }
 
         historialRepositorioPuerto.registrar(autor.getId(), AccionHistorial.PUBLICACION,
                 "Publicó la noticia " + publicada.getId(), ahora);
@@ -132,6 +154,6 @@ public class PublicarNoticiaServicio implements PublicarNoticiaCasoDeUso {
         return new Noticia(noticia.getId(), noticia.getTitulo(), noticia.getResumen(), noticia.getContenido(),
                 noticia.getFechaPublicacion(), noticia.isOficial(), noticia.getEstado(), noticia.getCiudad(),
                 noticia.getCiudadId(), autor.getId(), autor.nombreVisible(), autor.getNivel().getNumero(),
-                noticia.getLatitud(), noticia.getLongitud());
+                noticia.getLatitud(), noticia.getLongitud(), noticia.getImagenes());
     }
 }

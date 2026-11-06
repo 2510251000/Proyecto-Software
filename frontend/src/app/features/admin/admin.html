@@ -18,6 +18,17 @@
     <button
       type="button"
       role="tab"
+      id="pestana-reportes"
+      aria-controls="panel-reportes"
+      class="pestana"
+      [attr.aria-selected]="pestana() === 'reportes'"
+      (click)="pestana.set('reportes')"
+    >
+      {{ textoReportes }}
+    </button>
+    <button
+      type="button"
+      role="tab"
       id="pestana-usuarios"
       aria-controls="panel-usuarios"
       class="pestana"
@@ -31,6 +42,10 @@
   @if (pestana() === 'noticias') {
     <section id="panel-noticias" role="tabpanel" aria-labelledby="pestana-noticias">
       <app-moderacion-noticias />
+    </section>
+  } @else if (pestana() === 'reportes') {
+    <section id="panel-reportes" role="tabpanel" aria-labelledby="pestana-reportes">
+      <app-reportes-admin />
     </section>
   } @else {
     <section id="panel-usuarios" role="tabpanel" aria-labelledby="pestana-usuarios">

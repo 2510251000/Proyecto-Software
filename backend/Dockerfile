@@ -20,6 +20,8 @@ WORKDIR /app
 
 # No correr como root dentro del contenedor.
 RUN addgroup -S aldia && adduser -S aldia -G aldia
+# Carpeta de las fotos (volumen «imagenes»): debe ser del usuario aldia para poder escribir.
+RUN mkdir -p /app/imagenes && chown aldia:aldia /app/imagenes
 USER aldia
 
 COPY --from=compilacion /app/target/*.jar app.jar

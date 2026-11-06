@@ -11,6 +11,9 @@ import { Boton } from '../../../shared/boton/boton';
 import { Encabezado } from '../../../shared/encabezado/encabezado';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { ContenidoNoticia } from '../contenido-noticia/contenido-noticia';
+import { CalificacionNoticia } from '../interaccion/calificacion-noticia/calificacion-noticia';
+import { ComentariosNoticia } from '../interaccion/comentarios-noticia/comentarios-noticia';
+import { ReportarNoticia } from '../interaccion/reportar-noticia/reportar-noticia';
 
 /**
  * Página de una noticia (noticias/:id), para poder compartir su enlace. Primero la busca
@@ -19,7 +22,7 @@ import { ContenidoNoticia } from '../contenido-noticia/contenido-noticia';
  */
 @Component({
   selector: 'app-detalle',
-  imports: [Encabezado, Boton, ContenidoNoticia, RouterLink],
+  imports: [Encabezado, Boton, ContenidoNoticia, RouterLink, CalificacionNoticia, ComentariosNoticia, ReportarNoticia],
   templateUrl: './detalle.html',
   styleUrl: './detalle.css',
 })

@@ -1,0 +1,31 @@
+@if (enviado(); as aviso) {
+  <p class="aviso" role="status">{{ aviso }}</p>
+} @else {
+  <button type="button" class="boton-reportar" (click)="abrir()">{{ textos.boton }}</button>
+}
+
+<dialog #dialogo class="dialogo" aria-labelledby="reporte-titulo">
+  <form method="dialog" class="contenido" (submit)="$event.preventDefault(); enviar()">
+    <h2 id="reporte-titulo" class="titulo">{{ textos.titulo }}</h2>
+    <fieldset class="motivos">
+      <legend>{{ textos.motivo }}</legend>
+      @for (opcion of motivos; track opcion) {
+        <label class="opcion">
+          <input type="radio" name="motivo-reporte" [value]="opcion" [checked]="motivo() === opcion" (change)="motivo.set(opcion)" />
+          {{ etiquetas[opcion] }}
+        </label>
+      }
+    </fieldset>
+    <label class="descripcion">
+      {{ textos.descripcion }}
+      <textarea rows="3" [attr.maxlength]="largoMaximo" [value]="descripcion()" (input)="escribir($event)"></textarea>
+    </label>
+    @if (error(); as mensaje) {
+      <p class="error" role="alert">{{ mensaje }}</p>
+    }
+    <div class="acciones">
+      <button type="submit" class="principal" [disabled]="enviando()">{{ textos.enviar }}</button>
+      <button type="button" class="secundario" (click)="cerrar()">{{ textos.cancelar }}</button>
+    </div>
+  </form>
+</dialog>

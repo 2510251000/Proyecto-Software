@@ -8,7 +8,7 @@ name: Calidad (SonarQube Cloud)
 
 on:
   push:
-    branches: [dev, main]
+    branches: [dev, pre, main]
   pull_request:
     types: [opened, synchronize, reopened]
 

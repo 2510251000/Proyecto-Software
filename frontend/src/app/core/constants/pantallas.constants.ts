@@ -4,7 +4,9 @@ import { EstadoNoticia, TipoNoticias } from '../models/noticia.model';
 /** Menú principal que se ve en todas las pantallas con sesión. */
 export const TEXTOS_NAVEGACION = {
   menu: 'Menú principal',
+  hoy: 'Hoy',
   portada: 'Portada',
+  mapa: 'Mapa',
   publicar: 'Publicar',
   notificaciones: 'Notificaciones',
   sinLeer: 'sin leer',

@@ -5,3 +5,5 @@ target/
 *.log
 .vscode/
 *.class
+# Fotos subidas en local (IMAGENES_DIRECTORIO)
+imagenes/

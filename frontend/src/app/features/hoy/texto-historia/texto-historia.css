@@ -1,0 +1,113 @@
+/* Bloque sólido, sin degradado: el texto nunca queda sobre la foto. */
+:host {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  display: block;
+}
+
+.bloque {
+  padding: var(--espacio-l);
+  background: var(--color-noche);
+  color: var(--color-sobre-marca);
+}
+
+.etiqueta {
+  display: inline-block;
+  margin-bottom: var(--espacio-s);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--color-sobre-marca);
+  color: var(--color-marca);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.etiqueta.oficial {
+  background: var(--color-sol);
+}
+
+.titulo {
+  margin: 0 0 var(--espacio-s);
+  color: var(--color-sobre-marca);
+  font-family: var(--fuente-titulos);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.mascara {
+  display: inline-block;
+  margin-right: 0.25em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.palabra {
+  display: inline-block;
+  animation: palabra-sube 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes palabra-sube {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.resumen {
+  display: -webkit-box;
+  margin: 0 0 var(--espacio-m);
+  overflow: hidden;
+  color: var(--color-sobre-marca);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  animation: aparecer 0.5s ease-out 0.9s both;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.leer:focus-visible {
+  outline: 3px solid var(--color-sobre-marca);
+  outline-offset: 2px;
+}
+
+.leer {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alto-control);
+  color: var(--color-sobre-marca);
+  font-weight: 700;
+}
+
+.leer:hover {
+  color: var(--color-sobre-marca);
+  text-decoration-thickness: 2px;
+}
+
+/* Sin movimiento: el titular y el resumen, de una vez. */
+.sin-movimiento .palabra,
+.sin-movimiento .resumen {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .palabra,
+  .resumen {
+    animation: none;
+  }
+}
