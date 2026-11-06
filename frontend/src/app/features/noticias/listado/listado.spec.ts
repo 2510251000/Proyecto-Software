@@ -3,7 +3,7 @@ import { provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { MENSAJES_ERROR_HTTP, TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
 import { ETIQUETAS_PESTANA, TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
-import { TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
+import { TEXTOS_BIENVENIDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
 import { Noticia } from '../../../core/models/noticia.model';
@@ -232,6 +232,7 @@ describe('Listado', () => {
     it('al elegir un municipio solo quedan sus noticias, y «Todos» las devuelve', async () => {
       await elegirMunicipio('Soacha');
       expect(selector().value).toBe('Soacha');
+      expect(buscar('h1')?.textContent).toContain('Soacha');
       const datos = [...raiz().querySelectorAll('app-apertura .datos, app-tarjeta-noticia .datos')];
       expect(datos.length).toBeGreaterThan(0);
       for (const dato of datos) {
@@ -240,6 +241,7 @@ describe('Listado', () => {
 
       await elegirMunicipio('');
       expect(raiz().textContent).toContain('Zipaquirá');
+      expect(buscar('h1')?.textContent).toContain(TEXTOS_BIENVENIDA.tuMunicipio);
     });
 
     it('la pestaña activa es una sola y lo anuncia con aria-current', async () => {

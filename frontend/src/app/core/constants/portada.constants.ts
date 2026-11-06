@@ -46,3 +46,20 @@ export const TEXTOS_PORTADA = {
   actualizar: 'Actualizar',
   reintentar: 'Reintentar',
 } as const;
+
+/** Bloque azul de bienvenida, arriba de la portada. */
+export const TEXTOS_BIENVENIDA = {
+  tuMunicipio: 'tu municipio',
+  nivel: 'nivel',
+  publicar: 'Publicar',
+} as const;
+
+/** «Lo que pasa en Soacha, contado por sus vecinos.» o, sin municipio, «… en tu municipio …». */
+export function titularBienvenida(municipio: string | null): string {
+  return `Lo que pasa en ${municipio ?? TEXTOS_BIENVENIDA.tuMunicipio}, contado por sus vecinos.`;
+}
+
+/** Texto del campo que lleva a Publicar: «¿Qué está pasando en Fusagasugá?». */
+export function preguntaPublicar(municipio: string | null): string {
+  return `¿Qué está pasando en ${municipio ?? TEXTOS_BIENVENIDA.tuMunicipio}?`;
+}

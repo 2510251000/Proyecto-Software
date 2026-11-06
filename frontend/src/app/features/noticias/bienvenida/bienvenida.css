@@ -1,0 +1,157 @@
+:host {
+  display: block;
+}
+
+.bienvenida {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px;
+  overflow: hidden;
+  border-radius: var(--radio-g);
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+}
+
+/* Sol decorativo arriba a la derecha; el texto pasa por encima si hace falta. */
+.sol {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  width: 150px;
+  height: 96px;
+}
+
+/* Ámbar sobre azul (6.96:1). */
+.antetitulo {
+  position: relative;
+  margin: 0;
+  color: var(--color-sol);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.titular {
+  position: relative;
+  max-width: 32.5rem;
+  margin: 0;
+  color: var(--color-sobre-marca);
+  font-family: var(--fuente-titulos);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+}
+
+.fila {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+.iniciales {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radio-s);
+  background: var(--color-sol);
+  color: var(--color-marca);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* Parece un campo de texto, pero es un enlace a Publicar. */
+.campo {
+  display: flex;
+  flex: 1 1 240px;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--color-campo-sobre-marca);
+  border-radius: var(--radio-s);
+  background: var(--color-campo-sobre-marca);
+  color: var(--color-sobre-marca-suave);
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.campo:hover {
+  border-color: var(--color-sobre-marca-suave);
+  color: var(--color-sobre-marca);
+  text-decoration: none;
+}
+
+.publicar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: var(--radio-s);
+  background: var(--color-sol);
+  color: var(--color-marca);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.publicar:hover {
+  background: var(--color-sobre-marca);
+  color: var(--color-marca);
+  text-decoration: none;
+}
+
+.campo:focus-visible,
+.publicar:focus-visible {
+  outline-color: var(--color-sol);
+}
+
+.cupo {
+  position: relative;
+  margin: 0;
+  color: var(--color-sobre-marca-suave);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 47.99rem) {
+  .bienvenida {
+    gap: 12px;
+    padding: 18px;
+  }
+
+  .sol {
+    top: 14px;
+    right: 14px;
+    width: 86px;
+    height: 56px;
+  }
+
+  .antetitulo {
+    max-width: calc(100% - 96px);
+    font-size: 0.75rem;
+  }
+
+  .titular {
+    max-width: 15.6rem;
+    font-size: 1.4375rem;
+    line-height: 1.2;
+  }
+
+  .iniciales {
+    display: none;
+  }
+
+  .campo {
+    flex-basis: 100%;
+    min-height: 46px;
+    padding: 0 14px;
+  }
+}

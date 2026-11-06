@@ -7,6 +7,7 @@ import { AlmacenNoticias } from '../almacen-noticias';
 import { Apertura } from '../apertura/apertura';
 import { Marco } from '../../../shared/marco/marco';
 import { BarraPortada } from '../barra-portada/barra-portada';
+import { Bienvenida } from '../bienvenida/bienvenida';
 import { Cintillo } from '../cintillo/cintillo';
 import { ColumnaNoticias } from '../columna-noticias/columna-noticias';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
@@ -20,6 +21,7 @@ import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNot
     Apertura,
     Marco,
     BarraPortada,
+    Bienvenida,
     Cintillo,
     ColumnaNoticias,
     EsqueletoPortada,

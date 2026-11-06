@@ -11,6 +11,8 @@
   />
 
   <main class="pagina">
+    <app-bienvenida [ciudadActiva]="ciudadActiva()" />
+
     @if (cargando()) {
       <app-esqueleto-portada />
     } @else if (error(); as mensaje) {
