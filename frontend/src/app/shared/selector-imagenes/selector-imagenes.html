@@ -19,8 +19,10 @@
         </button>
       </div>
       <p class="soltar">{{ textos.soltarAqui }}</p>
-      <input #camara type="file" hidden [accept]="tiposCamara" capture="environment" (change)="alElegir($event)" />
-      <input #galeria type="file" hidden multiple [accept]="tiposAceptados" (change)="alElegir($event)" />
+      <label hidden for="fotos-camara">{{ textos.tomarFoto }}</label>
+      <input #camara id="fotos-camara" type="file" hidden [accept]="tiposCamara" capture="environment" (change)="alElegir($event)" />
+      <label hidden for="fotos-galeria">{{ textos.elegirFotos }}</label>
+      <input #galeria id="fotos-galeria" type="file" hidden multiple [accept]="tiposAceptados" (change)="alElegir($event)" />
     </div>
   }
 
