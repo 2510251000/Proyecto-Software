@@ -1,23 +1,43 @@
-<!-- El enlace se anuncia con el titular; la sección, el resumen y los datos van como descripción. -->
+<!-- El enlace se anuncia con el titular; el autor y los datos van como descripción. -->
 <a
   class="nota"
+  [class.grande]="variante() === 'grande'"
   [appEnlaceNoticia]="noticia()"
   [attr.aria-labelledby]="idTitulo"
-  [attr.aria-describedby]="idSeccion + ' ' + idDatos"
+  [attr.aria-describedby]="idAutor + ' ' + idDatos"
   (abrirNoticia)="abrir.emit($event)"
 >
-  <div class="texto">
-    <p class="seccion" [id]="idSeccion">
-      @if (ultimaHora()) {
-        <span class="urgente">{{ etiquetas.ultimaHora }}</span>
-      }
-      {{ seccion() }}
-    </p>
+  @if (variante() === 'grande') {
+    <app-autor-noticia [attr.id]="idAutor" [noticia]="noticia()" [conAvatar]="true" />
     <h3 class="titulo" [id]="idTitulo">{{ noticia().titulo }}</h3>
-    <p class="resumen">{{ noticia().resumen }}</p>
+    @if (noticia().resumen) {
+      <p class="resumen">{{ noticia().resumen }}</p>
+    }
+    <app-miniatura class="imagen" [categoria]="categoria()" [foto]="portada()" />
     <p class="datos" [id]="idDatos">
-      {{ noticia().ciudad }}@if (cuando() !== '') {, <time [attr.datetime]="noticia().fechaPublicacion" [attr.title]="fecha()">{{ cuando() }}</time>}
+      <span class="municipio">
+        <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false">
+          <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
+        </svg>
+        {{ noticia().ciudad }}
+      </span>
+      <span>{{ minutos() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}</span>
+      @if (calificaciones() > 0) {
+        <span class="calificacion" [attr.title]="etiquetas.promedio">
+          <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" focusable="false">
+            <path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" />
+          </svg>
+          {{ promedio() }}<span class="solo-lectores-pantalla"> {{ etiquetas.deCinco }},</span>
+          ({{ calificaciones() }}<span class="solo-lectores-pantalla"> {{ calificaciones() === 1 ? etiquetas.calificacion : etiquetas.calificaciones }}</span>)
+        </span>
+      }
     </p>
-  </div>
-  <app-miniatura class="imagen" [categoria]="categoria()" [foto]="portada()" />
+  } @else {
+    <app-miniatura class="imagen" [categoria]="categoria()" [foto]="portada()" />
+    <div class="texto">
+      <app-autor-noticia class="autor-compacto" [attr.id]="idAutor" [noticia]="noticia()" />
+      <h3 class="titulo" [id]="idTitulo">{{ noticia().titulo }}</h3>
+      <p class="datos" [id]="idDatos">{{ noticia().ciudad }}</p>
+    </div>
+  }
 </a>

@@ -15,6 +15,14 @@ export const ETIQUETAS_NOTICIA = {
   deLectura: 'de lectura',
   por: 'Por',
   nivel: 'nivel',
+  etiquetaNivel: 'Nivel',
+  /** Nombre que se muestra si la API no trae el autor. */
+  autorOficial: 'Administración municipal',
+  autorComunidad: 'Vecino de la comunidad',
+  calificacion: 'calificación',
+  calificaciones: 'calificaciones',
+  deCinco: 'de 5',
+  promedio: 'Calificación promedio',
 } as const;
 
 /** Textos de la vista de una noticia: la vista rápida de la portada y su página propia. */
