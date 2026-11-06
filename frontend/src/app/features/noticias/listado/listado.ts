@@ -1,27 +1,25 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
-import { Noticia, TipoNoticias } from '../../../core/models/noticia.model';
+import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
 import { esUltimaHora } from '../../../core/utils/noticia';
 import { Boton } from '../../../shared/boton/boton';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { Apertura } from '../apertura/apertura';
-import { BarraBusqueda } from '../barra-busqueda/barra-busqueda';
 import { Marco } from '../../../shared/marco/marco';
-import { CabeceraPortada, ConteoCiudad } from '../cabecera-portada/cabecera-portada';
+import { BarraPortada } from '../barra-portada/barra-portada';
 import { Cintillo } from '../cintillo/cintillo';
 import { ColumnaNoticias } from '../columna-noticias/columna-noticias';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
 import { ModalNoticia } from '../modal-noticia/modal-noticia';
-import { FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada';
+import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada';
 
 @Component({
   selector: 'app-listado',
   imports: [
     Boton,
     Apertura,
-    BarraBusqueda,
     Marco,
-    CabeceraPortada,
+    BarraPortada,
     Cintillo,
     ColumnaNoticias,
     EsqueletoPortada,
@@ -41,9 +39,11 @@ export class Listado implements OnInit {
   protected readonly noticiaAbierta = signal<Noticia | null>(null);
   protected readonly textosPortada = TEXTOS_PORTADA;
 
-  /** Palabra buscada (la búsqueda la hace el backend) y tipo elegido (oficial o comunidad). */
+  /** Palabra buscada (la búsqueda la hace el backend) y pestaña elegida en la barra. */
   protected readonly textoBuscado = signal('');
-  protected readonly tipo = signal<TipoNoticias>('TODAS');
+  protected readonly pestana = signal<PestanaPortada>('RECOMENDADAS');
+  /** Con «Oficiales» o «Comunidad» la portada muestra una sola columna. */
+  protected readonly unaColumna = computed(() => this.pestana() === 'OFICIALES' || this.pestana() === 'COMUNITARIAS');
 
   // Todo lo que muestra la portada sale de la misma lista, sin peticiones nuevas.
   // Cada noticia aparece una sola vez: la principal no se repite en las columnas.
@@ -52,17 +52,9 @@ export class Listado implements OnInit {
     const filtro = this.filtro();
     return filtro.tipo === 'ciudad' ? filtro.ciudad : null;
   });
-  private readonly filtradas = computed(() => {
-    const porCiudad = filtrarNoticias(this.noticias(), this.filtro());
-    switch (this.tipo()) {
-      case 'OFICIALES':
-        return porCiudad.filter((n) => n.oficial);
-      case 'COMUNITARIAS':
-        return porCiudad.filter((n) => !n.oficial);
-      default:
-        return porCiudad;
-    }
-  });
+  private readonly filtradas = computed(() =>
+    aplicarPestana(filtrarNoticias(this.noticias(), this.filtro()), this.pestana()),
+  );
   protected readonly principal = computed(() => this.filtradas()[0] ?? null);
   private readonly resto = computed(() => this.filtradas().slice(1));
   private readonly todasOficiales = computed(() => this.resto().filter((n) => n.oficial));
@@ -104,8 +96,8 @@ export class Listado implements OnInit {
     this.cargar();
   }
 
-  protected elegirTipo(tipo: TipoNoticias): void {
-    this.tipo.set(tipo);
+  protected elegirPestana(pestana: PestanaPortada): void {
+    this.pestana.set(pestana);
     this.visibles.set(NOTICIAS_POR_TANDA);
   }
 

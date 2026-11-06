@@ -52,6 +52,9 @@ export interface NuevaNoticia {
 export type TipoNoticias = 'TODAS' | 'OFICIALES' | 'COMUNITARIAS';
 export type OrdenNoticias = 'RECIENTES' | 'RECOMENDADAS';
 
+/** Pestaña de la portada: un orden (recomendadas o recientes) o un tipo (oficiales o comunidad). */
+export type PestanaPortada = OrdenNoticias | Exclude<TipoNoticias, 'TODAS'>;
+
 /** Filtros opcionales del listado. */
 export interface CriteriosNoticias {
   tipo?: TipoNoticias;

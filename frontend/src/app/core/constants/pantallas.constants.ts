@@ -1,5 +1,5 @@
 import { TipoNotificacion } from '../models/notificacion.model';
-import { EstadoNoticia, TipoNoticias } from '../models/noticia.model';
+import { EstadoNoticia, PestanaPortada, TipoNoticias } from '../models/noticia.model';
 
 /** Menú principal que se ve en todas las pantallas con sesión. */
 export const TEXTOS_NAVEGACION = {
@@ -25,12 +25,21 @@ export const ID_BUSQUEDA_NOTICIAS = 'busqueda-noticias';
 
 export const TEXTOS_BUSQUEDA = {
   etiqueta: 'Buscar noticias',
-  marcador: 'Buscar por palabra: agua, vía, feria…',
-  buscar: 'Buscar',
+  marcador: 'Buscar noticias',
   limpiar: 'Quitar búsqueda',
   resultadosPara: 'Resultados para',
-  tipos: 'Tipo de noticia',
+  pestanas: 'Qué noticias ver',
+  municipio: 'Municipio',
+  todosMunicipios: 'Todos los municipios',
 } as const;
+
+/** Pestañas de la barra superior de la portada, en el orden en que se muestran. */
+export const ETIQUETAS_PESTANA: Readonly<Record<PestanaPortada, string>> = {
+  RECOMENDADAS: 'Recomendadas',
+  RECIENTES: 'Recientes',
+  OFICIALES: 'Oficiales',
+  COMUNITARIAS: 'Comunidad',
+};
 
 export const ETIQUETAS_TIPO: Readonly<Record<TipoNoticias, string>> = {
   TODAS: 'Todas',

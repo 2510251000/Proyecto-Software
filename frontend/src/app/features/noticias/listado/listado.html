@@ -1,19 +1,16 @@
 <app-marco>
-  <app-cabecera-portada
+  <app-barra-portada
+    [pestanaActiva]="pestana()"
     [ciudades]="conteo()"
     [ciudadActiva]="ciudadActiva()"
     [total]="noticias().length"
-    (elegir)="elegirCiudad($event)"
+    [textoActivo]="textoBuscado()"
+    (pestana)="elegirPestana($event)"
+    (ciudad)="elegirCiudad($event)"
+    (buscar)="buscar($event)"
   />
 
   <main class="pagina">
-    <app-barra-busqueda
-      [textoActivo]="textoBuscado()"
-      [tipoActivo]="tipo()"
-      (buscar)="buscar($event)"
-      (tipo)="elegirTipo($event)"
-    />
-
     @if (cargando()) {
       <app-esqueleto-portada />
     } @else if (error(); as mensaje) {
@@ -44,8 +41,8 @@
         <app-apertura [principal]="noticia" (abrir)="abrirNoticia($event)" />
       }
 
-      <div class="columnas" [class.una]="tipo() !== 'TODAS'">
-        @if (tipo() !== 'COMUNITARIAS') {
+      <div class="columnas" [class.una]="unaColumna()">
+        @if (pestana() !== 'COMUNITARIAS') {
           <app-columna-noticias
             [titulo]="textosPortada.oficiales"
             idTitulo="columna-oficial"
@@ -55,7 +52,7 @@
             (abrir)="abrirNoticia($event)"
           />
         }
-        @if (tipo() !== 'OFICIALES') {
+        @if (pestana() !== 'OFICIALES') {
           <app-columna-noticias
             [titulo]="textosPortada.comunidad"
             idTitulo="columna-comunidad"

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { MENSAJES_ERROR_HTTP, TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
+import { ETIQUETAS_PESTANA, TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
 import { TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
@@ -156,7 +157,7 @@ describe('Listado', () => {
   it('el filtro «Comunidad» deja solo lo que cuentan los vecinos', async () => {
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
-    const comunidad = [...raiz().querySelectorAll<HTMLButtonElement>('.tipo')].find((b) =>
+    const comunidad = [...raiz().querySelectorAll<HTMLButtonElement>('.pestana')].find((b) =>
       b.textContent?.includes('Comunidad'),
     );
     comunidad?.click();
@@ -186,10 +187,12 @@ describe('Listado', () => {
 
     const columna = (id: string) => buscar(`#${id}`)?.closest('section') as HTMLElement;
     const notas = (id: string) => columna(id).querySelectorAll('app-tarjeta-noticia');
-    const municipio = (texto: string) =>
-      [...raiz().querySelectorAll<HTMLButtonElement>('.municipio')].find((boton) =>
-        boton.textContent?.trim().startsWith(texto),
-      ) as HTMLButtonElement;
+    const selector = () => buscar<HTMLSelectElement>('#municipio-portada') as HTMLSelectElement;
+    async function elegirMunicipio(valor: string): Promise<void> {
+      selector().value = valor;
+      selector().dispatchEvent(new Event('change'));
+      await fixture.whenStable();
+    }
 
     beforeEach(async () => {
       respuesta.next(MUCHAS);
@@ -215,31 +218,38 @@ describe('Listado', () => {
       expect(raiz().querySelectorAll('a[href="/noticias/1"]')).toHaveLength(1);
     });
 
-    it('la cabecera tiene «Todos» y un municipio por ciudad, en orden alfabético y con su cantidad', () => {
-      const textos = [...raiz().querySelectorAll('.municipio')].map((b) =>
-        b.textContent?.replace(/\s+/g, ' ').trim(),
-      );
-      expect(textos).toEqual(['Todos 30', 'Fusagasugá 10', 'Soacha 10', 'Zipaquirá 10']);
-      expect(municipio('Todos').getAttribute('aria-pressed')).toBe('true');
-      expect(municipio('Soacha').type).toBe('button');
-      expect(buscar('h1')?.textContent).toContain(TEXTOS_PORTADA.tuRegion);
+    it('el selector tiene «Todos los municipios» y un municipio por ciudad, en orden alfabético y con su cantidad', () => {
+      const textos = [...selector().options].map((opcion) => opcion.textContent?.replace(/\s+/g, ' ').trim());
+      expect(textos).toEqual([
+        `${TEXTOS_BUSQUEDA.todosMunicipios} (30)`,
+        'Fusagasugá (10)',
+        'Soacha (10)',
+        'Zipaquirá (10)',
+      ]);
+      expect(selector().value).toBe('');
     });
 
-    it('al elegir un municipio su nombre es el titular y solo quedan sus noticias', async () => {
-      municipio('Soacha').click();
-      await fixture.whenStable();
-      expect(municipio('Soacha').getAttribute('aria-pressed')).toBe('true');
-      expect(municipio('Todos').getAttribute('aria-pressed')).toBe('false');
-      expect(buscar('h1')?.textContent).toContain('Soacha');
+    it('al elegir un municipio solo quedan sus noticias, y «Todos» las devuelve', async () => {
+      await elegirMunicipio('Soacha');
+      expect(selector().value).toBe('Soacha');
       const datos = [...raiz().querySelectorAll('app-apertura .datos, app-tarjeta-noticia .datos')];
       expect(datos.length).toBeGreaterThan(0);
       for (const dato of datos) {
         expect(dato.textContent).toContain('Soacha');
       }
 
-      municipio('Todos').click();
+      await elegirMunicipio('');
+      expect(raiz().textContent).toContain('Zipaquirá');
+    });
+
+    it('la pestaña activa es una sola y lo anuncia con aria-current', async () => {
+      const pestanas = () => [...raiz().querySelectorAll<HTMLButtonElement>('.pestana')];
+      expect(pestanas().map((p) => p.textContent?.trim())).toEqual(Object.values(ETIQUETAS_PESTANA));
+      expect(pestanas().filter((p) => p.getAttribute('aria-current') === 'true')).toHaveLength(1);
+      pestanas()[1].click();
       await fixture.whenStable();
-      expect(buscar('h1')?.textContent).toContain(TEXTOS_PORTADA.tuRegion);
+      expect(pestanas()[1].getAttribute('aria-current')).toBe('true');
+      expect(pestanas()[0].getAttribute('aria-current')).toBeNull();
     });
 
     it('no muestra el cintillo si ninguna noticia es de última hora', () => {
