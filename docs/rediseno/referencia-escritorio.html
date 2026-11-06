@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Al Día · referencia del rediseño (escritorio)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0e2551;text-decoration:none}a:hover{color:#09193a;text-decoration:underline}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<!--
+  Referencia visual del rediseño (portada combinada Substack + Hashnode con la marca Al Día).
+  Es una maqueta estática: muestra cómo debe verse, no es código de Angular para copiar.
+  Las especificaciones completas están en docs/rediseno/REDISENO.md.
+-->
+<div style="min-height: 100%; background: #f7f9fc; color: #111827; font-family: 'Manrope', system-ui, sans-serif; display: flex; flex-wrap: wrap; align-items: stretch;">
+
+  <aside aria-label="Menú" style="flex: 1 1 236px; min-width: 0; max-width: 100%; box-sizing: border-box; background: #ffffff; border-right: 1px solid #e3e7ef; padding: 20px 16px; display: flex; flex-direction: column; gap: 22px;">
+    <a href="#" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 6px; text-decoration: none;">
+      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="9" fill="#0e2551"></rect><path d="M18 35.6a14 14 0 0 1 28 0Z" fill="#f0a028"></path><rect x="12" y="37.6" width="40" height="3.8" rx="1.9" fill="#ffffff"></rect><rect x="17" y="45.2" width="30" height="2.9" rx="1.45" fill="#ffffff"></rect><rect x="22.5" y="51" width="19" height="2.9" rx="1.45" fill="#ffffff"></rect></svg>
+      <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; color: #0e2551;">Al Día</span>
+    </a>
+    <nav aria-label="Secciones" style="display: flex; flex-direction: column; gap: 2px; font-size: 15px; font-weight: 500;">
+      <a href="#" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #111827;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>Hoy</a>
+      <a href="#" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; background: #edf1f7; color: #0e2551; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"></path></svg>Portada</a>
+      <a href="#" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #111827;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"></path><path d="M9 4v14M15 6v14"></path></svg>Mapa</a>
+      <a href="#" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #111827;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg>Avisos<span style="margin-left: auto; min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 6px; background: #f0a028; color: #0e2551; font-size: 12px; font-weight: 700; display: grid; place-items: center;">2</span></a>
+      <a href="#" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #111827;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Mi perfil</a>
+    </nav>
+    <a href="#" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; border-radius: 10px; background: #0e2551; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Publicar</a>
+    <div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 14px 6px 0; border-top: 1px solid #e3e7ef;">
+      <span aria-hidden="true" style="width: 38px; height: 38px; border-radius: 10px; background: #0e2551; color: #ffffff; display: grid; place-items: center; font-size: 13px; font-weight: 700;">CA</span>
+      <div style="display: flex; flex-direction: column; gap: 1px;">
+        <span style="font-size: 14px; font-weight: 700;">Carlos Activo</span>
+        <span style="font-size: 13px; color: #5c6880;">Nivel 2 · Fusagasugá</span>
+      </div>
+    </div>
+  </aside>
+
+  <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="background: #ffffff; border-bottom: 1px solid #e3e7ef; padding: 0 28px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
+      <nav aria-label="Orden de la portada" style="display: flex; flex-wrap: wrap; gap: 4px 24px; font-size: 15px; font-weight: 600;">
+        <a href="#" aria-current="page" style="display: inline-flex; align-items: center; min-height: 56px; box-sizing: border-box; border-bottom: 3px solid #f0a028; color: #0e2551; font-weight: 700; text-decoration: none;">Recomendadas</a>
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 56px; color: #5c6880; text-decoration: none;">Recientes</a>
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 56px; color: #5c6880; text-decoration: none;">Oficiales</a>
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 56px; color: #5c6880; text-decoration: none;">Comunidad</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 0;">
+        <label for="municipio" class="sr">Municipio</label>
+        <select id="municipio" style="height: 40px; padding: 0 12px; border: 1px solid #7a869c; border-radius: 10px; background: #ffffff; color: #111827; font: inherit; font-size: 14px; font-weight: 600;">
+          <option>Todos los municipios</option>
+          <option selected>Fusagasugá</option>
+          <option>Soacha</option>
+          <option>Zipaquirá</option>
+          <option>Facatativá</option>
+        </select>
+        <label for="buscar" class="sr">Buscar noticias</label>
+        <input id="buscar" type="search" placeholder="Buscar noticias" style="box-sizing: border-box; width: 230px; max-width: 100%; height: 40px; padding: 0 12px; border: 1px solid #7a869c; border-radius: 10px; background: #ffffff; color: #111827; font: inherit; font-size: 14px;">
+      </div>
+    </div>
+
+    <div style="width: 100%; max-width: 1180px; box-sizing: border-box; padding: 28px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 28px;">
+
+      <main style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+        <section style="position: relative; overflow: hidden; border-radius: 18px; background: #0e2551; border: 1px solid #0e2551; padding: 28px; display: flex; flex-direction: column; gap: 14px;">
+          <svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true" style="position: absolute; top: 24px; right: 28px;"><path d="M35 58a40 40 0 0 1 80 0Z" fill="#f0a028"></path><rect x="15" y="64" width="120" height="8" rx="4" fill="#ffffff"></rect><rect x="33" y="78" width="84" height="6" rx="3" fill="#ffffff" opacity="0.6"></rect></svg>
+          <p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #f0a028;">Fusagasugá · viernes 6 de noviembre</p>
+          <h1 style="margin: 0; max-width: 520px; font-family: 'Source Serif 4', Georgia, serif; font-size: 32px; font-weight: 700; line-height: 1.18; letter-spacing: -0.01em; color: #ffffff;">Lo que pasa en tu municipio, contado por sus vecinos.</h1>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 6px;">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 10px; background: #f0a028; color: #0e2551; display: grid; place-items: center; font-size: 14px; font-weight: 700;">CA</span>
+            <a href="#" style="flex: 1 1 240px; display: flex; align-items: center; min-height: 48px; padding: 0 16px; border-radius: 10px; background: #1c335e; border: 1px solid #1c335e; color: #c3cde0; font-size: 15px; text-decoration: none;">¿Qué está pasando en Fusagasugá?</a>
+            <a href="#" style="flex: none; display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 10px; background: #f0a028; color: #0e2551; font-size: 15px; font-weight: 700; text-decoration: none;">Publicar</a>
+          </div>
+          <p style="margin: 0; font-size: 14px; color: #c3cde0;">Te quedan 9 de 10 publicaciones hoy · nivel 2</p>
+        </section>
+
+        <h2 style="margin: 8px 0 0; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5c6880;">Nuevas y recomendadas</h2>
+
+        <article style="background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: #5c6880;">
+            <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 10px; background: #0e2551; display: grid; place-items: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V10l7-5 7 5v11"></path><path d="M9 21v-6h6v6"></path></svg></span>
+            <span style="font-size: 15px; font-weight: 700; color: #111827;">Administración municipal</span>
+            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; background: #0e2551; color: #ffffff; font-size: 12px; font-weight: 700;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>Oficial</span>
+            <span>· hace 2 h</span>
+          </div>
+          <h3 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 27px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em;"><a href="#" style="color: #111827;">Fusagasugá inaugura la nueva ciclorruta del centro</a></h3>
+          <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.5;">La obra conecta el parque principal con la terminal y beneficia a más de veinte mil ciclistas.</p>
+          <img src="../../frontend/public/imagenes/noticias/bici.webp" alt="Personas en bicicleta por una ciclorruta arborizada" style="width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 10px; display: block;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 13px; color: #5c6880;">
+            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; background: #edf1f7; color: #0e2551; font-weight: 700;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0e2551" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"></path></svg>Fusagasugá</span>
+            <span>1 min de lectura</span>
+          </div>
+        </article>
+
+        <article style="background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: #5c6880;">
+            <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 10px; background: #f0a028; color: #0e2551; display: grid; place-items: center; font-size: 13px; font-weight: 700;">CA</span>
+            <span style="font-size: 15px; font-weight: 700; color: #111827;">Carlos Activo</span>
+            <span style="padding: 2px 8px; border-radius: 6px; background: #edf1f7; color: #0e2551; font-size: 12px; font-weight: 700;">Nivel 2</span>
+            <span>· hace 5 h</span>
+          </div>
+          <h3 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 27px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em;"><a href="#" style="color: #111827;">El mercado campesino vuelve a la plaza los domingos</a></h3>
+          <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.5;">Más de treinta familias de las veredas venderán frutas, verduras y lácteos sin intermediarios.</p>
+          <img src="../../frontend/public/imagenes/noticias/mercado.webp" alt="Puesto de mercado con tomates, berenjenas, calabacines y habichuelas" style="width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 10px; display: block;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 13px; color: #5c6880;">
+            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; background: #edf1f7; color: #0e2551; font-weight: 700;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0e2551" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"></path></svg>Fusagasugá</span>
+            <span>1 min de lectura</span>
+          </div>
+        </article>
+
+        <h2 style="margin: 8px 0 0; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5c6880;">Más de tu región</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+          <article style="flex: 1 1 320px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 14px; display: flex; gap: 14px; align-items: flex-start;">
+            <img src="../../frontend/public/imagenes/noticias/obra.webp" alt="Dos obreros con casco trabajando en una construcción" style="flex: none; width: 104px; height: 78px; object-fit: cover; border-radius: 10px; display: block;">
+            <div style="min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: #5c6880;"><span style="font-weight: 700; color: #111827;">Laura Vecina</span><span style="padding: 1px 6px; border-radius: 6px; background: #edf1f7; color: #0e2551; font-size: 12px; font-weight: 700;">Nivel 1</span><span>· hace 8 h</span></div>
+              <h3 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; line-height: 1.3;"><a href="#" style="color: #111827;">Piden semáforo en el cruce del colegio departamental</a></h3>
+              <span style="font-size: 13px; color: #5c6880;">Fusagasugá</span>
+            </div>
+          </article>
+          <article style="flex: 1 1 320px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 14px; display: flex; gap: 14px; align-items: flex-start;">
+            <img src="../../frontend/public/imagenes/noticias/agua.webp" alt="Una mano llena una botella roja en un chorro de agua" style="flex: none; width: 104px; height: 78px; object-fit: cover; border-radius: 10px; display: block;">
+            <div style="min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: #5c6880;"><span style="font-weight: 700; color: #111827;">Alcaldía</span><span style="padding: 1px 6px; border-radius: 6px; background: #0e2551; color: #ffffff; font-size: 12px; font-weight: 700;">Oficial</span><span>· ayer</span></div>
+              <h3 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; line-height: 1.3;"><a href="#" style="color: #111827;">Cortes de agua programados para este jueves</a></h3>
+              <span style="font-size: 13px; color: #5c6880;">Soacha</span>
+            </div>
+          </article>
+          <article style="flex: 1 1 320px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 14px; display: flex; gap: 14px; align-items: flex-start;">
+            <img src="../../frontend/public/imagenes/noticias/parque.webp" alt="Voluntarias empacando bolsas bajo una carpa" style="flex: none; width: 104px; height: 78px; object-fit: cover; border-radius: 10px; display: block;">
+            <div style="min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: #5c6880;"><span style="font-weight: 700; color: #111827;">María Corresponsal</span><span style="padding: 1px 6px; border-radius: 6px; background: #edf1f7; color: #0e2551; font-size: 12px; font-weight: 700;">Nivel 3</span><span>· hace 3 días</span></div>
+              <h3 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; line-height: 1.3;"><a href="#" style="color: #111827;">Vecinos de La Esperanza reparan el parque por su cuenta</a></h3>
+              <span style="font-size: 13px; color: #5c6880;">Soacha</span>
+            </div>
+          </article>
+          <article style="flex: 1 1 320px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 14px; display: flex; gap: 14px; align-items: flex-start;">
+            <img src="../../frontend/public/imagenes/noticias/comida.webp" alt="Personas comiendo en mesas de una calle con puestos de comida" style="flex: none; width: 104px; height: 78px; object-fit: cover; border-radius: 10px; display: block;">
+            <div style="min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: #5c6880;"><span style="font-weight: 700; color: #111827;">María Corresponsal</span><span style="padding: 1px 6px; border-radius: 6px; background: #edf1f7; color: #0e2551; font-size: 12px; font-weight: 700;">Nivel 3</span><span>· hace 4 días</span></div>
+              <h3 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; line-height: 1.3;"><a href="#" style="color: #111827;">La feria gastronómica reunirá a cuarenta emprendedores</a></h3>
+              <span style="font-size: 13px; color: #5c6880;">Facatativá</span>
+            </div>
+          </article>
+        </div>
+        <div style="display: flex; justify-content: center; padding-top: 8px;">
+          <a href="#" style="display: inline-flex; align-items: center; min-height: 46px; padding: 0 22px; border: 1px solid #7a869c; border-radius: 10px; background: #ffffff; color: #0e2551; font-size: 15px; font-weight: 700; text-decoration: none;">Ver más noticias</a>
+        </div>
+      </main>
+
+      <aside aria-label="Tu actividad" style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+        <section style="background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <h2 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 23px; font-weight: 700; color: #0e2551;">Nivel 2</h2>
+            <span style="font-size: 14px; font-weight: 600; color: #5c6880;">60 / 150 puntos</span>
+          </div>
+          <div role="img" aria-label="60 de 150 puntos para el nivel 3" style="height: 8px; border-radius: 8px; background: #edf1f7; overflow: hidden;"><div style="width: 40%; height: 100%; border-radius: 8px; background: #f0a028;"></div></div>
+          <p style="margin: 0; font-size: 14px;">Faltan 90 puntos para el nivel 3.</p>
+          <p style="margin: 0; font-size: 14px; color: #5c6880;">Publicas hasta 10 noticias al día.</p>
+          <a href="#" style="font-size: 14px; font-weight: 700; text-decoration: underline;">Ver mi perfil</a>
+        </section>
+
+        <section style="background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <h2 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700; color: #0e2551;">Avisos cerca de ti</h2>
+            <span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 6px; background: #f0a028; color: #0e2551; font-size: 12px; font-weight: 700; display: grid; place-items: center;">2</span>
+          </div>
+          <a href="#" style="display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid #e3e7ef; text-decoration: none;"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; margin-top: 7px; border-radius: 8px; background: #f0a028;"></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 15px; font-weight: 700; line-height: 1.35; color: #111827;">Fusagasugá inaugura la nueva ciclorruta del centro</span><span style="font-size: 13px; color: #5c6880;">Hace 2 horas</span></span></a>
+          <a href="#" style="display: flex; gap: 10px; padding: 10px 0; text-decoration: none;"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; margin-top: 7px; border-radius: 8px; background: #f0a028;"></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 15px; font-weight: 700; line-height: 1.35; color: #111827;">Piden semáforo en el cruce del colegio departamental</span><span style="font-size: 13px; color: #5c6880;">Hace 8 horas</span></span></a>
+        </section>
+
+        <section style="background: #ffffff; border: 1px solid #e3e7ef; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 4px;">
+          <h2 style="margin: 0 0 6px; display: flex; align-items: center; gap: 8px; font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700; color: #0e2551;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0e2551" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V10l7-5 7 5v11"></path><path d="M9 21v-6h6v6"></path></svg>De la alcaldía</h2>
+          <a href="#" style="display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-bottom: 1px solid #e3e7ef; text-decoration: none;"><span style="font-size: 15px; font-weight: 700; line-height: 1.35; color: #111827;">Concierto de la banda sinfónica en la catedral de sal</span><span style="font-size: 13px; color: #5c6880;">Zipaquirá · ayer</span></a>
+          <a href="#" style="display: flex; flex-direction: column; gap: 2px; padding: 10px 0; text-decoration: none;"><span style="font-size: 15px; font-weight: 700; line-height: 1.35; color: #111827;">Abren las inscripciones para las escuelas deportivas</span><span style="font-size: 13px; color: #5c6880;">Zipaquirá · hace 2 días</span></a>
+        </section>
+
+        <section style="display: flex; flex-direction: column; gap: 10px;">
+          <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5c6880;">Municipios</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; font-weight: 600;">
+            <a href="#" aria-current="true" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border-radius: 10px; background: #0e2551; color: #ffffff; text-decoration: none;">Fusagasugá <span style="color: #c3cde0;">3</span></a>
+            <a href="#" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid #e3e7ef; border-radius: 10px; background: #ffffff; text-decoration: none;">Soacha <span style="color: #5c6880;">2</span></a>
+            <a href="#" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid #e3e7ef; border-radius: 10px; background: #ffffff; text-decoration: none;">Zipaquirá <span style="color: #5c6880;">2</span></a>
+            <a href="#" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid #e3e7ef; border-radius: 10px; background: #ffffff; text-decoration: none;">Facatativá <span style="color: #5c6880;">1</span></a>
+          </div>
+        </section>
+
+        <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #5c6880;">Normas de la comunidad · Cómo publicar · Contacto<br>© 2026 Al Día · Cundinamarca</p>
+      </aside>
+    </div>
+  </div>
+</div>
+</body>
+</html>
