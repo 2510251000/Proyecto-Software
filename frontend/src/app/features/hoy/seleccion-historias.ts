@@ -70,13 +70,4 @@ export function saludoCompleto(fecha: Date, nombre: string | null): string {
   return primerNombre ? `${saludo}, ${primerNombre}` : saludo;
 }
 
-/** Iniciales para el chip del autor: «Laura Méndez» → «LM». */
-export function iniciales(nombre: string): string {
-  return nombre
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((parte) => parte.charAt(0).toUpperCase())
-    .join('');
-}
+export { iniciales } from '../../core/utils/texto';

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { TEXTOS_NAVEGACION } from '../../core/constants/pantallas.constants';
 import { Rol, ROLES } from '../../core/constants/roles.constants';
 import { RUTAS } from '../../core/constants/rutas.constants';
@@ -8,14 +8,12 @@ import { campanaFalsa } from '../../../testing/menu-falso';
 import { Navegacion } from './navegacion';
 
 describe('Navegacion', () => {
-  const cerrarSesion = vi.fn();
-
   async function crear(rol: Rol, noLeidas = 0): Promise<HTMLElement> {
     await TestBed.configureTestingModule({
       imports: [Navegacion],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { cerrarSesion, obtenerContenidoToken: () => ({ rol }) } },
+        { provide: AuthService, useValue: { obtenerContenidoToken: () => ({ rol }) } },
         campanaFalsa(noLeidas),
       ],
     }).compileComponents();
@@ -24,14 +22,13 @@ describe('Navegacion', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('un usuario común ve hoy, portada, publicar, notificaciones y perfil, pero no el panel', async () => {
+  it('un usuario común ve hoy, portada, mapa, avisos y perfil, pero no el panel', async () => {
     const menu = await crear(ROLES.usuarioComun);
     const enlaces = [...menu.querySelectorAll('a')].map((a) => a.getAttribute('href'));
     expect(enlaces).toEqual([
       `/${RUTAS.hoy}`,
       `/${RUTAS.noticias}`,
       `/${RUTAS.mapa}`,
-      `/${RUTAS.publicar}`,
       `/${RUTAS.notificaciones}`,
       `/${RUTAS.perfil}`,
     ]);
@@ -47,11 +44,10 @@ describe('Navegacion', () => {
     expect(menu.querySelector('.contador')?.textContent).toContain('3');
   });
 
-  it('«Salir» cierra la sesión y lleva al login', async () => {
+  it('los íconos son decorativos', async () => {
     const menu = await crear(ROLES.usuarioComun);
-    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    menu.querySelector<HTMLButtonElement>('button')?.click();
-    expect(cerrarSesion).toHaveBeenCalled();
-    expect(navegar).toHaveBeenCalledWith([RUTAS.login]);
+    const iconos = [...menu.querySelectorAll('svg')];
+    expect(iconos.length).toBeGreaterThan(0);
+    expect(iconos.every((icono) => icono.getAttribute('aria-hidden') === 'true')).toBe(true);
   });
 });

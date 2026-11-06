@@ -9,7 +9,7 @@ import { Noticia } from '../../../core/models/noticia.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { NoticiaService } from '../../../core/services/noticia.service';
 import { simularDialogoNativo } from '../modal-noticia/dialogo-de-prueba';
-import { campanaFalsa } from '../../../../testing/menu-falso';
+import { campanaFalsa, perfilFalso } from '../../../../testing/menu-falso';
 import { Listado } from './listado';
 
 const NOTICIAS: Noticia[] = [
@@ -54,6 +54,7 @@ describe('Listado', () => {
         { provide: NoticiaService, useValue: { listar } },
         { provide: AuthService, useValue: { cerrarSesion, obtenerContenidoToken: () => null } },
         campanaFalsa(),
+        perfilFalso(),
       ],
     }).compileComponents();
     navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
@@ -62,7 +63,7 @@ describe('Listado', () => {
   });
 
   it('muestra el nombre del portal y pide las noticias al abrir', () => {
-    expect(buscar('header')?.textContent).toContain('Al Día');
+    expect(buscar('aside')?.textContent).toContain('Al Día');
     expect(listar).toHaveBeenCalledTimes(1);
   });
 
@@ -165,7 +166,7 @@ describe('Listado', () => {
   });
 
   it('cierra la sesión y vuelve al login', () => {
-    buscar<HTMLButtonElement>('header button')?.click();
+    buscar<HTMLButtonElement>('.salir')?.click();
     expect(cerrarSesion).toHaveBeenCalled();
     expect(navegar).toHaveBeenCalledWith([RUTAS.login]);
   });

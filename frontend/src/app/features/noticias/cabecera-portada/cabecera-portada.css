@@ -18,25 +18,6 @@
   padding: var(--espacio-m) var(--espacio-m) var(--espacio-l);
 }
 
-.barra {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--espacio-m);
-}
-
-.marca {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-/* Sobre el azul, el isotipo se invierte: cuadro blanco y filetes azules. */
-.marca app-logo {
-  --color-marca: var(--color-sobre-marca);
-  --color-fondo: var(--color-marca-oscuro);
-}
-
 .dia {
   margin: clamp(var(--espacio-l), 6vw, 4rem) 0 var(--espacio-l);
 }

@@ -10,13 +10,13 @@ import { Ciudad } from '../../core/models/ubicacion.model';
 import { PerfilService } from '../../core/services/perfil.service';
 import { Boton } from '../../shared/boton/boton';
 import { Campo } from '../../shared/campo/campo';
-import { Encabezado } from '../../shared/encabezado/encabezado';
+import { Marco } from '../../shared/marco/marco';
 import { SelectorCiudad } from '../../shared/selector-ciudad/selector-ciudad';
 
 /** Perfil: nivel, puntos para el siguiente, cupo de hoy y datos editables (nombre y municipio). */
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule, Encabezado, Campo, Boton, SelectorCiudad],
+  imports: [ReactiveFormsModule, Marco, Campo, Boton, SelectorCiudad],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })

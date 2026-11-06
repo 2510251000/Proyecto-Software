@@ -6,6 +6,7 @@ import { Boton } from '../../../shared/boton/boton';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { Apertura } from '../apertura/apertura';
 import { BarraBusqueda } from '../barra-busqueda/barra-busqueda';
+import { Marco } from '../../../shared/marco/marco';
 import { CabeceraPortada, ConteoCiudad } from '../cabecera-portada/cabecera-portada';
 import { Cintillo } from '../cintillo/cintillo';
 import { ColumnaNoticias } from '../columna-noticias/columna-noticias';
@@ -19,6 +20,7 @@ import { FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada
     Boton,
     Apertura,
     BarraBusqueda,
+    Marco,
     CabeceraPortada,
     Cintillo,
     ColumnaNoticias,

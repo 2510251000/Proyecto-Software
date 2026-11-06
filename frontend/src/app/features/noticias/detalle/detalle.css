@@ -19,14 +19,9 @@
   text-decoration: underline;
 }
 
-/* Sobre la banda azul. */
-.volver,
-.volver:hover {
-  color: var(--color-sobre-marca);
-}
-
-.volver:focus-visible {
-  outline-color: var(--color-sol);
+.volver {
+  margin: 0 0 var(--espacio-m) calc(-1 * var(--espacio-m));
+  color: var(--color-marca);
 }
 
 .pagina {

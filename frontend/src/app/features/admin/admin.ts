@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TEXTOS_ADMIN } from '../../core/constants/pantallas.constants';
-import { Encabezado } from '../../shared/encabezado/encabezado';
+import { Marco } from '../../shared/marco/marco';
 import { GestionUsuarios } from './gestion-usuarios/gestion-usuarios';
 import { ModeracionNoticias } from './moderacion-noticias/moderacion-noticias';
 import { ReportesAdmin } from './reportes-admin/reportes-admin';
@@ -11,7 +11,7 @@ type Pestana = 'noticias' | 'reportes' | 'usuarios';
 /** Panel del administrador: moderar noticias, revisar reportes y gestionar usuarios. */
 @Component({
   selector: 'app-admin',
-  imports: [Encabezado, ModeracionNoticias, GestionUsuarios, ReportesAdmin],
+  imports: [Marco, ModeracionNoticias, GestionUsuarios, ReportesAdmin],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })

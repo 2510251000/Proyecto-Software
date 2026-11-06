@@ -7,7 +7,7 @@ import { ErrorApi } from '../../../core/models/error-api.model';
 import { Noticia } from '../../../core/models/noticia.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { NoticiaService } from '../../../core/services/noticia.service';
-import { campanaFalsa } from '../../../../testing/menu-falso';
+import { campanaFalsa, perfilFalso } from '../../../../testing/menu-falso';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { Detalle } from './detalle';
 
@@ -53,6 +53,7 @@ describe('Detalle', () => {
         { provide: NoticiaService, useValue: { listar, obtener } },
         { provide: AuthService, useValue: { obtenerContenidoToken: () => null, cerrarSesion: () => undefined } },
         campanaFalsa(),
+        perfilFalso(),
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ id })) } },
       ],
     }).compileComponents();

@@ -8,11 +8,15 @@ export const TEXTOS_NAVEGACION = {
   portada: 'Portada',
   mapa: 'Mapa',
   publicar: 'Publicar',
-  notificaciones: 'Notificaciones',
+  notificaciones: 'Avisos',
   sinLeer: 'sin leer',
   perfil: 'Mi perfil',
   admin: 'Administración',
   salir: 'Salir',
+  /** Nombre del menú lateral (escritorio) o de la barra inferior (celular). */
+  lateral: 'Menú',
+  usuario: 'Tu cuenta',
+  nivel: 'Nivel',
 } as const;
 
 export const TEXTOS_BUSQUEDA = {
