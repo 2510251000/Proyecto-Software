@@ -34,38 +34,28 @@
         <p>{{ textoBuscado() === '' ? textosPortada.sinNoticias : textosPortada.sinResultados }}</p>
         <app-boton variante="secundaria" (click)="cargar()">{{ textosPortada.actualizar }}</app-boton>
       </div>
-    } @else {
-      @if (ultimaHora(); as noticia) {
-        <app-cintillo [noticia]="noticia" (abrir)="abrirNoticia($event)" />
-      }
-
-      @if (principal(); as noticia) {
-        <app-apertura [principal]="noticia" (abrir)="abrirNoticia($event)" />
-      }
-
-      <div class="columnas" [class.una]="unaColumna()">
-        @if (pestana() !== 'COMUNITARIAS') {
-          <app-columna-noticias
-            [titulo]="textosPortada.oficiales"
-            idTitulo="columna-oficial"
-            [descripcion]="textosPortada.oficialesDescripcion"
-            [vacia]="textosPortada.sinOficiales"
-            [noticias]="oficiales()"
-            (abrir)="abrirNoticia($event)"
-          />
-        }
-        @if (pestana() !== 'OFICIALES') {
-          <app-columna-noticias
-            [titulo]="textosPortada.comunidad"
-            idTitulo="columna-comunidad"
-            origen="comunidad"
-            [descripcion]="textosPortada.comunidadDescripcion"
-            [vacia]="textosPortada.sinComunidad"
-            [noticias]="comunidad()"
-            (abrir)="abrirNoticia($event)"
-          />
-        }
+    } @else if (destacadas().length === 0) {
+      <div class="estado">
+        <p>{{ textosPortada.sinFiltro }}</p>
       </div>
+    } @else {
+      <section class="seccion" aria-labelledby="titulo-destacadas">
+        <h2 id="titulo-destacadas" class="etiqueta-seccion">{{ textosPortada.destacadas }}</h2>
+        @for (noticia of destacadas(); track noticia.id) {
+          <app-tarjeta-noticia variante="grande" [noticia]="noticia" (abrir)="abrirNoticia($event)" />
+        }
+      </section>
+
+      @if (masDeTuRegion().length > 0) {
+        <section class="seccion" aria-labelledby="titulo-region">
+          <h2 id="titulo-region" class="etiqueta-seccion">{{ textosPortada.masDeTuRegion }}</h2>
+          <ul class="compactas">
+            @for (noticia of masDeTuRegion(); track noticia.id) {
+              <li><app-tarjeta-noticia [noticia]="noticia" (abrir)="abrirNoticia($event)" /></li>
+            }
+          </ul>
+        </section>
+      }
 
       @if (hayMas()) {
         <div class="ver-mas">

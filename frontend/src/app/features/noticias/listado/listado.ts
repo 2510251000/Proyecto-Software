@@ -1,15 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
+import { NOTICIAS_DESTACADAS, NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
-import { esUltimaHora } from '../../../core/utils/noticia';
 import { Boton } from '../../../shared/boton/boton';
 import { AlmacenNoticias } from '../almacen-noticias';
-import { Apertura } from '../apertura/apertura';
 import { Marco } from '../../../shared/marco/marco';
 import { BarraPortada } from '../barra-portada/barra-portada';
 import { Bienvenida } from '../bienvenida/bienvenida';
-import { Cintillo } from '../cintillo/cintillo';
-import { ColumnaNoticias } from '../columna-noticias/columna-noticias';
+import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
 import { ModalNoticia } from '../modal-noticia/modal-noticia';
 import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada';
@@ -18,12 +15,10 @@ import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNot
   selector: 'app-listado',
   imports: [
     Boton,
-    Apertura,
     Marco,
     BarraPortada,
     Bienvenida,
-    Cintillo,
-    ColumnaNoticias,
+    TarjetaNoticia,
     EsqueletoPortada,
     ModalNoticia,
   ],
@@ -44,11 +39,9 @@ export class Listado implements OnInit {
   /** Palabra buscada (la búsqueda la hace el backend) y pestaña elegida en la barra. */
   protected readonly textoBuscado = signal('');
   protected readonly pestana = signal<PestanaPortada>('RECOMENDADAS');
-  /** Con «Oficiales» o «Comunidad» la portada muestra una sola columna. */
-  protected readonly unaColumna = computed(() => this.pestana() === 'OFICIALES' || this.pestana() === 'COMUNITARIAS');
 
   // Todo lo que muestra la portada sale de la misma lista, sin peticiones nuevas.
-  // Cada noticia aparece una sola vez: la principal no se repite en las columnas.
+  // Cada noticia aparece una sola vez: las destacadas no se repiten abajo.
   protected readonly filtro = signal<FiltroPortada>(FILTRO_INICIAL);
   protected readonly ciudadActiva = computed(() => {
     const filtro = this.filtro();
@@ -57,21 +50,14 @@ export class Listado implements OnInit {
   private readonly filtradas = computed(() =>
     aplicarPestana(filtrarNoticias(this.noticias(), this.filtro()), this.pestana()),
   );
-  protected readonly principal = computed(() => this.filtradas()[0] ?? null);
-  private readonly resto = computed(() => this.filtradas().slice(1));
-  private readonly todasOficiales = computed(() => this.resto().filter((n) => n.oficial));
-  private readonly todasComunidad = computed(() => this.resto().filter((n) => !n.oficial));
+  /** Las dos primeras van como publicación grande en «Nuevas y recomendadas». */
+  protected readonly destacadas = computed(() => this.filtradas().slice(0, NOTICIAS_DESTACADAS));
+  private readonly resto = computed(() => this.filtradas().slice(NOTICIAS_DESTACADAS));
 
+  /** El resto va en tarjetas compactas en «Más de tu región», por tandas. */
   protected readonly visibles = signal(NOTICIAS_POR_TANDA);
-  protected readonly oficiales = computed(() => this.todasOficiales().slice(0, this.visibles()));
-  protected readonly comunidad = computed(() => this.todasComunidad().slice(0, this.visibles()));
-  protected readonly hayMas = computed(
-    () =>
-      this.todasOficiales().length > this.visibles() ||
-      this.todasComunidad().length > this.visibles(),
-  );
-
-  protected readonly ultimaHora = computed(() => this.noticias().find((n) => esUltimaHora(n)) ?? null);
+  protected readonly masDeTuRegion = computed(() => this.resto().slice(0, this.visibles()));
+  protected readonly hayMas = computed(() => this.resto().length > this.visibles());
 
   /** Municipios en orden alfabético, con cuántas noticias tiene cada uno. */
   protected readonly conteo = computed<ConteoCiudad[]>(() => {

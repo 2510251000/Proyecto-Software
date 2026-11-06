@@ -7,6 +7,9 @@ export const HORAS_ULTIMA_HORA = 3;
 /** Noticias que muestra cada columna de la portada al abrirla y que agrega cada clic en «Ver más». */
 export const NOTICIAS_POR_TANDA = 6;
 
+/** Noticias que van como publicación grande arriba del feed. */
+export const NOTICIAS_DESTACADAS = 2;
+
 export const ETIQUETAS_NOTICIA = {
   ultimaHora: 'Última hora',
   oficial: 'Oficial',
@@ -37,18 +40,10 @@ export const TEXTOS_NOTICIA = {
 
 export const TEXTOS_PORTADA = {
   tuRegion: 'Tu región',
-  elegirMunicipio: 'Elegir municipio',
-  todas: 'Todos',
-  cerrarSesion: 'Cerrar sesión',
-  oficiales: 'Información oficial',
-  oficialesDescripcion: 'Publicada por los administradores del portal.',
-  comunidad: 'Lo que cuenta la comunidad',
-  comunidadDescripcion: 'Escrita por los vecinos de cada municipio.',
-  sinOficiales: 'Todavía no hay información oficial de este municipio.',
-  sinComunidad: 'Nadie de este municipio ha contado nada todavía.',
   verMas: 'Ver más noticias',
-  noticia: 'noticia',
-  noticias: 'noticias',
+  destacadas: 'Nuevas y recomendadas',
+  masDeTuRegion: 'Más de tu región',
+  sinFiltro: 'No hay noticias para lo que elegiste. Prueba con otra pestaña o con otro municipio.',
   sinNoticias: 'Todavía no hay noticias publicadas.',
   sinResultados: 'No encontramos noticias con esa búsqueda.',
   actualizar: 'Actualizar',
