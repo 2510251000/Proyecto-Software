@@ -15,7 +15,7 @@
       @if (notificaciones.length === 0) {
         <p class="texto-suave">{{ textos.vacio }}</p>
       } @else {
-        <ul class="lista-filas seccion-papel">
+        <ul class="lista-filas">
           @for (aviso of notificaciones; track aviso.id) {
             <li class="aviso" [class.no-leida]="!aviso.leida">
               <p class="meta">

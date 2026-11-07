@@ -144,24 +144,32 @@ html:has(dialog:modal) {
 }
 
 /* ==========================================================================
-   Pantallas internas (publicar, perfil, notificaciones, administración).
-   Mismo lenguaje de la portada: papel blanco, filetes finos y el azul de marca.
+   Pantallas internas (publicar, perfil, avisos, mapa, administración).
+   Mismo lenguaje de la portada: tarjetas blancas con borde de 1px y radio 14,
+   alineadas a la izquierda del área de contenido con 28px de margen.
    ========================================================================== */
 
 .pagina-interna {
   max-width: 54rem;
-  margin: 0 auto;
-  padding: clamp(var(--espacio-l), 4vw, 3rem) var(--espacio-m) 4rem;
+  padding: 28px;
+}
+
+@media (max-width: 47.99rem) {
+  .pagina-interna {
+    padding: 14px 16px 24px;
+  }
 }
 
 .pagina-interna-ancha {
-  max-width: var(--ancho-maximo);
+  max-width: 1180px;
 }
 
+/* El mismo tamaño del titular del bloque de bienvenida (32px, interlineado 1.18). */
 .titulo-pagina {
   margin: 0 0 var(--espacio-s);
-  font-size: clamp(2rem, 6vw, 3rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(1.625rem, 4vw, 2rem);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
 }
 
 .bajada {
@@ -171,9 +179,17 @@ html:has(dialog:modal) {
 }
 
 .seccion-papel {
-  margin-top: var(--espacio-l);
-  padding-top: var(--espacio-l);
-  border-top: 3px solid var(--color-marca);
+  margin-top: 18px;
+  padding: 22px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
+}
+
+@media (max-width: 47.99rem) {
+  .seccion-papel {
+    padding: 16px;
+  }
 }
 
 /* Tarjeta de la columna derecha de la portada (Tu nivel, Avisos, De la alcaldía). */
@@ -306,15 +322,22 @@ html:has(dialog:modal) {
   color: var(--color-sobre-marca);
 }
 
+/* Listas de avisos y de administración: una tarjeta con renglones separados por línea. */
 .lista-filas {
-  margin: 0;
-  padding: 0;
+  margin: 18px 0 0;
+  padding: 0 18px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
   list-style: none;
 }
 
 .lista-filas > li {
   padding: var(--espacio-m) 0;
-  border-bottom: 1px solid var(--color-linea);
+}
+
+.lista-filas > li + li {
+  border-top: 1px solid var(--color-linea);
 }
 
 .texto-suave {

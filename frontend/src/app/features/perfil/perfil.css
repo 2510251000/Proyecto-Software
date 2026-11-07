@@ -8,7 +8,7 @@
   align-items: baseline;
   gap: var(--espacio-s);
   margin: 0;
-  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  font-size: 1.75rem;
 }
 
 .nombre-nivel {
@@ -23,20 +23,20 @@
   font-size: 1.1rem;
 }
 
-/* Barra de avance hacia el siguiente nivel: el sol llenando el azul. */
+/* Barra de avance hacia el siguiente nivel: la misma de «Tu nivel» en la portada. */
 .barra {
   overflow: hidden;
-  height: 0.75rem;
+  height: 8px;
   margin-bottom: var(--espacio-s);
-  border: 1px solid var(--color-marca);
-  border-radius: 999px;
-  background: var(--color-superficie);
+  border-radius: 8px;
+  background: var(--color-superficie-2);
 }
 
 .relleno {
   display: block;
   height: 100%;
-  background: var(--color-marca);
+  border-radius: 8px;
+  background: var(--color-sol);
 }
 
 .cupo {

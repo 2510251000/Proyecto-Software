@@ -95,7 +95,7 @@ export const TEXTOS_PERFIL = {
 } as const;
 
 export const TEXTOS_NOTIFICACIONES = {
-  titulo: 'Notificaciones',
+  titulo: 'Avisos',
   vacio: 'No tienes notificaciones todavía.',
   marcarTodas: 'Marcar todas como leídas',
   verNoticia: 'Ver la noticia',
