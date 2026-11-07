@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ETIQUETAS_NOTICIA } from '../../core/constants/portada.constants';
 import { Noticia } from '../../core/models/noticia.model';
-import { TarjetaNoticia } from './tarjeta-noticia';
+import { TarjetaNoticia, VarianteTarjeta } from './tarjeta-noticia';
 
 // Dos días antes de la fecha de publicación: la hora relativa es fija en las pruebas.
 const AHORA = new Date('2026-09-23T10:00:00');
@@ -21,9 +21,10 @@ describe('TarjetaNoticia', () => {
   const raiz = () => fixture.nativeElement as HTMLElement;
   const buscar = (selector: string) => raiz().querySelector(selector);
 
-  async function mostrar(noticia: Noticia): Promise<void> {
+  async function mostrar(noticia: Noticia, variante: VarianteTarjeta = 'compacta'): Promise<void> {
     fixture = TestBed.createComponent(TarjetaNoticia);
     fixture.componentRef.setInput('noticia', noticia);
+    fixture.componentRef.setInput('variante', variante);
     await fixture.whenStable();
   }
 
@@ -37,8 +38,8 @@ describe('TarjetaNoticia', () => {
     vi.useRealTimers();
   });
 
-  it('muestra título, resumen, ciudad y la hora relativa en español', async () => {
-    await mostrar(NOTICIA);
+  it('la grande muestra título, resumen, ciudad y la hora relativa en español', async () => {
+    await mostrar(NOTICIA, 'grande');
     const texto = raiz().textContent ?? '';
     expect(texto).toContain('Arreglan la vía principal');
     expect(texto).toContain('La alcaldía terminó las obras.');
@@ -65,16 +66,44 @@ describe('TarjetaNoticia', () => {
 
   it('una noticia sin urgencia no lleva «Última hora»', async () => {
     await mostrar({ ...NOTICIA, oficial: true });
-    expect(buscar('.urgente')).toBeNull();
+    expect(buscar('.etiqueta-urgente')).toBeNull();
   });
 
   it('una noticia oficial de hace menos de tres horas lleva «Última hora»', async () => {
     await mostrar({ ...NOTICIA, oficial: true, fechaPublicacion: '2026-09-23T08:30:00' });
-    expect(buscar('.urgente')?.textContent).toContain(ETIQUETAS_NOTICIA.ultimaHora);
+    expect(buscar('.etiqueta-urgente')?.textContent).toContain(ETIQUETAS_NOTICIA.ultimaHora);
   });
 
-  it('lleva la sección de la noticia encima del titular', async () => {
-    await mostrar({ ...NOTICIA, titulo: 'Nueva ciclorruta en el centro' });
-    expect(buscar('.seccion')?.textContent).toContain('Movilidad');
+  it('la compacta no lleva resumen y tiene la miniatura pequeña', async () => {
+    await mostrar(NOTICIA);
+    expect(raiz().textContent).not.toContain(NOTICIA.resumen);
+    expect(buscar('.nota')?.classList).not.toContain('grande');
+    expect(buscar('.datos')?.textContent?.trim()).toBe('Fusagasugá');
+    expect(buscar('.avatar')).toBeNull();
+  });
+
+  it('un vecino lleva sus iniciales sobre ámbar y «Nivel N»', async () => {
+    await mostrar({ ...NOTICIA, autor: 'Carlos Activo', autorNivel: 2 }, 'grande');
+    expect(buscar('.avatar')?.textContent?.trim()).toBe('CA');
+    expect(buscar('.nombre')?.textContent?.trim()).toBe('Carlos Activo');
+    expect(buscar('.etiqueta')?.textContent?.trim()).toBe(`${ETIQUETAS_NOTICIA.etiquetaNivel} 2`);
+  });
+
+  it('una oficial lleva el edificio sobre azul y la etiqueta «Oficial»', async () => {
+    await mostrar({ ...NOTICIA, oficial: true, autorNivel: 3 }, 'grande');
+    expect(buscar('.avatar-oficial svg')).not.toBeNull();
+    expect(buscar('.etiqueta-oficial')?.textContent).toContain(ETIQUETAS_NOTICIA.oficial);
+    expect(buscar('.nombre')?.textContent?.trim()).toBe(ETIQUETAS_NOTICIA.autorOficial);
+  });
+
+  it('la grande lleva el municipio, los minutos de lectura y, si la han calificado, el promedio', async () => {
+    await mostrar(NOTICIA, 'grande');
+    expect(buscar('.municipio')?.textContent?.trim()).toBe('Fusagasugá');
+    expect(buscar('.datos')?.textContent).toContain(`1 ${ETIQUETAS_NOTICIA.minutos} ${ETIQUETAS_NOTICIA.deLectura}`);
+    expect(buscar('.calificacion')).toBeNull();
+
+    await mostrar({ ...NOTICIA, promedio: 4.25, cantidadCalificaciones: 12 }, 'grande');
+    const calificacion = buscar('.calificacion')?.textContent?.replace(/\s+/g, ' ').trim();
+    expect(calificacion).toBe(`4,3 ${ETIQUETAS_NOTICIA.deCinco}, (12 ${ETIQUETAS_NOTICIA.calificaciones})`);
   });
 });

@@ -1,5 +1,5 @@
 import { TipoNotificacion } from '../models/notificacion.model';
-import { EstadoNoticia, TipoNoticias } from '../models/noticia.model';
+import { EstadoNoticia, PestanaPortada, TipoNoticias } from '../models/noticia.model';
 
 /** Menú principal que se ve en todas las pantallas con sesión. */
 export const TEXTOS_NAVEGACION = {
@@ -8,21 +8,38 @@ export const TEXTOS_NAVEGACION = {
   portada: 'Portada',
   mapa: 'Mapa',
   publicar: 'Publicar',
-  notificaciones: 'Notificaciones',
+  notificaciones: 'Avisos',
   sinLeer: 'sin leer',
   perfil: 'Mi perfil',
   admin: 'Administración',
   salir: 'Salir',
+  /** Nombre del menú lateral (escritorio) o de la barra inferior (celular). */
+  lateral: 'Menú',
+  usuario: 'Tu cuenta',
+  nivel: 'Nivel',
+  buscar: 'Buscar noticias',
 } as const;
+
+/** Id del campo de búsqueda de la portada: la lupa del celular lleva el foco ahí. */
+export const ID_BUSQUEDA_NOTICIAS = 'busqueda-noticias';
 
 export const TEXTOS_BUSQUEDA = {
   etiqueta: 'Buscar noticias',
-  marcador: 'Buscar por palabra: agua, vía, feria…',
-  buscar: 'Buscar',
+  marcador: 'Buscar noticias',
   limpiar: 'Quitar búsqueda',
   resultadosPara: 'Resultados para',
-  tipos: 'Tipo de noticia',
+  pestanas: 'Qué noticias ver',
+  municipio: 'Municipio',
+  todosMunicipios: 'Todos los municipios',
 } as const;
+
+/** Pestañas de la barra superior de la portada, en el orden en que se muestran. */
+export const ETIQUETAS_PESTANA: Readonly<Record<PestanaPortada, string>> = {
+  RECOMENDADAS: 'Recomendadas',
+  RECIENTES: 'Recientes',
+  OFICIALES: 'Oficiales',
+  COMUNITARIAS: 'Comunidad',
+};
 
 export const ETIQUETAS_TIPO: Readonly<Record<TipoNoticias, string>> = {
   TODAS: 'Todas',
@@ -78,7 +95,7 @@ export const TEXTOS_PERFIL = {
 } as const;
 
 export const TEXTOS_NOTIFICACIONES = {
-  titulo: 'Notificaciones',
+  titulo: 'Avisos',
   vacio: 'No tienes notificaciones todavía.',
   marcarTodas: 'Marcar todas como leídas',
   verNoticia: 'Ver la noticia',

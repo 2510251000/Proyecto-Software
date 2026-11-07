@@ -1,0 +1,58 @@
+:host {
+  display: block;
+}
+
+.nivel {
+  gap: 10px;
+}
+
+.encabezado {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.encabezado h2 {
+  margin: 0;
+  font-size: 1.4375rem;
+}
+
+.puntos {
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Pista gris azulada con el avance en ámbar. */
+.barra {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--color-superficie-2);
+}
+
+.relleno {
+  display: block;
+  height: 100%;
+  border-radius: 8px;
+  background: var(--color-sol);
+}
+
+.faltan,
+.limite {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.limite {
+  color: var(--color-texto-suave);
+}
+
+.ver-perfil {
+  align-self: flex-start;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: underline;
+}

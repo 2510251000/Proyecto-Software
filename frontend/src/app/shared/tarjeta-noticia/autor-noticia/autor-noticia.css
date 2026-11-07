@@ -1,0 +1,72 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+/* Cuadro de 36px: iniciales sobre ámbar, o el edificio sobre azul si es oficial. */
+.avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radio-s);
+  background: var(--color-sol);
+  color: var(--color-marca);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.avatar-oficial {
+  background: var(--color-marca);
+}
+
+.avatar-oficial svg {
+  fill: none;
+  stroke: var(--color-sobre-marca);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nombre {
+  color: var(--color-texto);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+/* «Nivel N»: gris azulado con texto azul. */
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radio-chip);
+  background: var(--color-superficie-2);
+  color: var(--color-marca);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.etiqueta-oficial {
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+}
+
+.etiqueta-oficial svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Solo «Última hora» va en rojo (blanco sobre rojo: 5:1). */
+.etiqueta-urgente {
+  background: var(--color-urgente);
+  color: var(--color-sobre-marca);
+}

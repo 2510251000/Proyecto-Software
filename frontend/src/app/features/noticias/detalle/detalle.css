@@ -19,25 +19,31 @@
   text-decoration: underline;
 }
 
-/* Sobre la banda azul. */
-.volver,
-.volver:hover {
-  color: var(--color-sobre-marca);
-}
-
-.volver:focus-visible {
-  outline-color: var(--color-sol);
+.volver {
+  margin: 0 0 var(--espacio-m) calc(-1 * var(--espacio-m));
+  color: var(--color-marca);
 }
 
 .pagina {
   max-width: 54rem;
-  margin: 0 auto;
-  padding: var(--espacio-l) var(--espacio-m) var(--espacio-xl);
+  padding: 18px 28px 28px;
 }
 
-/* La noticia va directo sobre el papel: la foto con esquinas suaves y el texto debajo. */
+/* La noticia va en una tarjeta blanca con borde; la foto ocupa el ancho de arriba. */
 .hoja {
-  --radio-imagen: var(--radio-s);
+  --radio-imagen: 0;
+
+  overflow: hidden;
+  padding-bottom: 28px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
+}
+
+@media (max-width: 47.99rem) {
+  .pagina {
+    padding: 10px 16px 24px;
+  }
 }
 
 .aviso {

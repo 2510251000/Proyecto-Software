@@ -1,0 +1,10 @@
+<div class="usuario" [attr.aria-label]="textos.usuario" role="group">
+  @if (perfil()) {
+    <span class="iniciales" aria-hidden="true">{{ iniciales() }}</span>
+    <span class="datos">
+      <span class="usuario-nombre">{{ nombre() }}</span>
+      <span class="usuario-detalle">{{ detalle() }}</span>
+    </span>
+  }
+  <button type="button" class="salir" (click)="salir()">{{ textos.salir }}</button>
+</div>

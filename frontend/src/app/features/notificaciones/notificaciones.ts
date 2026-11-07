@@ -11,12 +11,12 @@ import { Notificacion } from '../../core/models/notificacion.model';
 import { CampanaNotificaciones } from '../../core/services/campana-notificaciones';
 import { NotificacionService } from '../../core/services/notificacion.service';
 import { tiempoRelativo } from '../../core/utils/noticia';
-import { Encabezado } from '../../shared/encabezado/encabezado';
+import { Marco } from '../../shared/marco/marco';
 
 /** Bandeja de notificaciones: noticias nuevas en el municipio, cambios de nivel y moderación. */
 @Component({
   selector: 'app-notificaciones',
-  imports: [Encabezado],
+  imports: [Marco],
   templateUrl: './notificaciones.html',
   styleUrl: './notificaciones.css',
 })

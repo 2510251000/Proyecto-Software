@@ -2,31 +2,62 @@
   display: block;
 }
 
+/*
+  Contenido: ancho máximo 1180px, 28px de margen y 28px entre columnas. La columna derecha
+  (280px) baja al final cuando no cabe al lado (tableta) y no se muestra en el celular.
+*/
+.cuerpo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 28px;
+  max-width: 1180px;
+  padding: 28px;
+}
+
 .pagina {
   display: flex;
+  flex: 999 1 420px;
   flex-direction: column;
-  gap: clamp(var(--espacio-xl), 5vw, 4rem);
-  max-width: var(--ancho-maximo);
-  margin: 0 auto;
-  padding: clamp(var(--espacio-l), 4vw, 3rem) var(--espacio-m) 4rem;
+  gap: 18px;
+  min-width: 0;
+  container-type: inline-size;
 }
 
-/* Dos columnas parejas: lo oficial y lo de la comunidad. Se apilan en pantallas angostas. */
-.columnas {
+.derecha {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* «Nuevas y recomendadas», «Más de tu región»: etiqueta pequeña en mayúsculas. */
+.etiqueta-seccion {
+  margin: 8px 0 0;
+  color: var(--color-texto-suave);
+  font-family: var(--fuente-texto);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Tarjetas compactas: dos columnas; una si el feed mide menos de 640px (tableta y celular). */
+.compactas {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--espacio-xl) clamp(var(--espacio-xl), 5vw, 4rem);
-  align-items: start;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-/* Con un solo tipo elegido queda una columna de lectura cómoda. */
-.columnas.una {
-  grid-template-columns: minmax(0, 48rem);
-  justify-content: center;
-}
-
-@media (max-width: 48rem) {
-  .columnas {
+@container (max-width: 640px) {
+  .compactas {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -34,7 +65,7 @@
 .ver-mas {
   display: flex;
   justify-content: center;
-  margin-top: calc(-1 * var(--espacio-l));
+  padding-top: 8px;
 }
 
 .estado {
@@ -43,6 +74,9 @@
   align-items: center;
   gap: var(--espacio-s);
   padding: var(--espacio-xl) var(--espacio-l);
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
   color: var(--color-texto-suave);
   text-align: center;
 }
@@ -52,8 +86,7 @@
 }
 
 .estado-error {
-  border: 1px solid var(--color-error);
-  border-radius: var(--radio-s);
+  border-color: var(--color-error);
   color: var(--color-error);
   font-weight: 600;
 }
@@ -61,4 +94,23 @@
 .dibujo {
   width: 7.5rem;
   height: auto;
+}
+
+@media (max-width: 47.99rem) {
+  .cuerpo {
+    padding: 14px 16px 24px;
+  }
+
+  .pagina {
+    gap: 14px;
+  }
+
+  /* En el celular «Tu nivel» está en Perfil y los avisos en la barra inferior. */
+  .derecha {
+    display: none;
+  }
+
+  .seccion {
+    gap: 14px;
+  }
 }

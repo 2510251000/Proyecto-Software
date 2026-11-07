@@ -1,27 +1,29 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
-import { Noticia, TipoNoticias } from '../../../core/models/noticia.model';
-import { esUltimaHora } from '../../../core/utils/noticia';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
+import { NOTICIAS_DESTACADAS, NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
+import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
 import { Boton } from '../../../shared/boton/boton';
 import { AlmacenNoticias } from '../almacen-noticias';
-import { Apertura } from '../apertura/apertura';
-import { BarraBusqueda } from '../barra-busqueda/barra-busqueda';
-import { CabeceraPortada, ConteoCiudad } from '../cabecera-portada/cabecera-portada';
-import { Cintillo } from '../cintillo/cintillo';
-import { ColumnaNoticias } from '../columna-noticias/columna-noticias';
+import { Marco } from '../../../shared/marco/marco';
+import { BarraPortada } from '../barra-portada/barra-portada';
+import { Bienvenida } from '../bienvenida/bienvenida';
+import { ColumnaDerecha } from '../columna-derecha/columna-derecha';
+import { PerfilService } from '../../../core/services/perfil.service';
+import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
 import { ModalNoticia } from '../modal-noticia/modal-noticia';
-import { FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada';
+import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada';
 
 @Component({
   selector: 'app-listado',
   imports: [
     Boton,
-    Apertura,
-    BarraBusqueda,
-    CabeceraPortada,
-    Cintillo,
-    ColumnaNoticias,
+    Marco,
+    BarraPortada,
+    Bienvenida,
+    ColumnaDerecha,
+    TarjetaNoticia,
     EsqueletoPortada,
     ModalNoticia,
   ],
@@ -35,47 +37,39 @@ export class Listado implements OnInit {
   protected readonly cargando = this.almacen.cargando;
   protected readonly error = this.almacen.error;
   protected readonly noticias = this.almacen.noticias;
+  /** Perfil de la sesión para la bienvenida y «Tu nivel»; null si no carga. */
+  protected readonly perfil = toSignal(
+    inject(PerfilService)
+      .obtener()
+      .pipe(catchError(() => of(null))),
+    { initialValue: null },
+  );
   /** Noticia que se está viendo en la vista rápida; null si está cerrada. */
   protected readonly noticiaAbierta = signal<Noticia | null>(null);
   protected readonly textosPortada = TEXTOS_PORTADA;
 
-  /** Palabra buscada (la búsqueda la hace el backend) y tipo elegido (oficial o comunidad). */
+  /** Palabra buscada (la búsqueda la hace el backend) y pestaña elegida en la barra. */
   protected readonly textoBuscado = signal('');
-  protected readonly tipo = signal<TipoNoticias>('TODAS');
+  protected readonly pestana = signal<PestanaPortada>('RECOMENDADAS');
 
   // Todo lo que muestra la portada sale de la misma lista, sin peticiones nuevas.
-  // Cada noticia aparece una sola vez: la principal no se repite en las columnas.
+  // Cada noticia aparece una sola vez: las destacadas no se repiten abajo.
   protected readonly filtro = signal<FiltroPortada>(FILTRO_INICIAL);
   protected readonly ciudadActiva = computed(() => {
     const filtro = this.filtro();
     return filtro.tipo === 'ciudad' ? filtro.ciudad : null;
   });
-  private readonly filtradas = computed(() => {
-    const porCiudad = filtrarNoticias(this.noticias(), this.filtro());
-    switch (this.tipo()) {
-      case 'OFICIALES':
-        return porCiudad.filter((n) => n.oficial);
-      case 'COMUNITARIAS':
-        return porCiudad.filter((n) => !n.oficial);
-      default:
-        return porCiudad;
-    }
-  });
-  protected readonly principal = computed(() => this.filtradas()[0] ?? null);
-  private readonly resto = computed(() => this.filtradas().slice(1));
-  private readonly todasOficiales = computed(() => this.resto().filter((n) => n.oficial));
-  private readonly todasComunidad = computed(() => this.resto().filter((n) => !n.oficial));
-
-  protected readonly visibles = signal(NOTICIAS_POR_TANDA);
-  protected readonly oficiales = computed(() => this.todasOficiales().slice(0, this.visibles()));
-  protected readonly comunidad = computed(() => this.todasComunidad().slice(0, this.visibles()));
-  protected readonly hayMas = computed(
-    () =>
-      this.todasOficiales().length > this.visibles() ||
-      this.todasComunidad().length > this.visibles(),
+  private readonly filtradas = computed(() =>
+    aplicarPestana(filtrarNoticias(this.noticias(), this.filtro()), this.pestana()),
   );
+  /** Las dos primeras van como publicación grande en «Nuevas y recomendadas». */
+  protected readonly destacadas = computed(() => this.filtradas().slice(0, NOTICIAS_DESTACADAS));
+  private readonly resto = computed(() => this.filtradas().slice(NOTICIAS_DESTACADAS));
 
-  protected readonly ultimaHora = computed(() => this.noticias().find((n) => esUltimaHora(n)) ?? null);
+  /** El resto va en tarjetas compactas en «Más de tu región», por tandas. */
+  protected readonly visibles = signal(NOTICIAS_POR_TANDA);
+  protected readonly masDeTuRegion = computed(() => this.resto().slice(0, this.visibles()));
+  protected readonly hayMas = computed(() => this.resto().length > this.visibles());
 
   /** Municipios en orden alfabético, con cuántas noticias tiene cada uno. */
   protected readonly conteo = computed<ConteoCiudad[]>(() => {
@@ -102,8 +96,8 @@ export class Listado implements OnInit {
     this.cargar();
   }
 
-  protected elegirTipo(tipo: TipoNoticias): void {
-    this.tipo.set(tipo);
+  protected elegirPestana(pestana: PestanaPortada): void {
+    this.pestana.set(pestana);
     this.visibles.set(NOTICIAS_POR_TANDA);
   }
 

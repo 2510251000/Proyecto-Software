@@ -2,14 +2,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { MENSAJES_ERROR_HTTP, TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
-import { TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
+import { ETIQUETAS_PESTANA, TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
+import { ETIQUETAS_NOTICIA, TEXTOS_BIENVENIDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
 import { Noticia } from '../../../core/models/noticia.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { NoticiaService } from '../../../core/services/noticia.service';
 import { simularDialogoNativo } from '../modal-noticia/dialogo-de-prueba';
-import { campanaFalsa } from '../../../../testing/menu-falso';
+import { avisosFalsos, campanaFalsa, perfilFalso } from '../../../../testing/menu-falso';
 import { Listado } from './listado';
 
 const NOTICIAS: Noticia[] = [
@@ -42,6 +43,8 @@ describe('Listado', () => {
 
   const raiz = () => fixture.nativeElement as HTMLElement;
   const buscar = <T extends Element>(selector: string) => raiz().querySelector<T>(selector);
+  const destacadas = () => [...raiz().querySelectorAll('[aria-labelledby="titulo-destacadas"] app-tarjeta-noticia')];
+  const enlaces = () => [...raiz().querySelectorAll<HTMLAnchorElement>('app-tarjeta-noticia a')];
 
   beforeEach(async () => {
     respuesta = new Subject<Noticia[]>();
@@ -54,6 +57,8 @@ describe('Listado', () => {
         { provide: NoticiaService, useValue: { listar } },
         { provide: AuthService, useValue: { cerrarSesion, obtenerContenidoToken: () => null } },
         campanaFalsa(),
+        perfilFalso(),
+        avisosFalsos(),
       ],
     }).compileComponents();
     navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
@@ -62,7 +67,7 @@ describe('Listado', () => {
   });
 
   it('muestra el nombre del portal y pide las noticias al abrir', () => {
-    expect(buscar('header')?.textContent).toContain('Al Día');
+    expect(buscar('aside')?.textContent).toContain('Al Día');
     expect(listar).toHaveBeenCalledTimes(1);
   });
 
@@ -72,12 +77,15 @@ describe('Listado', () => {
     expect(buscar('app-tarjeta-noticia')).toBeNull();
   });
 
-  it('abre con la noticia más reciente en grande y las demás en su columna', async () => {
+  it('las dos primeras van en grande en «Nuevas y recomendadas»', async () => {
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
-    expect(buscar('app-apertura .principal')?.textContent).toContain('Primera noticia');
-    expect(buscar('#columna-comunidad')?.closest('section')?.textContent).toContain('Segunda noticia');
-    expect(buscar('app-columna-noticias')?.textContent).toContain(TEXTOS_PORTADA.sinOficiales);
+    const grandes = destacadas();
+    expect(buscar('#titulo-destacadas')?.textContent).toContain(TEXTOS_PORTADA.destacadas);
+    expect(grandes).toHaveLength(2);
+    expect(grandes[0].textContent).toContain('Primera noticia');
+    expect(grandes[1].textContent).toContain('Segunda noticia');
+    expect(buscar('#titulo-region')).toBeNull();
     expect(raiz().textContent).toContain('Soacha');
     expect(buscar('[role="status"]')).toBeNull();
   });
@@ -102,7 +110,7 @@ describe('Listado', () => {
 
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
-    expect(buscar('app-apertura')?.textContent).toContain('Primera noticia');
+    expect(destacadas()[0].textContent).toContain('Primera noticia');
   });
 
   describe('vista rápida de una noticia', () => {
@@ -115,13 +123,12 @@ describe('Listado', () => {
     });
 
     it('las tarjetas son enlaces a la página de su noticia', () => {
-      expect(buscar('app-apertura a.principal')?.getAttribute('href')).toBe('/noticias/1');
-      expect(buscar('app-tarjeta-noticia a')?.getAttribute('href')).toBe('/noticias/2');
+      expect(enlaces().map((a) => a.getAttribute('href'))).toEqual(['/noticias/1', '/noticias/2']);
     });
 
     it('al hacer clic en una tarjeta se abre con esa noticia, sin pedir nada al backend', async () => {
       expect(dialogo().hasAttribute('open')).toBe(false);
-      buscar<HTMLAnchorElement>('app-tarjeta-noticia a')?.click();
+      enlaces()[1].click();
       await fixture.whenStable();
       expect(dialogo().hasAttribute('open')).toBe(true);
       expect(dialogo().textContent).toContain('Segunda noticia');
@@ -130,14 +137,14 @@ describe('Listado', () => {
     });
 
     it('al cerrarla queda vacía y se puede abrir otra', async () => {
-      buscar<HTMLAnchorElement>('app-tarjeta-noticia a')?.click();
+      enlaces()[1].click();
       await fixture.whenStable();
       buscar<HTMLButtonElement>('dialog button.cerrar')?.click();
       await fixture.whenStable();
       expect(dialogo().hasAttribute('open')).toBe(false);
       expect(dialogo().textContent?.trim()).toBe('');
 
-      buscar<HTMLAnchorElement>('app-apertura a.principal')?.click();
+      enlaces()[0].click();
       await fixture.whenStable();
       expect(dialogo().textContent).toContain('Contenido uno');
     });
@@ -155,17 +162,18 @@ describe('Listado', () => {
   it('el filtro «Comunidad» deja solo lo que cuentan los vecinos', async () => {
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
-    const comunidad = [...raiz().querySelectorAll<HTMLButtonElement>('.tipo')].find((b) =>
+    const comunidad = [...raiz().querySelectorAll<HTMLButtonElement>('.pestana')].find((b) =>
       b.textContent?.includes('Comunidad'),
     );
     comunidad?.click();
     await fixture.whenStable();
-    expect(buscar('#columna-oficial')).toBeNull();
-    expect(buscar('app-apertura .principal')?.textContent).toContain('Segunda noticia');
+    expect(destacadas()).toHaveLength(1);
+    expect(destacadas()[0].textContent).toContain('Segunda noticia');
+    expect(buscar('main')?.textContent).not.toContain('Primera noticia');
   });
 
   it('cierra la sesión y vuelve al login', () => {
-    buscar<HTMLButtonElement>('header button')?.click();
+    buscar<HTMLButtonElement>('.salir')?.click();
     expect(cerrarSesion).toHaveBeenCalled();
     expect(navegar).toHaveBeenCalledWith([RUTAS.login]);
   });
@@ -183,70 +191,102 @@ describe('Listado', () => {
       ciudad: CIUDADES[i % CIUDADES.length],
     }));
 
-    const columna = (id: string) => buscar(`#${id}`)?.closest('section') as HTMLElement;
-    const notas = (id: string) => columna(id).querySelectorAll('app-tarjeta-noticia');
-    const municipio = (texto: string) =>
-      [...raiz().querySelectorAll<HTMLButtonElement>('.municipio')].find((boton) =>
-        boton.textContent?.trim().startsWith(texto),
-      ) as HTMLButtonElement;
+    const compactas = () => [...raiz().querySelectorAll('.compactas app-tarjeta-noticia')];
+    const selector = () => buscar<HTMLSelectElement>('#municipio-portada') as HTMLSelectElement;
+    async function elegirMunicipio(valor: string): Promise<void> {
+      selector().value = valor;
+      selector().dispatchEvent(new Event('change'));
+      await fixture.whenStable();
+    }
 
     beforeEach(async () => {
       respuesta.next(MUCHAS);
       await fixture.whenStable();
     });
 
-    it('cada columna muestra 6 y «Ver más» agrega 6 a cada una', async () => {
-      expect(notas('columna-oficial')).toHaveLength(6);
-      expect(notas('columna-comunidad')).toHaveLength(6);
+    it('«Más de tu región» muestra 6 compactas y «Ver más» agrega 6', async () => {
+      expect(buscar('#titulo-region')?.textContent).toContain(TEXTOS_PORTADA.masDeTuRegion);
+      expect(compactas()).toHaveLength(6);
       [...raiz().querySelectorAll<HTMLButtonElement>('button')]
         .find((boton) => boton.textContent?.includes(TEXTOS_PORTADA.verMas))
         ?.click();
       await fixture.whenStable();
-      expect(notas('columna-oficial')).toHaveLength(12);
-      expect(notas('columna-comunidad')).toHaveLength(12);
+      expect(compactas()).toHaveLength(12);
     });
 
-    it('separa lo oficial de lo de la comunidad y no repite la principal', () => {
-      expect(buscar('app-apertura')?.textContent).toContain('Noticia 1');
-      expect(columna('columna-oficial').textContent).toContain('Noticia 3');
-      expect(columna('columna-oficial').textContent).not.toContain('Noticia 2');
-      expect(columna('columna-comunidad').textContent).toContain('Noticia 2');
-      expect(raiz().querySelectorAll('a[href="/noticias/1"]')).toHaveLength(1);
+    it('respeta el orden de la API y no repite las destacadas abajo', () => {
+      expect(destacadas().map((t) => t.querySelector('h3')?.textContent?.trim())).toEqual(['Noticia 1', 'Noticia 2']);
+      expect(compactas()[0].textContent).toContain('Noticia 3');
+      expect(raiz().querySelectorAll('main a[href="/noticias/1"]')).toHaveLength(1);
     });
 
-    it('la cabecera tiene «Todos» y un municipio por ciudad, en orden alfabético y con su cantidad', () => {
-      const textos = [...raiz().querySelectorAll('.municipio')].map((b) =>
-        b.textContent?.replace(/\s+/g, ' ').trim(),
-      );
-      expect(textos).toEqual(['Todos 30', 'Fusagasugá 10', 'Soacha 10', 'Zipaquirá 10']);
-      expect(municipio('Todos').getAttribute('aria-pressed')).toBe('true');
-      expect(municipio('Soacha').type).toBe('button');
-      expect(buscar('h1')?.textContent).toContain(TEXTOS_PORTADA.tuRegion);
-    });
-
-    it('al elegir un municipio su nombre es el titular y solo quedan sus noticias', async () => {
-      municipio('Soacha').click();
+    it('«Recientes» ordena por fecha sin pedir nada nuevo al backend', async () => {
+      // Se invierte el orden de la API: la más nueva (Noticia 1) llega al final.
+      respuesta.next([...MUCHAS].reverse());
       await fixture.whenStable();
-      expect(municipio('Soacha').getAttribute('aria-pressed')).toBe('true');
-      expect(municipio('Todos').getAttribute('aria-pressed')).toBe('false');
+      expect(destacadas()[0].textContent).toContain('Noticia 30');
+      raiz().querySelectorAll<HTMLButtonElement>('.pestana')[1].click();
+      await fixture.whenStable();
+      expect(destacadas()[0].textContent).toContain('Noticia 1');
+      expect(listar).toHaveBeenCalledTimes(1);
+    });
+
+    it('el selector tiene «Todos los municipios» y un municipio por ciudad, en orden alfabético y con su cantidad', () => {
+      const textos = [...selector().options].map((opcion) => opcion.textContent?.replace(/\s+/g, ' ').trim());
+      expect(textos).toEqual([
+        `${TEXTOS_BUSQUEDA.todosMunicipios} (30)`,
+        'Fusagasugá (10)',
+        'Soacha (10)',
+        'Zipaquirá (10)',
+      ]);
+      expect(selector().value).toBe('');
+    });
+
+    it('al elegir un municipio solo quedan sus noticias, y «Todos» las devuelve', async () => {
+      await elegirMunicipio('Soacha');
+      expect(selector().value).toBe('Soacha');
       expect(buscar('h1')?.textContent).toContain('Soacha');
-      const datos = [...raiz().querySelectorAll('app-apertura .datos, app-tarjeta-noticia .datos')];
+      const datos = [...raiz().querySelectorAll('app-tarjeta-noticia .datos')];
       expect(datos.length).toBeGreaterThan(0);
       for (const dato of datos) {
         expect(dato.textContent).toContain('Soacha');
       }
 
-      municipio('Todos').click();
-      await fixture.whenStable();
-      expect(buscar('h1')?.textContent).toContain(TEXTOS_PORTADA.tuRegion);
+      await elegirMunicipio('');
+      expect(raiz().textContent).toContain('Zipaquirá');
+      expect(buscar('h1')?.textContent).toContain(TEXTOS_BIENVENIDA.tuMunicipio);
     });
 
-    it('no muestra el cintillo si ninguna noticia es de última hora', () => {
-      expect(buscar('app-cintillo')).toBeNull();
+    it('la pestaña activa es una sola y lo anuncia con aria-current', async () => {
+      const pestanas = () => [...raiz().querySelectorAll<HTMLButtonElement>('.pestana')];
+      expect(pestanas().map((p) => p.textContent?.trim())).toEqual(Object.values(ETIQUETAS_PESTANA));
+      expect(pestanas().filter((p) => p.getAttribute('aria-current') === 'true')).toHaveLength(1);
+      pestanas()[1].click();
+      await fixture.whenStable();
+      expect(pestanas()[1].getAttribute('aria-current')).toBe('true');
+      expect(pestanas()[0].getAttribute('aria-current')).toBeNull();
+    });
+
+    it('sin «Última hora» no aparece la etiqueta roja', () => {
+      expect(buscar('.etiqueta-urgente')).toBeNull();
     });
   });
 
-  it('muestra el cintillo cuando hay una noticia oficial de hace menos de tres horas', async () => {
+  it('si el municipio y la pestaña no dejan ninguna noticia, lo dice', async () => {
+    respuesta.next(NOTICIAS);
+    await fixture.whenStable();
+    // En Soacha solo está la «Segunda noticia», que es de la comunidad.
+    const selector = buscar<HTMLSelectElement>('#municipio-portada') as HTMLSelectElement;
+    selector.value = 'Soacha';
+    selector.dispatchEvent(new Event('change'));
+    await fixture.whenStable();
+    raiz().querySelectorAll<HTMLButtonElement>('.pestana')[2].click();
+    await fixture.whenStable();
+    expect(destacadas()).toHaveLength(0);
+    expect(raiz().textContent).toContain(TEXTOS_PORTADA.sinFiltro);
+  });
+
+  it('una noticia oficial de hace menos de tres horas lleva la etiqueta «Última hora»', async () => {
     const reciente: Noticia = {
       ...NOTICIAS[0],
       id: 99,
@@ -255,6 +295,7 @@ describe('Listado', () => {
     };
     respuesta.next([reciente, ...NOTICIAS]);
     await fixture.whenStable();
-    expect(buscar('app-cintillo')?.textContent).toContain('Se cae el puente peatonal');
+    expect(destacadas()[0].textContent).toContain('Se cae el puente peatonal');
+    expect(destacadas()[0].querySelector('.etiqueta-urgente')?.textContent).toContain(ETIQUETAS_NOTICIA.ultimaHora);
   });
 });

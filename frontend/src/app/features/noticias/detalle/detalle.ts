@@ -8,7 +8,7 @@ import { PARAMETRO_ID_NOTICIA, RUTAS } from '../../../core/constants/rutas.const
 import { Noticia } from '../../../core/models/noticia.model';
 import { NoticiaService } from '../../../core/services/noticia.service';
 import { Boton } from '../../../shared/boton/boton';
-import { Encabezado } from '../../../shared/encabezado/encabezado';
+import { Marco } from '../../../shared/marco/marco';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { ContenidoNoticia } from '../contenido-noticia/contenido-noticia';
 import { CalificacionNoticia } from '../interaccion/calificacion-noticia/calificacion-noticia';
@@ -22,7 +22,7 @@ import { ReportarNoticia } from '../interaccion/reportar-noticia/reportar-notici
  */
 @Component({
   selector: 'app-detalle',
-  imports: [Encabezado, Boton, ContenidoNoticia, RouterLink, CalificacionNoticia, ComentariosNoticia, ReportarNoticia],
+  imports: [Marco, Boton, ContenidoNoticia, RouterLink, CalificacionNoticia, ComentariosNoticia, ReportarNoticia],
   templateUrl: './detalle.html',
   styleUrl: './detalle.css',
 })

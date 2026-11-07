@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 8px 0 16px;
+  border-bottom: 1px solid var(--color-linea);
+  background: var(--color-tarjeta);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alto-control);
+  font-size: 1.3125rem;
+  text-decoration: none;
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+}
+
+.accion {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radio-s);
+  background: none;
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+.icono {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.iniciales {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+  font-size: 0.75rem;
+  font-weight: 700;
+}

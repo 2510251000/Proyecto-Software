@@ -2,72 +2,60 @@
   display: block;
 }
 
-/* Sobre la banda azul. «Salir» va primero en el DOM (lo encuentran rápido los lectores
-   de pantalla y las pruebas) pero se dibuja al final. */
+/* Lista vertical del menú lateral: un renglón de 44px por destino. */
 .menu {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--espacio-xs);
+  flex-direction: column;
+  gap: 2px;
 }
 
 .enlace {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--espacio-xs);
+  gap: 12px;
   min-height: var(--alto-control);
-  padding: 0 var(--espacio-s);
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--color-sobre-marca);
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 700;
+  padding: 0 12px;
+  border-radius: var(--radio-s);
+  color: var(--color-texto);
+  font-size: 0.9375rem;
+  font-weight: 500;
   text-decoration: none;
-  cursor: pointer;
 }
 
 .enlace:hover {
-  color: var(--color-sobre-marca);
-  text-decoration: underline;
-}
-
-.enlace:focus-visible {
-  outline-color: var(--color-sol);
-}
-
-.activo {
-  border-color: var(--color-sobre-marca-suave);
-}
-
-.salir {
-  order: 1;
-  border-color: var(--color-sobre-marca-suave);
-  padding-inline: var(--espacio-m);
-}
-
-.salir:hover {
-  background: var(--color-sobre-marca);
+  background: var(--color-superficie-2);
   color: var(--color-marca);
   text-decoration: none;
 }
 
-/* Cantidad sin leer: el sol sobre el azul (7:1). */
-.contador {
-  min-width: 1.4rem;
-  padding: 0 0.35rem;
-  border-radius: 999px;
-  background: var(--color-sol);
-  color: var(--color-marca-oscuro);
-  font-size: 0.75rem;
-  line-height: 1.4rem;
-  text-align: center;
+.activo {
+  background: var(--color-superficie-2);
+  color: var(--color-marca);
+  font-weight: 700;
 }
 
-@media (max-width: 40rem) {
-  .menu {
-    justify-content: flex-start;
-  }
+.icono {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Cantidad sin leer: relleno ámbar con texto azul (6.96:1). */
+.contador {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: var(--radio-chip);
+  background: var(--color-sol);
+  color: var(--color-marca);
+  font-size: 0.75rem;
+  font-weight: 700;
 }
