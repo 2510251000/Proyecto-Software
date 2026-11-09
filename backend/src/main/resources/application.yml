@@ -90,9 +90,25 @@ aldia:
     maximo-reportes-listado: ${REPORTES_MAXIMO_LISTADO:200}
 
   imagenes:
-    # Carpeta donde se guardan las fotos (relativa a donde arranca el backend). En Docker es
-    # el volumen «imagenes». Con varios servidores habría que cambiar de adaptador (ver DECISIONES).
-    directorio: ${IMAGENES_DIRECTORIO:imagenes}
+    almacen:
+      # Dónde se guardan los archivos de las fotos (en la base solo queda su clave):
+      #   s3    → bucket privado con la API de S3. Docker usa SeaweedFS; producción, AWS S3 o R2.
+      #   disco → carpeta local; solo para trabajar sin Docker (no sirve con varios servidores).
+      tipo: ${IMAGENES_ALMACEN:disco}
+      # Carpeta del tipo disco (relativa a donde arranca el backend).
+      directorio: ${IMAGENES_DIRECTORIO:imagenes}
+      s3:
+        # Vacío para AWS S3. SeaweedFS en Docker: http://s3:8333.
+        # Cloudflare R2: https://<id de la cuenta>.r2.cloudflarestorage.com (con S3_REGION=auto).
+        endpoint: ${S3_ENDPOINT:}
+        region: ${S3_REGION:us-east-1}
+        bucket: ${S3_BUCKET:aldia-imagenes}
+        # Vacías: se usa la cadena de credenciales de AWS (p. ej. el rol IAM del servidor).
+        clave-acceso: ${S3_CLAVE_ACCESO:}
+        clave-secreta: ${S3_CLAVE_SECRETA:}
+        # true para SeaweedFS y similares (la URL lleva el bucket en la ruta, no en el dominio).
+        estilo-ruta: ${S3_ESTILO_RUTA:false}
+        tiempo-espera-ms: ${S3_TIEMPO_ESPERA_MS:10000}
     maximo-por-noticia: ${IMAGENES_MAXIMO_POR_NOTICIA:4}
     tamano-maximo-mb: ${IMAGENES_TAMANO_MAXIMO_MB:5}
     ancho-maximo: ${IMAGENES_ANCHO_MAXIMO:8000}

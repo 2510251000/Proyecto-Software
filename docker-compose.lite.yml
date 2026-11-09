@@ -1,5 +1,5 @@
 # ============================================================================
-#  Al Día — versión liviana: base de datos + backend
+#  Al Día — versión liviana: base de datos + almacén de fotos (S3) + backend
 #
 #  El frontend NO va aquí: se corre aparte con `ng serve` (puerto 4200) para
 #  seguir editándolo con recarga automática.
@@ -34,6 +34,27 @@ services:
       timeout: 5s
       retries: 10
 
+  s3:
+    # Almacenamiento de objetos compatible con S3 para las fotos de las noticias (SeaweedFS).
+    # En producción se reemplaza por AWS S3 o Cloudflare R2 cambiando solo variables del backend.
+    image: chrislusf/seaweedfs:4.50
+    # «mini» es la versión de un solo proceso para desarrollo; crea el bucket al arrancar.
+    command: mini -dir=/data -bucket=${S3_BUCKET:-aldia-imagenes}
+    environment:
+      # Con estas dos variables SeaweedFS exige firma: el bucket no se puede leer sin credenciales.
+      AWS_ACCESS_KEY_ID: ${S3_CLAVE_ACCESO:?Falta S3_CLAVE_ACCESO en el .env}
+      AWS_SECRET_ACCESS_KEY: ${S3_CLAVE_SECRETA:?Falta S3_CLAVE_SECRETA en el .env}
+    volumes:
+      - datos-s3:/data
+    ports:
+      # Solo desde esta máquina (para correr el backend sin Docker contra el mismo almacén).
+      - "127.0.0.1:8333:8333"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8333/healthz"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   backend:
     build: ./backend
     environment:
@@ -52,19 +73,25 @@ services:
       NIVEL_LOGS: ${NIVEL_LOGS:-INFO}
       COMENTARIO_LARGO_MAXIMO: ${COMENTARIO_LARGO_MAXIMO:-1000}
       REPORTE_LARGO_DESCRIPCION: ${REPORTE_LARGO_DESCRIPCION:-1000}
-      # Fotos de las noticias: se guardan en el volumen «imagenes».
-      IMAGENES_DIRECTORIO: /app/imagenes
+      # Fotos de las noticias: en el bucket privado del servicio «s3».
+      IMAGENES_ALMACEN: s3
+      S3_ENDPOINT: http://s3:8333
+      S3_REGION: us-east-1
+      S3_BUCKET: ${S3_BUCKET:-aldia-imagenes}
+      S3_CLAVE_ACCESO: ${S3_CLAVE_ACCESO}
+      S3_CLAVE_SECRETA: ${S3_CLAVE_SECRETA}
+      S3_ESTILO_RUTA: "true"
       IMAGENES_MAXIMO_POR_NOTICIA: ${IMAGENES_MAXIMO_POR_NOTICIA:-4}
       IMAGENES_TAMANO_MAXIMO_MB: ${IMAGENES_TAMANO_MAXIMO_MB:-5}
       IMAGENES_TAMANO_MAXIMO_PETICION_MB: ${IMAGENES_TAMANO_MAXIMO_PETICION_MB:-25}
-    volumes:
-      - imagenes:/app/imagenes
     ports:
       - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
+      s3:
+        condition: service_healthy
 
 volumes:
   datos-postgres:
-  imagenes:
+  datos-s3:

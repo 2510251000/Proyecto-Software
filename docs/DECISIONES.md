@@ -150,11 +150,10 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     el bloque de texto de cada historia (`features/hoy/texto-historia`) son subcomponentes.
 
 ## Fase 2 — Fotos de las noticias (MF02_003)
-36. **Almacenamiento detrás de un puerto.** `AlmacenImagenesPuerto` (guardar, leer, borrar) con un
-    primer adaptador en disco (`IMAGENES_DIRECTORIO`; en Docker, el volumen `imagenes`). **Con
-    varios servidores** el disco de uno no lo ve el otro: habría que cambiar a un adaptador de
-    almacenamiento en la nube (S3, Azure Blob, Cloudinary…). El puerto ya lo permite sin tocar
-    los casos de uso.
+36. **Almacenamiento detrás de un puerto.** `AlmacenImagenesPuerto` (guardar, leer, borrar). El
+    primer adaptador guardaba en disco (en Docker, el volumen `imagenes`). Desde la Fase 7 las
+    fotos van a almacenamiento de objetos S3 (decisiones 64 a 70); el disco queda solo para
+    trabajar sin Docker.
 37. En la columna `multimedia.url` se guarda la **clave del archivo** (un UUID con extensión), no
     una URL pública: la API arma la URL (`/api/noticias/{id}/imagenes/{orden}`) y así puede
     revisar permisos. El nombre que puso el usuario nunca se usa en el disco.
@@ -243,3 +242,29 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     o mover todo Angular a la vez. Lo demás queda en `PENDIENTES.md`.
 63. Apagado ordenado: `server.shutdown: graceful` con hasta `TIEMPO_APAGADO` (20 s) para
     terminar las peticiones en curso (factor IX).
+
+## Fase 7 — Fotos en almacenamiento de objetos (S3)
+64. **Las fotos van a un bucket con la API de S3**, no al disco del backend. Así el backend no
+    guarda estado (factor VI): se puede recrear o tener varios servidores sin perder fotos, y el
+    almacén se cambia por variables (factor IV). Adaptador `AlmacenImagenesS3Adaptador` con el
+    AWS SDK v2 (BOM 2.57.0, sin el cliente Netty). El mismo código sirve para AWS S3,
+    Cloudflare R2 y SeaweedFS.
+65. **En Docker, SeaweedFS 4.50** (`weed mini`, servicio `s3`, volumen `datos-s3`). MinIO era la
+    opción más conocida, pero su imagen ya no se publica en Docker Hub; SeaweedFS se mantiene
+    activamente y crea el bucket al arrancar. El puerto 8333 se abre solo en `127.0.0.1`.
+    (decidido por Claude Code; revisar)
+66. **Bucket privado.** SeaweedFS exige firma porque recibe `AWS_ACCESS_KEY_ID` y
+    `AWS_SECRET_ACCESS_KEY` (las claves `S3_CLAVE_ACCESO` y `S3_CLAVE_SECRETA` del `.env`); sin
+    ellas responde 403. La API sigue entregando las fotos (`/api/noticias/{id}/imagenes/{orden}`)
+    para revisar permisos de las noticias no publicadas. No se usan URLs públicas del bucket.
+67. **Credenciales:** con `S3_CLAVE_ACCESO` y `S3_CLAVE_SECRETA` se usan esas (SeaweedFS, R2). Sin
+    ellas, la cadena estándar de AWS (rol IAM del servidor), para no guardar claves en
+    producción. Si llega solo una de las dos, el backend no arranca.
+68. **Falla al arrancar** (`HeadBucket`) si el bucket no existe o no hay acceso, en vez de fallar
+    al subir la primera foto. En Docker, el backend espera a que el servicio `s3` esté sano.
+69. Cada operación contra el almacén tiene un tope de `S3_TIEMPO_ESPERA_MS` (10 s), para que
+    una caída del almacén no deje peticiones colgadas.
+70. Las claves siguen siendo `uuid.extensión` (clase `ClavesDeImagen`, compartida por los dos
+    adaptadores): ninguna clave que no haya generado el portal llega al bucket. El objeto se
+    guarda con su `Content-Type`. `IMAGENES_ALMACEN=disco` sigue siendo el valor por defecto
+    para correr sin Docker y para las pruebas. (decidido por Claude Code; revisar)

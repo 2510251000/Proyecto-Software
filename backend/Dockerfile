@@ -20,7 +20,7 @@ WORKDIR /app
 
 # No correr como root dentro del contenedor.
 RUN addgroup -S aldia && adduser -S aldia -G aldia
-# Carpeta de las fotos (volumen «imagenes»): debe ser del usuario aldia para poder escribir.
+# Carpeta por si se usa IMAGENES_ALMACEN=disco (en Docker las fotos van al servicio «s3»).
 RUN mkdir -p /app/imagenes && chown aldia:aldia /app/imagenes
 USER aldia
 

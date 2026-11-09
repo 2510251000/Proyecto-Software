@@ -3,8 +3,8 @@ package com.aldia.dominio.puerto.salida;
 import java.util.Optional;
 
 /**
- * Dónde viven los archivos de las fotos. El primer adaptador guarda en disco; con varios
- * servidores se cambia por uno de almacenamiento en la nube sin tocar los casos de uso.
+ * Dónde viven los archivos de las fotos: un bucket S3 (Docker y producción) o una carpeta
+ * local (solo sin Docker). Se elige con IMAGENES_ALMACEN sin tocar los casos de uso.
  */
 public interface AlmacenImagenesPuerto {
 

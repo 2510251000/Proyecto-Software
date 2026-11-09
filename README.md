@@ -52,7 +52,8 @@ Se necesita PostgreSQL 14 o superior corriendo, Java 17 o superior y Node.js.
 
 ### Opción B — con Docker
 
-1. Copiar `.env.example` como `.env` (en la raíz) y completar los valores.
+1. Copiar `.env.example` como `.env` (en la raíz) y completar los valores (también
+   `S3_CLAVE_ACCESO` y `S3_CLAVE_SECRETA`, con valores largos y al azar).
 2. `docker compose up --build -d`
 3. Abrir http://localhost:4200 (la base queda en el puerto 5433).
 
@@ -60,6 +61,31 @@ Quedan así:
 
 - Frontend: http://localhost:4200
 - Backend: http://localhost:8080 (documentación en `/swagger-ui.html`)
+- Almacén de fotos (S3, SeaweedFS): http://localhost:8333, solo desde este computador y con
+  las claves del `.env`.
+
+## Dónde se guardan las fotos
+
+Los archivos van a un **bucket privado con la API de S3**. En la base (`multimedia.url`) solo
+queda la clave del archivo (`uuid.jpg`). Nadie lee el bucket directamente: la API entrega cada
+foto en `/api/noticias/{id}/imagenes/{orden}` después de revisar los permisos.
+
+| Dónde corre | Almacén | Variables del backend |
+|---|---|---|
+| Docker (desarrollo y demo) | SeaweedFS, servicio `s3` del compose | Ya vienen en `docker-compose.lite.yml` |
+| Producción con AWS | AWS S3 | `IMAGENES_ALMACEN=s3`, `S3_REGION`, `S3_BUCKET`; sin claves si el servidor tiene un rol IAM |
+| Producción con Cloudflare R2 | R2 | `IMAGENES_ALMACEN=s3`, `S3_ENDPOINT=https://<cuenta>.r2.cloudflarestorage.com`, `S3_REGION=auto`, `S3_BUCKET`, `S3_CLAVE_ACCESO`, `S3_CLAVE_SECRETA` |
+| Windows sin Docker | Carpeta `backend/imagenes` | Ninguna (`IMAGENES_ALMACEN=disco` es el valor por defecto) |
+
+Para producción:
+
+- El bucket debe ser **privado** (en AWS, con «Block Public Access» activado).
+- Las claves del backend solo deben poder `s3:GetObject`, `s3:PutObject` y `s3:DeleteObject`
+  sobre los objetos del bucket, y `s3:ListBucket` sobre el bucket (lo usa la revisión al
+  arrancar). Nada de claves de administrador.
+- Activar el versionado del bucket o un respaldo programado, porque las fotos no están en
+  los respaldos de la base.
+- Si el backend no puede entrar al bucket, **no arranca** y dice qué revisar.
 
 ## Cuentas de demostración (SOLO para la demo)
 
