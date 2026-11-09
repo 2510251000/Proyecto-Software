@@ -35,8 +35,9 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
   mismo JSON y hasta 4 partes `imagenes`); el JSON solo sigue igual. Cada foto se valida por sus
   primeros bytes (JPEG, PNG o WebP), por peso y por dimensiones, y se guarda **sin metadatos**
   (JPEG y PNG se vuelven a codificar; a WebP se le quitan los bloques EXIF y XMP). Los archivos
-  van al puerto `AlmacenImagenesPuerto` (adaptador en disco, `IMAGENES_DIRECTORIO`; en Docker el
-  volumen `imagenes`). Si la base falla, se borran los archivos ya guardados.
+  van al puerto `AlmacenImagenesPuerto`: adaptador S3 (bucket privado; en Docker, SeaweedFS en
+  el servicio `s3`; en producción, AWS S3 o R2) o adaptador en disco para trabajar sin Docker
+  (`IMAGENES_ALMACEN`). Si la base falla, se borran los archivos ya guardados.
   `GET /api/noticias/{id}/imagenes/{orden}` las sirve con `Cache-Control`; si la noticia no está
   publicada solo la ven su autor y los administradores. `NoticiaResponseDTO.imagenes`.
   Migración `V4__imagenes_noticia.sql` (descripción de la foto y orden único por noticia).

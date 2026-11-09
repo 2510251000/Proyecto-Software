@@ -6,39 +6,26 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.aldia.dominio.excepcion.AlmacenamientoExcepcion;
 import com.aldia.dominio.puerto.salida.AlmacenImagenesPuerto;
 
 /**
- * Guarda las fotos en una carpeta del servidor (IMAGENES_DIRECTORIO; en Docker, el volumen
- * «imagenes»). Cada archivo se llama con un UUID: el nombre que puso el usuario nunca se usa,
- * así no hay rutas raras ni archivos que se pisen.
- * Con varios servidores esta carpeta no se comparte: ahí se cambia por un adaptador de nube.
+ * Guarda las fotos en una carpeta del servidor (IMAGENES_DIRECTORIO). Sirve para trabajar en
+ * local sin Docker; en Docker y en producción se usa {@link AlmacenImagenesS3Adaptador}, porque
+ * una carpeta no se comparte entre servidores ni sobrevive a que se recree el contenedor.
  */
-@Component
 public class AlmacenImagenesDiscoAdaptador implements AlmacenImagenesPuerto {
-
-    /** Solo claves que este adaptador generó: «uuid.extensión». Impide salir de la carpeta. */
-    private static final Pattern CLAVE_VALIDA = Pattern.compile("^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}\\.(jpg|png|webp)$");
 
     private final Path carpeta;
 
-    public AlmacenImagenesDiscoAdaptador(@Value("${aldia.imagenes.directorio}") String directorio) {
+    public AlmacenImagenesDiscoAdaptador(String directorio) {
         this.carpeta = Path.of(directorio).toAbsolutePath().normalize();
     }
 
     @Override
     public String guardar(byte[] contenido, String extension) {
-        String clave = UUID.randomUUID() + "." + extension;
-        if (!CLAVE_VALIDA.matcher(clave).matches()) {
-            throw new IllegalArgumentException("Extensión no permitida: " + extension);
-        }
+        String clave = ClavesDeImagen.nueva(extension);
         try {
             Files.createDirectories(carpeta);
             Files.write(carpeta.resolve(clave), contenido, StandardOpenOption.CREATE_NEW);
@@ -50,7 +37,7 @@ public class AlmacenImagenesDiscoAdaptador implements AlmacenImagenesPuerto {
 
     @Override
     public Optional<byte[]> leer(String clave) {
-        if (!esValida(clave)) {
+        if (!ClavesDeImagen.esValida(clave)) {
             return Optional.empty();
         }
         try {
@@ -64,7 +51,7 @@ public class AlmacenImagenesDiscoAdaptador implements AlmacenImagenesPuerto {
 
     @Override
     public void borrar(String clave) {
-        if (!esValida(clave)) {
+        if (!ClavesDeImagen.esValida(clave)) {
             return;
         }
         try {
@@ -72,9 +59,5 @@ public class AlmacenImagenesDiscoAdaptador implements AlmacenImagenesPuerto {
         } catch (IOException error) {
             throw new AlmacenamientoExcepcion("No se pudo borrar la foto", error);
         }
-    }
-
-    private static boolean esValida(String clave) {
-        return clave != null && CLAVE_VALIDA.matcher(clave).matches();
     }
 }
