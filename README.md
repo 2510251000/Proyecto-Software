@@ -85,10 +85,16 @@ noticia → entrar como `vecina@aldia.com` y ver la notificación → entrar com
 ## Calidad del código (SonarQube Cloud)
 
 En cada push a `dev` o `main` y en cada PR, GitHub Actions (`.github/workflows/sonar.yml`)
-corre las pruebas de los dos lados y envía el código y la cobertura a
-[SonarQube Cloud](https://sonarcloud.io/project/overview?id=2510251000_Proyecto-Software).
-Allí se ven los bugs, las vulnerabilidades, el código duplicado, la cobertura y el
-Quality Gate (aprobado / no aprobado). La configuración está en `sonar-project.properties`.
+corre dos jobs en paralelo, uno por lado, y cada uno envía su código y su cobertura a su
+propio proyecto de SonarQube Cloud con su propio Quality Gate:
+
+| Lado | Proyecto en SonarQube Cloud | Configuración |
+|---|---|---|
+| Backend | [2510251000_Proyecto-Software](https://sonarcloud.io/project/overview?id=2510251000_Proyecto-Software) | `backend/sonar-project.properties` |
+| Frontend | [2510251000_Proyecto-Software-frontend](https://sonarcloud.io/project/overview?id=2510251000_Proyecto-Software-frontend) | `frontend/sonar-project.properties` |
+
+Allí se ven los bugs, las vulnerabilidades, el código duplicado, la cobertura y el Quality
+Gate (aprobado / no aprobado). Si el Quality Gate de un lado no pasa, su job queda en rojo.
 
 Para ver la cobertura en tu equipo:
 - Backend: `cd backend` y `.\mvnw.cmd verify` → `backend/target/site/jacoco/index.html`.
