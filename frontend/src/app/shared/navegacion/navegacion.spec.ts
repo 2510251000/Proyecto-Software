@@ -22,11 +22,10 @@ describe('Navegacion', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('un usuario común ve hoy, portada, mapa, avisos y perfil, pero no el panel', async () => {
+  it('un usuario común ve portada, mapa, avisos y perfil, pero no el panel', async () => {
     const menu = await crear(ROLES.usuarioComun);
     const enlaces = [...menu.querySelectorAll('a')].map((a) => a.getAttribute('href'));
     expect(enlaces).toEqual([
-      `/${RUTAS.hoy}`,
       `/${RUTAS.noticias}`,
       `/${RUTAS.mapa}`,
       `/${RUTAS.notificaciones}`,

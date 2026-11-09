@@ -16,12 +16,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/registro/registro').then((m) => m.Registro),
   },
   {
-    path: RUTAS.hoy,
-    title: 'Hoy | Al Día',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/hoy/hoy').then((m) => m.Hoy),
-  },
-  {
     path: RUTAS.noticias,
     title: 'Noticias | Al Día',
     canActivate: [authGuard],

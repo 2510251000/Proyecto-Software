@@ -1,0 +1,14 @@
+<div class="fondo" aria-hidden="true">
+  <div class="muro">
+    @for (recorte of recortes; track $index) {
+      <figure class="recorte">
+        <img [src]="recorte.imagen" alt="" decoding="async" />
+        <figcaption>
+          <span class="seccion">{{ recorte.seccion }}</span>
+          <span class="titular">{{ recorte.titular }}</span>
+        </figcaption>
+      </figure>
+    }
+  </div>
+  <div class="velo"></div>
+</div>

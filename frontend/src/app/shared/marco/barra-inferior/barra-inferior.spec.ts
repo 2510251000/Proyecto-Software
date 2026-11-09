@@ -15,17 +15,16 @@ describe('BarraInferior', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('tiene portada, hoy, publicar en el centro, mapa y avisos', async () => {
+  it('tiene portada, publicar, mapa y avisos', async () => {
     const barra = await crear();
     const enlaces = [...barra.querySelectorAll('a')].map((a) => a.getAttribute('href'));
     expect(enlaces).toEqual([
       `/${RUTAS.noticias}`,
-      `/${RUTAS.hoy}`,
       `/${RUTAS.publicar}`,
       `/${RUTAS.mapa}`,
       `/${RUTAS.notificaciones}`,
     ]);
-    expect(barra.querySelectorAll('a')[2].classList).toContain('publicar');
+    expect(barra.querySelectorAll('a')[1].classList).toContain('publicar');
   });
 
   it('muestra los avisos sin leer y nada cuando no hay', async () => {

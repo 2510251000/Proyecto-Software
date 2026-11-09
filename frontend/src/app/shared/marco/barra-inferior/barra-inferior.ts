@@ -5,7 +5,7 @@ import { RUTAS } from '../../../core/constants/rutas.constants';
 import { CampanaNotificaciones } from '../../../core/services/campana-notificaciones';
 
 /**
- * Menú del celular, fijo abajo: portada, hoy, publicar (el botón ámbar del centro), mapa y
+ * Menú del celular, fijo abajo: portada, publicar (el botón ámbar), mapa y
  * avisos con cuántos hay sin leer. La consulta de la campana la arranca el menú lateral.
  */
 @Component({
