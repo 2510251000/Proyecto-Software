@@ -247,3 +247,48 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     o mover todo Angular a la vez. Lo demás queda en `PENDIENTES.md`.
 63. Apagado ordenado: `server.shutdown: graceful` con hasta `TIEMPO_APAGADO` (20 s) para
     terminar las peticiones en curso (factor IX).
+
+## Cambios pedidos por Sebastián (2026-11-09)
+64. **Login con muro de noticias.** El fondo del login es un muro de recortes de periódico (foto,
+    sección y titular de ejemplo) difuminado con un velo azul; al centro, el logo grande y el
+    lema. Las fotos nuevas son CC0 (`frontend/public/imagenes/fondo-login/CREDITOS.md`). Se
+    quitaron la entrada con atardecer y el amanecer: dependían del cielo de noche.
+65. **Se quita «Hoy».** La pantalla de municipio + historias no gustó; al iniciar sesión se va
+    a la portada. La barra inferior del celular queda con 4 destinos.
+66. **Se califica al autor, no la noticia.** En cada noticia el lector elige «Sigue publicando
+    así» o «No me gustó esto» (un voto por lector y noticia, se puede cambiar). La aprobación del
+    autor es el % de votos positivos en **todas** sus noticias; se muestra en las tarjetas, el
+    detalle y el perfil. **Solo se muestra: no suma ni resta puntos ni cambia el nivel.**
+67. V5 cambia `calificacion.valor` (1 a 5) por `calificacion.recomienda` (booleano) en la misma
+    tabla, para no agregar tablas al modelo de diez. Las calificaciones viejas de 4 o 5 estrellas
+    pasan a `TRUE`; las demás a `FALSE`. (decidido por Claude Code; revisar)
+68. API: `PUT /api/noticias/{id}/calificacion` recibe `{ "recomienda": true|false }` y responde
+    `autorAprobacion` (null sin votos), `autorVotos`, `autorVotosPositivos` y `miVoto`.
+    `NoticiaResponseDTO` cambia `promedio`, `cantidadCalificaciones` y `miCalificacion` por
+    `autorAprobacion`, `autorVotos` y `miVoto`; `/api/usuarios/me` agrega `aprobacion` y `votos`.
+69. **Noticias reales incluidas en la aplicación.** 18 noticias de la semana del 2 al 9 de
+    noviembre de 2026 (Fusagasugá, Soacha, Zipaquirá, Chía, Girardot, Facatativá y Silvania) viven
+    en `backend/src/main/resources/datos-iniciales/noticias/` (JSON + fotos). Al arrancar,
+    `CargaNoticiasIniciales` publica las que falten (se reconocen por el título), en todos los
+    ambientes; se apaga con `NOTICIAS_INICIALES=false`. Los textos son resúmenes propios y cada
+    noticia termina con «Fuente: medio. Nota original: enlace» y «Foto: medio» (pedido de Sebastián:
+    citar y enlazar la fuente). Las fotos pasan por el almacén de imágenes (disco o nube).
+70. Si la cuenta de demostración que publica una noticia inicial no existe (por ejemplo, en
+    producción), la publica el primer administrador activo. (decidido por Claude Code; revisar)
+71. V6 agrega Silvania al catálogo de ciudades (una de las noticias es de allí), con los datos de
+    Nominatim; si ya existe, no hace nada.
+72. Las direcciones http(s) del contenido de una noticia se muestran como enlaces que abren en
+    otra pestaña; el resto sigue siendo texto plano, nunca HTML.
+
+### Rediseño «El día en vivo» (2026-11-10, rama feature/dia-en-vivo)
+73. La portada sigue `docs/dia-en-vivo/ESPECIFICACION.md`. El tema de noche es solo de la portada:
+    el modal de la noticia, el detalle y las demás pantallas siguen en claro.
+74. **El celular no se ajusta en este rediseño** (pedido de Sebastián, para no gastar más tiempo).
+    En el celular se ve la misma portada, con las barras de siempre.
+75. «Tu nivel» deja de tener el enlace «Ver mi perfil»: el perfil se abre desde el círculo con las
+    iniciales en la barra superior. (decidido por Claude Code; revisar)
+76. En «Dónde está pasando» los municipios que quedan casi a la misma altura (por ejemplo,
+    Fusagasugá y Silvania) se separan un poco en vertical para que los nombres no se monten; se
+    conserva el orden de norte a sur. El margen del área es 14 % (la especificación decía 12 %)
+    para que los nombres no se corten en los bordes. (decidido por Claude Code; revisar)
+77. Sin noticias, o si falla la carga, debajo del mensaje siguen «Tu nivel» y «Avisos cerca de ti».

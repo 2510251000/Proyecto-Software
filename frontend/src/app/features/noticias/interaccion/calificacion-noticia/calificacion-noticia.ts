@@ -1,13 +1,14 @@
 import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
-import { ESTRELLAS, TEXTOS_CALIFICACION } from '../../../../core/constants/interaccion.constants';
+import { TEXTOS_CALIFICACION, textoAprobacion } from '../../../../core/constants/interaccion.constants';
 import { ErrorApi } from '../../../../core/models/error-api.model';
 import { Noticia } from '../../../../core/models/noticia.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { InteraccionService } from '../../../../core/services/interaccion.service';
 
 /**
- * Calificar de 1 a 5 estrellas (HU MF03_002). Es un grupo de radios: con teclado se elige con
- * las flechas. Muestra el promedio y cuántas calificaciones hay. El autor no puede calificarse.
+ * Calificar al autor desde su noticia (HU MF03_002): dos botones, «Sigue publicando así» y
+ * «No me gustó esto». El botón elegido queda marcado (aria-pressed) y se puede cambiar.
+ * Muestra la aprobación del autor en todas sus noticias. Nadie se vota a sí mismo.
  */
 @Component({
   selector: 'app-calificacion-noticia',
@@ -21,11 +22,10 @@ export class CalificacionNoticia {
   readonly noticia = input.required<Noticia>();
 
   protected readonly textos = TEXTOS_CALIFICACION;
-  protected readonly estrellas = ESTRELLAS;
 
-  protected readonly promedio = linkedSignal(() => this.noticia().promedio ?? 0);
-  protected readonly cantidad = linkedSignal(() => this.noticia().cantidadCalificaciones ?? 0);
-  readonly mia = linkedSignal(() => this.noticia().miCalificacion ?? null);
+  protected readonly aprobacion = linkedSignal(() => this.noticia().autorAprobacion ?? null);
+  protected readonly votos = linkedSignal(() => this.noticia().autorVotos ?? 0);
+  readonly miVoto = linkedSignal(() => this.noticia().miVoto ?? null);
   protected readonly guardando = signal(false);
   protected readonly mensaje = signal<string | null>(null);
   protected readonly error = signal<string | null>(null);
@@ -35,37 +35,32 @@ export class CalificacionNoticia {
     return this.sesion !== null && autorId !== undefined && autorId !== null && autorId === this.sesion.id;
   });
 
-  protected readonly resumen = computed(() => {
-    const cantidad = this.cantidad();
-    if (cantidad === 0) {
-      return this.textos.sinCalificaciones;
-    }
-    const palabra = cantidad === 1 ? this.textos.calificacion : this.textos.calificaciones;
-    return `${this.textos.promedio}: ${this.promedio().toFixed(1)} · ${cantidad} ${palabra}`;
-  });
+  protected readonly pregunta = computed(
+    () => `${this.textos.pregunta} ${this.noticia().autor ?? this.textos.autorGenerico}?`,
+  );
 
-  protected nombreEstrella(valor: number): string {
-    return `${valor} ${valor === 1 ? this.textos.estrella : this.textos.estrellas}`;
-  }
+  protected readonly resumen = computed(
+    () => textoAprobacion(this.aprobacion(), this.votos()) ?? this.textos.sinVotos,
+  );
 
-  calificar(valor: number): void {
+  votar(recomienda: boolean): void {
     if (this.esPropia() || this.guardando()) {
       return;
     }
-    const anterior = this.mia();
-    this.mia.set(valor);
+    const anterior = this.miVoto();
+    this.miVoto.set(recomienda);
     this.guardando.set(true);
     this.error.set(null);
-    this.interaccion.calificar(this.noticia().id, valor).subscribe({
+    this.interaccion.calificar(this.noticia().id, recomienda).subscribe({
       next: (resultado) => {
-        this.promedio.set(resultado.promedio);
-        this.cantidad.set(resultado.cantidadCalificaciones);
-        this.mia.set(resultado.miCalificacion);
+        this.aprobacion.set(resultado.autorAprobacion);
+        this.votos.set(resultado.autorVotos);
+        this.miVoto.set(resultado.miVoto);
         this.mensaje.set(this.textos.gracias);
         this.guardando.set(false);
       },
       error: (error: ErrorApi) => {
-        this.mia.set(anterior);
+        this.miVoto.set(anterior);
         this.error.set(error.mensaje);
         this.guardando.set(false);
       },

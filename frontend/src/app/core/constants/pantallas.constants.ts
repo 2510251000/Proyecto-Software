@@ -1,28 +1,52 @@
 import { TipoNotificacion } from '../models/notificacion.model';
-import { EstadoNoticia, TipoNoticias } from '../models/noticia.model';
+import { EstadoNoticia, PestanaPortada, TipoNoticias } from '../models/noticia.model';
 
 /** Menú principal que se ve en todas las pantallas con sesión. */
 export const TEXTOS_NAVEGACION = {
   menu: 'Menú principal',
-  hoy: 'Hoy',
   portada: 'Portada',
   mapa: 'Mapa',
   publicar: 'Publicar',
-  notificaciones: 'Notificaciones',
+  notificaciones: 'Avisos',
   sinLeer: 'sin leer',
   perfil: 'Mi perfil',
   admin: 'Administración',
   salir: 'Salir',
+  /** Nombre de la barra inferior (tableta y celular). */
+  lateral: 'Menú',
+  usuario: 'Tu cuenta',
+  nivel: 'Nivel',
+  buscar: 'Buscar noticias',
 } as const;
+
+/** Píxeles que hay que bajar para que la barra superior de la portada deje de ser transparente. */
+export const DESPLAZAMIENTO_BARRA_SOLIDA = 24;
+
+/** Nombre accesible del círculo de la cuenta: «Tu cuenta: Carlos Activo, nivel 2». */
+export function etiquetaCuenta(nombre: string, nivel: number): string {
+  return `${TEXTOS_NAVEGACION.usuario}: ${nombre}, ${TEXTOS_NAVEGACION.nivel.toLowerCase()} ${nivel}`;
+}
+
+/** Id del campo de búsqueda de la portada: la lupa del celular lleva el foco ahí. */
+export const ID_BUSQUEDA_NOTICIAS = 'busqueda-noticias';
 
 export const TEXTOS_BUSQUEDA = {
   etiqueta: 'Buscar noticias',
-  marcador: 'Buscar por palabra: agua, vía, feria…',
-  buscar: 'Buscar',
+  marcador: 'Buscar noticias',
   limpiar: 'Quitar búsqueda',
   resultadosPara: 'Resultados para',
-  tipos: 'Tipo de noticia',
+  pestanas: 'Qué noticias ver',
+  municipio: 'Municipio',
+  todosMunicipios: 'Todos los municipios',
 } as const;
+
+/** Pestañas de la barra superior de la portada, en el orden en que se muestran. */
+export const ETIQUETAS_PESTANA: Readonly<Record<PestanaPortada, string>> = {
+  RECOMENDADAS: 'Recomendadas',
+  RECIENTES: 'Recientes',
+  OFICIALES: 'Oficiales',
+  COMUNITARIAS: 'Comunidad',
+};
 
 export const ETIQUETAS_TIPO: Readonly<Record<TipoNoticias, string>> = {
   TODAS: 'Todas',
@@ -70,6 +94,8 @@ export const TEXTOS_PERFIL = {
   publicadas: 'publicadas',
   limiteDiario: 'por día',
   sinLimite: 'Sin límite diario',
+  aprobacion: 'Lo que opinan los lectores',
+  sinVotos: 'Todavía nadie ha votado por lo que publicas.',
   regla:
     'Cada noticia que publicas suma puntos. Si un administrador oculta o borra una de tus noticias, pierdes puntos. Los niveles altos publican más noticias al día y sus noticias se recomiendan más.',
   guardar: 'Guardar cambios',
@@ -78,7 +104,7 @@ export const TEXTOS_PERFIL = {
 } as const;
 
 export const TEXTOS_NOTIFICACIONES = {
-  titulo: 'Notificaciones',
+  titulo: 'Avisos',
   vacio: 'No tienes notificaciones todavía.',
   marcarTodas: 'Marcar todas como leídas',
   verNoticia: 'Ver la noticia',
@@ -90,7 +116,7 @@ export const ETIQUETAS_NOTIFICACION: Readonly<Record<TipoNotificacion, string>> 
   ASCENSO_NIVEL: 'Tu nivel',
   MODERACION: 'Moderación',
   COMENTARIO: 'Comentario',
-  CALIFICACION: 'Calificación',
+  CALIFICACION: 'Voto a tu noticia',
 };
 
 export const TEXTOS_ADMIN = {

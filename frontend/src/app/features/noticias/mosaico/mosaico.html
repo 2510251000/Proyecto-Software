@@ -1,0 +1,75 @@
+<div class="encabezado">
+  <h2 class="titulo">{{ titulo() }}</h2>
+  <div class="pestanas" role="group" [attr.aria-label]="nombrePestanas">
+    @for (opcion of pestanas; track opcion) {
+      <button
+        type="button"
+        class="pestana"
+        [class.activa]="opcion === pestanaActiva()"
+        [attr.aria-current]="opcion === pestanaActiva() ? 'true' : null"
+        (click)="pestana.emit(opcion)"
+      >
+        {{ etiquetas[opcion] }}
+      </button>
+    }
+  </div>
+</div>
+
+@if (aviso(); as mensaje) {
+  <p class="aviso">{{ mensaje }}</p>
+}
+
+<!-- Fila 1: una noticia en grande, «Dónde está pasando» y «Tu nivel», en proporción 5 / 4 / 3. -->
+<div class="fila fila-1">
+  @if (grande(); as noticia) {
+    <app-ficha-noticia
+      class="celda-grande"
+      variante="foto-grande"
+      [noticia]="noticia"
+      [dia]="dia()"
+      (abrir)="abrir.emit($event)"
+    />
+  }
+  <div class="hueco hueco-mapa"><ng-content select="[fichaMapa]" /></div>
+  <div class="hueco hueco-nivel"><ng-content select="[fichaNivel]" /></div>
+</div>
+
+<!-- Fila 2: una de color, dos con foto y «Avisos cerca de ti», todas iguales. -->
+<div class="fila fila-2">
+  @if (deColor(); as noticia) {
+    <app-ficha-noticia class="celda" variante="color" [noticia]="noticia" [dia]="dia()" (abrir)="abrir.emit($event)" />
+  }
+  @for (noticia of conFoto(); track noticia.id) {
+    <app-ficha-noticia class="celda" [noticia]="noticia" [dia]="dia()" (abrir)="abrir.emit($event)" />
+  }
+  <div class="hueco celda"><ng-content select="[fichaAvisos]" /></div>
+</div>
+
+@if (masDelDia().length > 0) {
+  <div class="fila fila-mas">
+    @for (noticia of masDelDia(); track noticia.id) {
+      <app-ficha-noticia class="celda" [noticia]="noticia" [dia]="dia()" (abrir)="abrir.emit($event)" />
+    }
+  </div>
+}
+
+@if (anteriores().length > 0) {
+  <div class="separador">
+    <h2 class="subtitulo">{{ textos.anteriores }}</h2>
+    <span class="linea" aria-hidden="true"></span>
+  </div>
+
+  <ul class="anteriores">
+    @for (noticia of anteriores(); track noticia.id) {
+      <li>
+        <app-ficha-noticia variante="horizontal" [noticia]="noticia" [dia]="dia()" (abrir)="abrir.emit($event)" />
+      </li>
+    }
+  </ul>
+
+  @if (hayMas()) {
+    <div class="ver-mas">
+      <app-boton variante="secundaria" (click)="verMas.emit()">{{ textosPortada.verMas }}</app-boton>
+    </div>
+  }
+}

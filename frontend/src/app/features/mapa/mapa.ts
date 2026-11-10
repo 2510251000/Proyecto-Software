@@ -21,7 +21,7 @@ import { Coordenadas } from '../../core/models/ubicacion.model';
 import { MapaDibujado, MapaService } from '../../core/services/mapa.service';
 import { NoticiaService } from '../../core/services/noticia.service';
 import { PerfilService } from '../../core/services/perfil.service';
-import { Encabezado } from '../../shared/encabezado/encabezado';
+import { Marco } from '../../shared/marco/marco';
 
 const TIPOS: readonly TipoNoticias[] = ['TODAS', 'OFICIALES', 'COMUNITARIAS'];
 
@@ -39,7 +39,7 @@ export function cumpleTipo(noticia: Noticia, tipo: TipoNoticias): boolean {
 /** Mapa de noticias (HU MF05_002): un marcador por noticia con ubicación, centrado en el municipio. */
 @Component({
   selector: 'app-mapa',
-  imports: [Encabezado, RouterLink],
+  imports: [Marco, RouterLink],
   templateUrl: './mapa.html',
   styleUrl: './mapa.css',
 })

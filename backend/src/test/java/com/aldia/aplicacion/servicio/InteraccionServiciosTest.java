@@ -40,7 +40,7 @@ import com.aldia.dominio.modelo.MotivoReporte;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.modelo.ParametrosInteraccion;
 import com.aldia.dominio.modelo.Reporte;
-import com.aldia.dominio.modelo.ResumenCalificaciones;
+import com.aldia.dominio.modelo.ReputacionAutor;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.salida.CalificacionRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.ComentarioRepositorioPuerto;
@@ -153,39 +153,41 @@ class InteraccionServiciosTest {
                 .isInstanceOf(ComentarioNoEncontradoExcepcion.class);
     }
 
-    // ---------------------------------------------------------------- calificaciones
+    // ---------------------------------------------------------------- votos al autor
 
     @Test
-    void laPrimeraCalificacionAvisaAlAutorYCambiarDeOpinionNo() {
-        when(calificaciones.buscar(2L, 9L)).thenReturn(Optional.empty(), Optional.of(4));
-        when(calificaciones.resumen(9L)).thenReturn(new ResumenCalificaciones(4, 1), new ResumenCalificaciones(2, 1));
+    void elPrimerVotoAvisaAlAutorYCambiarDeOpinionNo() {
+        when(calificaciones.buscar(2L, 9L)).thenReturn(Optional.empty(), Optional.of(true));
+        when(calificaciones.reputacion(1L)).thenReturn(new ReputacionAutor(1, 1), new ReputacionAutor(0, 1));
 
-        CalificacionPropia primera = calificarServicio.calificar(lector.getCorreo(), 9L, 4);
-        CalificacionPropia cambio = calificarServicio.calificar(lector.getCorreo(), 9L, 2);
+        CalificacionPropia primera = calificarServicio.calificar(lector.getCorreo(), 9L, true);
+        CalificacionPropia cambio = calificarServicio.calificar(lector.getCorreo(), 9L, false);
 
-        assertThat(primera.miCalificacion()).isEqualTo(4);
-        assertThat(cambio.resumen().promedio()).isEqualTo(2.0);
-        verify(calificaciones).guardar(2L, 9L, 2, AHORA);
+        assertThat(primera.recomienda()).isTrue();
+        assertThat(primera.reputacion().aprobacion()).isEqualTo(100);
+        assertThat(cambio.recomienda()).isFalse();
+        assertThat(cambio.reputacion().aprobacion()).isZero();
+        verify(calificaciones).guardar(2L, 9L, false, AHORA);
         verify(notificaciones, org.mockito.Mockito.times(1)).guardarTodas(any());
         verify(historial, org.mockito.Mockito.times(2)).registrar(eq(2L), eq(AccionHistorial.CALIFICACION), anyString(),
                 eq(AHORA));
     }
 
     @Test
-    void elAutorNoCalificaSuPropiaNoticia() {
-        assertThatThrownBy(() -> calificarServicio.calificar(autor.getCorreo(), 9L, 5))
+    void elAutorNoSeVotaASiMismo() {
+        assertThatThrownBy(() -> calificarServicio.calificar(autor.getCorreo(), 9L, true))
                 .isInstanceOf(AccionNoPermitidaExcepcion.class);
-        verify(calificaciones, never()).guardar(any(), any(), org.mockito.ArgumentMatchers.anyInt(), any());
+        verify(calificaciones, never()).guardar(any(), any(), org.mockito.ArgumentMatchers.anyBoolean(), any());
     }
 
     @Test
-    void misCalificacionesSoloConSesion() {
-        when(calificaciones.delUsuario(2L, List.of(9L))).thenReturn(Map.of(9L, 3));
-        assertThat(calificarServicio.misCalificaciones(lector.getCorreo(), List.of(9L))).containsEntry(9L, 3);
-        assertThat(calificarServicio.misCalificaciones(null, List.of(9L))).isEmpty();
-        assertThat(calificarServicio.misCalificaciones(lector.getCorreo(), List.of())).isEmpty();
+    void misVotosSoloConSesion() {
+        when(calificaciones.delUsuario(2L, List.of(9L))).thenReturn(Map.of(9L, true));
+        assertThat(calificarServicio.misVotos(lector.getCorreo(), List.of(9L))).containsEntry(9L, true);
+        assertThat(calificarServicio.misVotos(null, List.of(9L))).isEmpty();
+        assertThat(calificarServicio.misVotos(lector.getCorreo(), List.of())).isEmpty();
         when(usuarios.buscarPorCorreo("nadie@x.com")).thenReturn(Optional.empty());
-        assertThat(calificarServicio.misCalificaciones("nadie@x.com", List.of(9L))).isEmpty();
+        assertThat(calificarServicio.misVotos("nadie@x.com", List.of(9L))).isEmpty();
     }
 
     // ---------------------------------------------------------------- reportes

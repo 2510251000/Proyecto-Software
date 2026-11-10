@@ -1,10 +1,11 @@
 @if (rutaFoto(); as ruta) {
   <img
     [src]="ruta"
-    [alt]="textoAlternativo()"
+    [alt]="decorativa() ? '' : textoAlternativo()"
     width="1280"
     height="720"
-    loading="lazy"
+    [attr.loading]="prioridad() ? 'eager' : 'lazy'"
+    [attr.fetchpriority]="prioridad() ? 'high' : null"
     decoding="async"
     (error)="alFallar()"
   />

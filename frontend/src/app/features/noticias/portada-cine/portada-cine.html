@@ -1,0 +1,78 @@
+<header class="cine">
+  <!-- La foto es de fondo: lo que dice la noticia ya está en el titular. -->
+  <div class="capas" aria-hidden="true">
+    @for (fondo of fotos(); track fondo.id) {
+      <app-miniatura
+        class="foto"
+        [categoria]="categoriaDe(fondo)"
+        [foto]="fotoDe(fondo)"
+        [decorativa]="true"
+        [prioridad]="true"
+      />
+    }
+    <div class="velo velo-lateral"></div>
+    <div class="velo velo-superior"></div>
+    <!-- Una capa por momento del día; solo se ve la del momento actual. -->
+    @for (opcion of momentos; track opcion) {
+      <div class="velo tinte" [class]="'tinte-' + opcion" [class.visible]="opcion === momento()"></div>
+    }
+  </div>
+
+  <div class="contenido">
+    <div class="texto">
+      <p class="etiquetas">
+        <span class="etiqueta" [class.oficial]="noticia().oficial">{{ etiqueta() }}</span>
+        @if (ultimaHora()) {
+          <span class="etiqueta urgente">{{ etiquetas.ultimaHora }}</span>
+        }
+        <span class="etiqueta municipio">
+          <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" focusable="false">
+            <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
+          </svg>
+          {{ noticia().ciudad }}
+        </span>
+        @if (hora()) {
+          <time [attr.datetime]="noticia().fechaPublicacion">{{ hora() }}</time>
+        }
+      </p>
+
+      <h1 class="titular">{{ noticia().titulo }}</h1>
+
+      @if (noticia().resumen) {
+        <p class="resumen">{{ noticia().resumen }}</p>
+      }
+
+      <div class="autor">
+        <span class="iniciales" aria-hidden="true">{{ iniciales() }}</span>
+        <p class="autor-datos">
+          <span class="autor-nombre">{{ autor() }}</span>
+          <span class="lectura">{{ minutos() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}</span>
+        </p>
+      </div>
+
+      <div class="botones">
+        <a class="boton leer" [appEnlaceNoticia]="noticia()" (abrirNoticia)="abrir.emit($event)">
+          {{ textos.leer }}
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </a>
+        @if (conUbicacion()) {
+          <a class="boton mapa" [routerLink]="rutaMapa">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false">
+              <path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z" />
+              <path d="M9 4v14M15 6v14" />
+            </svg>
+            {{ textos.verEnMapa }}
+          </a>
+        }
+      </div>
+    </div>
+
+    <!-- A la derecha va la tarjeta del reloj. -->
+    <ng-content />
+  </div>
+
+  <!-- Al pie va la línea del sol. -->
+  <ng-content select="[cineFranja]" />
+</header>

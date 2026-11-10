@@ -1,0 +1,30 @@
+<div class="marco">
+  <app-barra-movil class="solo-celular" [perfil]="perfil()" />
+
+  <header class="barra-superior" [class.sobre-foto]="sobreFoto()" [class.solida]="desplazada()">
+    <a class="marca" [routerLink]="['/', rutas.noticias]">
+      <app-logo [tamano]="38" [conNombre]="true" />
+    </a>
+
+    <app-navegacion />
+
+    <div class="acciones">
+      <div class="herramientas"><ng-content select="[marcoHerramientas]" /></div>
+
+      <a class="publicar" [routerLink]="['/', rutas.publicar]">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false">
+          <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" />
+        </svg>
+        {{ textos.publicar }}
+      </a>
+
+      <app-menu-cuenta [perfil]="perfil()" />
+    </div>
+  </header>
+
+  <div class="contenido">
+    <ng-content />
+  </div>
+
+  <app-barra-inferior class="solo-celular" />
+</div>

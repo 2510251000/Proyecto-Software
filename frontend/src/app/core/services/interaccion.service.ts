@@ -6,7 +6,7 @@ import { ENDPOINTS, SUFIJOS } from '../constants/endpoints.constants';
 import { Comentario, NuevoReporte, Reporte, ResultadoCalificacion } from '../models/interaccion.model';
 import { conErrorApi } from './error-http';
 
-/** Comentarios, calificaciones y reportes de una noticia. */
+/** Comentarios, votos al autor y reportes de una noticia. */
 @Injectable({ providedIn: 'root' })
 export class InteraccionService {
   private readonly http = inject(HttpClient);
@@ -28,9 +28,10 @@ export class InteraccionService {
       .pipe(conErrorApi());
   }
 
-  calificar(noticiaId: number, valor: number): Observable<ResultadoCalificacion> {
+  /** recomienda = true: «sigue publicando así»; false: «no me gustó esto». */
+  calificar(noticiaId: number, recomienda: boolean): Observable<ResultadoCalificacion> {
     return this.http
-      .put<ResultadoCalificacion>(`${this.url}/${noticiaId}/${SUFIJOS.calificacion}`, { valor })
+      .put<ResultadoCalificacion>(`${this.url}/${noticiaId}/${SUFIJOS.calificacion}`, { recomienda })
       .pipe(conErrorApi());
   }
 

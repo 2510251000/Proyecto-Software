@@ -14,11 +14,12 @@
   /* Última hora y antetítulos, una vez por pantalla. 5:1 sobre blanco; como texto solo va sobre tarjeta (4.4:1 sobre la página). */
   --color-urgente: #d7262d;
   --color-fondo: #ffffff; /* blanco de los filetes del logo y del lockup */
-  --color-pagina: #ffffff; /* papel: la portada se ordena con espacio y filetes, no con cajas */
+  --color-pagina: #f7f9fc; /* fondo de la app: las tarjetas blancas se separan con su borde */
   --color-sobre-marca-suave: #c3cde0; /* texto secundario sobre el azul: 9.6:1 */
   --color-tarjeta: #ffffff; /* superficie de las tarjetas */
   --color-superficie: #f7f9fc; /* relleno de campos y avisos: texto 16.8:1, texto suave 5.3:1, error 6.2:1 */
-  --color-superficie-2: #edf1f7; /* solo relleno decorativo: esqueletos y dibujos */
+  --color-superficie-2: #edf1f7; /* item activo del menú, etiqueta «Nivel N», chips y pista de la barra de nivel: el texto suave queda en 4.94:1 */
+  --color-campo-sobre-marca: #1c335e; /* campo «¿Qué está pasando…?» dentro del bloque azul: el texto suave sobre marca queda en 7.8:1 */
   --color-linea: #e3e7ef; /* bordes y separadores decorativos (1.2:1): nunca el único borde de un control */
   --color-texto: #111827; /* 17.7:1 sobre blanco, 15.7:1 sobre la página */
   --color-texto-suave: #5c6880; /* 5.6:1 sobre blanco, 4.9:1 sobre la página */
@@ -27,20 +28,30 @@
   --color-error: #b3261e; /* errores de formulario: 6.5:1 sobre blanco, 5.8:1 sobre la página */
 
   /*
-    El cielo de la entrada y de «Hoy». Todos llevan texto blanco encima, nunca gris claro.
-    Contraste del blanco: noche 16.4:1, alba 10.2:1, día 9.4:1, atardecer 7.6:1,
-    crepúsculo 13.4:1, anochecer 15.9:1, amanecer 8.5:1.
+    Portada «El día en vivo». El realce es el color de los textos y enlaces destacados; el botón,
+    el relleno del botón principal, de la pestaña activa y de la etiqueta «Oficial». En el tema
+    de noche los dos pasan a ámbar (ver [data-tema='noche'] más abajo).
   */
-  --color-noche: #0b1d40;
-  --color-cielo-alba: #1a3f7a;
+  --color-realce: #0e2551;
+  --color-boton: #0e2551;
+  --color-boton-texto: #ffffff;
+
+  /* El cielo de la portada de cine: tiñe la foto según el momento. Siempre con texto blanco encima. */
+  --color-cielo-amanecer: #1f4a8a;
   --color-cielo-dia: #1f4580;
   --color-cielo-atardecer: #8f3f27;
   --color-cielo-crepusculo: #4f2140;
   --color-cielo-anochecer: #1f1b3d;
-  --color-cielo-amanecer: #1f4a8a;
+  --color-cielo-noche: #081226;
   --color-sol-poniente: #e4572e; /* solo relleno: el sol cuando se oculta */
-  --color-velo-noche: rgba(11, 29, 64, 0.78); /* chip sobre la foto: el blanco queda por encima de 8:1 */
-  --color-papel-calido: #fdf7ee; /* tarjeta final de «Hoy»: el azul de marca encima da 14.2:1 */
+
+  /*
+    Velo azul sobre el muro de noticias del login: más denso en el centro, donde van el logo
+    y el lema en blanco (sobre el centro, el blanco queda por encima de 12:1).
+  */
+  --color-velo-login-centro: rgba(9, 25, 58, 0.82);
+  --color-velo-login-medio: rgba(9, 25, 58, 0.5);
+  --color-velo-login-borde: rgba(9, 25, 58, 0.38);
 
   /* Espacios */
   --espacio-xs: 0.25rem;
@@ -50,16 +61,19 @@
   --espacio-xl: 2.5rem;
 
   /* Forma */
-  --radio-s: 12px; /* controles: botones, campos, avisos */
-  --radio-m: 24px; /* lo que va dentro de una tarjeta, como la imagen */
-  --radio-g: 32px; /* tarjetas y piezas grandes */
+  --radio-chip: 6px; /* etiquetas «Oficial» y «Nivel N», contadores y chip de municipio */
+  --radio-s: 10px; /* controles: botones, campos, items del menú, fotos dentro de una tarjeta */
+  --radio-m: 14px; /* tarjetas */
+  --radio-g: 18px; /* piezas grandes, como el bloque de bienvenida */
+  --radio-ficha: 26px; /* fichas del mosaico de la portada y tarjeta del reloj */
   --radio: var(--radio-s);
   --alto-control: 2.75rem; /* 44 px: tamaño táctil mínimo */
   --ancho-maximo: 72rem; /* ancho del contenido en las pantallas de la aplicación */
 
   /*
     Sombras en capas, teñidas con el azul de marca (14, 37, 81) para que no ensucien.
-    1: tarjeta en reposo. 2: imagen flotante y tarjeta con el mouse encima. 3: modal.
+    Las tarjetas no llevan sombra: se separan con un borde de 1px (--color-linea).
+    1: marcadores del mapa y botón de cerrar del modal. 2: reservada. 3: el modal.
   */
   --sombra-1: 0 1px 2px rgba(14, 37, 81, 0.04), 0 8px 24px rgba(14, 37, 81, 0.06);
   --sombra-2: 0 2px 4px rgba(14, 37, 81, 0.06), 0 16px 40px rgba(14, 37, 81, 0.12);
@@ -72,6 +86,136 @@
   --fuente-titulos: 'Source Serif 4 Variable', Georgia, 'Times New Roman', serif;
   --fuente-texto: 'Manrope Variable', system-ui, sans-serif;
   --fuente-titulares-serif: var(--fuente-titulos);
+}
+
+/*
+  Temas de la portada. Se eligen con data-tema en el elemento raíz de la portada: todo lo que
+  ya usa estas variables cambia solo. El de día repite los valores de :root para que una pieza
+  dentro de la portada de noche (el modal de la noticia) pueda volver a claro.
+*/
+[data-tema='dia'] {
+  --color-pagina: #f7f9fc;
+  --color-tarjeta: #ffffff;
+  --color-superficie: #f7f9fc;
+  --color-superficie-2: #edf1f7;
+  --color-linea: #e3e7ef;
+  --color-borde: #7a869c;
+  --color-texto: #111827;
+  --color-texto-suave: #5c6880;
+  --color-realce: #0e2551;
+  --color-boton: #0e2551;
+  --color-boton-texto: #ffffff;
+}
+
+/*
+  Noche: texto 15.1:1 sobre tarjeta; texto suave 8.0:1 sobre tarjeta y 6.8:1 sobre superficie-2;
+  borde de campos 4.1:1 sobre tarjeta. Aquí el ámbar sí puede ser letra: 8.7:1 sobre la página
+  y 7.6:1 sobre la tarjeta.
+*/
+[data-tema='noche'] {
+  --color-pagina: #081226;
+  --color-tarjeta: #0f1f3d;
+  --color-superficie: #0f1f3d;
+  --color-superficie-2: #182b52;
+  --color-linea: #263a63;
+  --color-borde: #6b7fa8;
+  --color-texto: #f4f6fb;
+  --color-texto-suave: #a9b6cf;
+  --color-realce: #f0a028;
+  --color-boton: #f0a028;
+  --color-boton-texto: #0e2551;
+}
+
+/*
+  El cambio de tema se anima 0,7 s. Para eso el navegador tiene que saber que estas variables
+  son colores (@property): así puede pasar de un color a otro poco a poco, y todo lo que las
+  usa cambia a la vez. Si un navegador no lo entiende, el tema cambia de golpe.
+*/
+@property --color-pagina {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f7f9fc;
+}
+
+@property --color-tarjeta {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --color-superficie {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f7f9fc;
+}
+
+@property --color-superficie-2 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #edf1f7;
+}
+
+@property --color-linea {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #e3e7ef;
+}
+
+@property --color-borde {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #7a869c;
+}
+
+@property --color-texto {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #111827;
+}
+
+@property --color-texto-suave {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #5c6880;
+}
+
+@property --color-realce {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0e2551;
+}
+
+@property --color-boton {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0e2551;
+}
+
+@property --color-boton-texto {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+[data-tema] {
+  transition:
+    --color-pagina 0.7s ease,
+    --color-tarjeta 0.7s ease,
+    --color-superficie 0.7s ease,
+    --color-superficie-2 0.7s ease,
+    --color-linea 0.7s ease,
+    --color-borde 0.7s ease,
+    --color-texto 0.7s ease,
+    --color-texto-suave 0.7s ease,
+    --color-realce 0.7s ease,
+    --color-boton 0.7s ease,
+    --color-boton-texto 0.7s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tema] {
+    transition: none;
+  }
 }
 
 *,
@@ -110,12 +254,17 @@ p {
   margin: 0 0 var(--espacio-m);
 }
 
+/* El realce es el azul de marca de día y el ámbar en la portada de noche. */
 a {
-  color: var(--color-marca);
+  color: var(--color-realce);
 }
 
 a:hover {
   color: var(--color-marca-oscuro);
+}
+
+[data-tema='noche'] a:hover {
+  color: var(--color-realce);
 }
 
 :focus-visible {
@@ -141,24 +290,33 @@ html:has(dialog:modal) {
 }
 
 /* ==========================================================================
-   Pantallas internas (publicar, perfil, notificaciones, administración).
-   Mismo lenguaje de la portada: papel blanco, filetes finos y el azul de marca.
+   Pantallas internas (publicar, perfil, avisos, mapa, administración).
+   Mismo lenguaje de la portada: tarjetas blancas con borde de 1px y radio 14,
+   alineadas a la izquierda del área de contenido con 28px de margen.
    ========================================================================== */
 
 .pagina-interna {
   max-width: 54rem;
-  margin: 0 auto;
-  padding: clamp(var(--espacio-l), 4vw, 3rem) var(--espacio-m) 4rem;
+  margin-inline: auto;
+  padding: 28px;
+}
+
+@media (max-width: 47.99rem) {
+  .pagina-interna {
+    padding: 14px 16px 24px;
+  }
 }
 
 .pagina-interna-ancha {
-  max-width: var(--ancho-maximo);
+  max-width: 1180px;
 }
 
+/* El mismo tamaño del titular del bloque de bienvenida (32px, interlineado 1.18). */
 .titulo-pagina {
   margin: 0 0 var(--espacio-s);
-  font-size: clamp(2rem, 6vw, 3rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(1.625rem, 4vw, 2rem);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
 }
 
 .bajada {
@@ -168,9 +326,48 @@ html:has(dialog:modal) {
 }
 
 .seccion-papel {
-  margin-top: var(--espacio-l);
-  padding-top: var(--espacio-l);
-  border-top: 3px solid var(--color-marca);
+  margin-top: 18px;
+  padding: 22px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
+}
+
+@media (max-width: 47.99rem) {
+  .seccion-papel {
+    padding: 16px;
+  }
+}
+
+/* Un renglón de una ficha de la portada: titular en negrita y debajo el dato en gris. */
+.renglon-lateral {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.renglon-lateral + .renglon-lateral {
+  border-top: 1px solid var(--color-linea);
+}
+
+.renglon-lateral:hover .renglon-titulo {
+  text-decoration: underline;
+}
+
+.renglon-titulo {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.renglon-dato {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-texto-suave);
+  font-size: 0.8125rem;
 }
 
 .aviso-cupo,
@@ -200,7 +397,7 @@ html:has(dialog:modal) {
   min-height: 1.6rem;
   padding: 0 0.6rem;
   border: 1px solid var(--color-borde);
-  border-radius: 999px;
+  border-radius: var(--radio-chip);
   color: var(--color-texto);
   font-size: 0.8rem;
   font-weight: 700;
@@ -223,7 +420,7 @@ html:has(dialog:modal) {
   min-height: var(--alto-control);
   padding: 0 var(--espacio-m);
   border: 1px solid var(--color-marca);
-  border-radius: 999px;
+  border-radius: var(--radio-s);
   background: var(--color-tarjeta);
   color: var(--color-marca);
   font: inherit;
@@ -252,15 +449,22 @@ html:has(dialog:modal) {
   color: var(--color-sobre-marca);
 }
 
+/* Listas de avisos y de administración: una tarjeta con renglones separados por línea. */
 .lista-filas {
-  margin: 0;
-  padding: 0;
+  margin: 18px 0 0;
+  padding: 0 18px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
   list-style: none;
 }
 
 .lista-filas > li {
   padding: var(--espacio-m) 0;
-  border-bottom: 1px solid var(--color-linea);
+}
+
+.lista-filas > li + li {
+  border-top: 1px solid var(--color-linea);
 }
 
 .texto-suave {

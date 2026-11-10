@@ -1,0 +1,233 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+/* Lo común: ficha de esquinas redondas que es un solo enlace. */
+.ficha {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-ficha);
+  background: var(--color-tarjeta);
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.ficha:hover {
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.texto,
+.fila {
+  display: flex;
+}
+
+.texto {
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 18px 20px 20px;
+}
+
+.fila {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+}
+
+/* «Comunidad · Nivel N»: gris azulado con letra de realce. «Oficial»: el color del botón. */
+.etiqueta {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--color-superficie-2);
+  color: var(--color-realce);
+  font-weight: 800;
+}
+
+.oficial {
+  background: var(--color-boton);
+  color: var(--color-boton-texto);
+}
+
+.datos {
+  color: var(--color-texto-suave);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.titular {
+  margin: 0;
+  font-size: 1.3125rem;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+}
+
+/* Al pasar el mouse la foto se acerca y el titular se subraya. */
+.foto {
+  overflow: hidden;
+}
+
+.foto ::ng-deep img {
+  transition: transform 0.7s ease;
+}
+
+.ficha:hover .foto ::ng-deep img {
+  transform: scale(1.05);
+}
+
+.ficha:hover .titular {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Con foto: la foto arriba, de 150px. */
+.con-foto .foto {
+  flex: none;
+  height: 150px;
+}
+
+/* Horizontal («Días anteriores»): foto de 180 × 128 a la izquierda. */
+.horizontal {
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+}
+
+.horizontal .foto {
+  flex: none;
+  width: 180px;
+  height: 128px;
+  border-radius: 16px;
+}
+
+.horizontal .texto {
+  padding: 0;
+}
+
+.horizontal .titular {
+  font-size: 1.375rem;
+}
+
+.horizontal .texto > .datos {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+/* Foto grande: la foto llena la ficha y el texto va abajo, en blanco sobre un degradado azul. */
+.foto-grande {
+  justify-content: flex-end;
+  min-height: 410px;
+  border: 0;
+  background: var(--color-marca-oscuro);
+}
+
+.foto-grande,
+.foto-grande:hover {
+  color: var(--color-sobre-marca);
+}
+
+.foto-grande .foto,
+.degradado {
+  position: absolute;
+  inset: 0;
+}
+
+.degradado {
+  background: linear-gradient(180deg, rgba(9, 25, 58, 0) 28%, rgba(9, 25, 58, 0.72) 62%, rgba(9, 25, 58, 0.95) 100%);
+}
+
+.foto-grande .texto {
+  position: relative;
+  gap: 12px;
+  padding: 28px;
+}
+
+.foto-grande .etiqueta {
+  padding: 5px 12px;
+  background: var(--color-fondo);
+  color: var(--color-marca);
+}
+
+.foto-grande .hora {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(9, 25, 58, 0.7);
+  color: inherit;
+}
+
+.foto-grande .titular {
+  font-size: 2.125rem;
+  line-height: 1.12;
+}
+
+.foto-grande .datos {
+  color: #e8edf6;
+  font-size: 0.9375rem;
+  font-weight: 400;
+}
+
+/* De color: fondo ámbar con todo en azul (6.96:1), en los dos temas. */
+.color {
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 290px;
+  padding: 24px;
+  border: 0;
+  background: var(--color-sol);
+}
+
+.color,
+.color:hover,
+.color .datos {
+  color: var(--color-marca);
+}
+
+.color .fila {
+  justify-content: space-between;
+}
+
+.color .etiqueta {
+  padding: 4px 12px;
+  border: 1.5px solid currentColor;
+  background: none;
+  color: inherit;
+}
+
+.flecha {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.color .texto {
+  gap: 10px;
+  padding: 0;
+}
+
+.color .titular {
+  font-size: 1.6875rem;
+  line-height: 1.15;
+}
+
+.color .datos {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.color:focus-visible {
+  outline-color: var(--color-realce);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foto ::ng-deep img {
+    transition: none;
+  }
+}

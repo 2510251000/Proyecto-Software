@@ -1,0 +1,72 @@
+<div class="franja" [style.--boton.px]="arco.botonRango">
+  <!-- El arco punteado: la misma curva de la fórmula, estirada sobre su caja. -->
+  <svg
+    class="arco"
+    viewBox="0 0 100 100"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    focusable="false"
+    [style.left.%]="arco.xInicio"
+    [style.top.px]="arco.tope"
+    [style.width.%]="arco.ancho"
+    [style.height.px]="arco.alto"
+  >
+    <path d="M0,100 Q50,-100 100,100" vector-effect="non-scaling-stroke" />
+  </svg>
+
+  <div class="sol" aria-hidden="true" [style.left.%]="sol().x" [style.top.px]="sol().y"></div>
+
+  <!-- Las montañas tapan el sol cuando baja. La de adelante tiene el color de la página. -->
+  <svg class="montanas" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path
+      class="montana-atras"
+      d="M0,44 L90,24 L170,40 L260,8 L340,32 L430,16 L520,38 L640,4 L740,30 L840,14 L930,36 L1040,2 L1130,28 L1230,12 L1320,34 L1440,10 L1440,120 L0,120 Z"
+    />
+    <path
+      class="montana-adelante"
+      d="M0,62 L110,46 L210,60 L330,40 L450,58 L560,46 L690,64 L810,38 L920,56 L1050,44 L1170,60 L1290,36 L1440,52 L1440,120 L0,120 Z"
+    />
+  </svg>
+
+  <div class="plomada" aria-hidden="true" [style.left.%]="sol().x" [style.top.px]="sol().y"></div>
+
+  @for (marca of marcas(); track marca.noticia.id) {
+    <button
+      type="button"
+      class="marca"
+      [class.activa]="marca.noticia.id === idActiva()"
+      [style.left.%]="marca.x"
+      [style.top.px]="marca.y"
+      [attr.aria-label]="etiqueta(marca)"
+      [attr.aria-current]="marca.noticia.id === idActiva() ? 'true' : null"
+      (click)="elegida.emit(marca.hora)"
+    >
+      <span class="punto"></span>
+      <span class="pildora" aria-hidden="true">{{ horaDe(marca) }}</span>
+    </button>
+  }
+
+  @for (guia of guias; track guia.texto) {
+    <span class="guia" aria-hidden="true" [style.left.%]="guia.x">{{ guia.texto }}</span>
+  }
+
+  <label class="solo-lectores-pantalla" [for]="idRango">{{ textos.deslizador }}</label>
+  <input
+    class="rango"
+    type="range"
+    step="1"
+    [id]="idRango"
+    [min]="minimo"
+    [max]="maximoMinutos()"
+    [value]="minutos()"
+    [disabled]="sinRecorrido()"
+    [attr.aria-valuetext]="horaTexto()"
+    [style.--inicio.%]="arco.xInicio"
+    [style.--riel.%]="anchoRiel()"
+    (input)="mover($event)"
+    (change)="soltar($event)"
+  />
+
+  <!-- Al soltar el deslizador se anuncia la hora y la noticia que quedó en portada. -->
+  <p class="solo-lectores-pantalla" aria-live="polite">{{ anuncio() }}</p>
+</div>

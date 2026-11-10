@@ -5,11 +5,12 @@ import java.util.Map;
 
 import com.aldia.dominio.modelo.CalificacionPropia;
 
+/** Votar al autor desde una de sus noticias: «sigue publicando así» o «no me gustó esto». */
 public interface CalificarNoticiaCasoDeUso {
 
-    /** Califica de 1 a 5; si ya había calificado, cambia el valor. */
-    CalificacionPropia calificar(String correo, Long noticiaId, Integer valor);
+    /** Registra el voto; si ya había votado en esa noticia, lo cambia. */
+    CalificacionPropia calificar(String correo, Long noticiaId, Boolean recomienda);
 
-    /** Lo que el usuario le dio a cada una de esas noticias (para «miCalificacion»). */
-    Map<Long, Integer> misCalificaciones(String correo, List<Long> noticiaIds);
+    /** Lo que votó el usuario en cada una de esas noticias (para «miVoto»). */
+    Map<Long, Boolean> misVotos(String correo, List<Long> noticiaIds);
 }

@@ -2,53 +2,66 @@
   display: block;
 }
 
-.calificacion {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  min-width: 0;
-}
-
 .titulo {
-  padding: 0;
+  margin: 0 0 var(--espacio-s);
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
   font-weight: 700;
 }
 
-.estrellas {
+.botones {
   display: flex;
-  gap: var(--espacio-xs);
-  margin: var(--espacio-s) 0;
+  flex-wrap: wrap;
+  gap: var(--espacio-s);
+  margin-bottom: var(--espacio-s);
 }
 
-/* Cada estrella es un objetivo táctil de 44 px. Vacía: borde gris (3.7:1); llena: azul de marca. */
-.estrella {
-  display: grid;
-  place-items: center;
-  width: var(--alto-control);
-  height: var(--alto-control);
-  border-radius: var(--radio-s);
+/* Botones de 44 px con borde gris (3.7:1). Elegido: relleno de marca o rojo con texto blanco. */
+.voto {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-s);
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-m);
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  background: var(--color-tarjeta);
+  color: var(--color-texto);
+  font: inherit;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.estrella svg {
-  width: 30px;
-  height: 30px;
-  fill: transparent;
-  stroke: var(--color-borde);
-  stroke-width: 1.6;
+.voto svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
 }
 
-.estrella.llena svg {
-  fill: var(--color-marca);
-  stroke: var(--color-marca);
+.voto:hover:not(:disabled) {
+  background: var(--color-superficie-2);
 }
 
-.estrella:has(input:focus-visible) {
-  outline: 3px solid var(--color-texto);
-  outline-offset: 2px;
+.sigue[aria-pressed='true'] {
+  border-color: var(--color-marca);
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
 }
 
-.calificacion:disabled .estrella {
+.no-gusto[aria-pressed='true'] {
+  border-color: var(--color-error);
+  background: var(--color-error);
+  color: var(--color-sobre-marca);
+}
+
+.voto[aria-pressed='true'] svg {
+  fill: currentColor;
+}
+
+.voto:disabled {
   cursor: default;
 }
 

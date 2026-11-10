@@ -1,78 +1,109 @@
-<app-cabecera-portada
-  [ciudades]="conteo()"
-  [ciudadActiva]="ciudadActiva()"
-  [total]="noticias().length"
-  (elegir)="elegirCiudad($event)"
-/>
-
-<main class="pagina">
-  <app-barra-busqueda
+<app-marco [sobreFoto]="noticiaPortada() !== null" [attr.data-tema]="tema()">
+  <app-herramientas-portada
+    marcoHerramientas
+    [ciudades]="conteo()"
+    [ciudadActiva]="ciudadActiva()"
+    [total]="noticias().length"
     [textoActivo]="textoBuscado()"
-    [tipoActivo]="tipo()"
+    (ciudad)="elegirCiudad($event)"
     (buscar)="buscar($event)"
-    (tipo)="elegirTipo($event)"
   />
 
-  @if (cargando()) {
-    <app-esqueleto-portada />
-  } @else if (error(); as mensaje) {
-    <div class="estado estado-error" role="alert">
-      <p>{{ mensaje }}</p>
-      <app-boton (click)="cargar()">{{ textosPortada.reintentar }}</app-boton>
-    </div>
-  } @else if (noticias().length === 0) {
-    <div class="estado">
-      <svg class="dibujo" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
-        <path d="M42 40a18 18 0 0 1 36 0Z" fill="var(--color-sol)" />
-        <path
-          d="M32 44h56M40 53h40M48 61h24"
-          stroke="var(--color-marca)"
-          stroke-width="4"
-          stroke-linecap="round"
+  <main>
+    @if (noticiaPortada(); as noticia) {
+      <app-portada-cine [noticia]="noticia" [momento]="momento()" (abrir)="abrirNoticia($event)">
+        <app-reloj-dia
+          [hora]="hora()"
+          [dia]="dia()"
+          [municipio]="ciudadActiva()"
+          [enVivo]="enVivo()"
+          [deViaje]="deViaje()"
+          [sinNoticias]="diaSinNoticias()"
+          [hayAnterior]="diaPrevio() !== null"
+          [haySiguiente]="diaPosterior() !== null"
+          (volver)="volverAAhora()"
+          (anterior)="irAlDia(diaPrevio())"
+          (siguiente)="irAlDia(diaPosterior())"
         />
-      </svg>
-      <p>{{ textoBuscado() === '' ? textosPortada.sinNoticias : textosPortada.sinResultados }}</p>
-      <app-boton variante="secundaria" (click)="cargar()">{{ textosPortada.actualizar }}</app-boton>
-    </div>
-  } @else {
-    @if (ultimaHora(); as noticia) {
-      <app-cintillo [noticia]="noticia" (abrir)="abrirNoticia($event)" />
+        <app-linea-sol
+          cineFranja
+          [hora]="hora()"
+          [marcas]="marcas()"
+          [idActiva]="noticia.id"
+          [maximo]="horaMaxima()"
+          [titular]="noticia.titulo"
+          (elegida)="elegirHora($event)"
+        />
+      </app-portada-cine>
     }
 
-    @if (principal(); as noticia) {
-      <app-apertura [principal]="noticia" (abrir)="abrirNoticia($event)" />
-    }
-
-    <div class="columnas" [class.una]="tipo() !== 'TODAS'">
-      @if (tipo() !== 'COMUNITARIAS') {
-        <app-columna-noticias
-          [titulo]="textosPortada.oficiales"
-          idTitulo="columna-oficial"
-          [descripcion]="textosPortada.oficialesDescripcion"
-          [vacia]="textosPortada.sinOficiales"
-          [noticias]="oficiales()"
-          (abrir)="abrirNoticia($event)"
-        />
+    <div class="cuerpo">
+      @if (textoBuscado() !== '') {
+        <p class="busqueda-activa" role="status">
+          {{ textosBusqueda.resultadosPara }} «{{ textoBuscado() }}»
+          <button type="button" class="quitar" (click)="buscar('')">{{ textosBusqueda.limpiar }}</button>
+        </p>
       }
-      @if (tipo() !== 'OFICIALES') {
-        <app-columna-noticias
-          [titulo]="textosPortada.comunidad"
-          idTitulo="columna-comunidad"
-          origen="comunidad"
-          [descripcion]="textosPortada.comunidadDescripcion"
-          [vacia]="textosPortada.sinComunidad"
-          [noticias]="comunidad()"
+
+      @if (cargando()) {
+        <app-esqueleto-portada />
+      } @else if (error(); as mensaje) {
+        <div class="estado estado-error" role="alert">
+          <p>{{ mensaje }}</p>
+          <app-boton (click)="cargar()">{{ textosPortada.reintentar }}</app-boton>
+        </div>
+        <ng-container [ngTemplateOutlet]="fichasPropias" />
+      } @else if (noticias().length === 0) {
+        <div class="estado">
+          <svg class="dibujo" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
+            <path d="M42 40a18 18 0 0 1 36 0Z" fill="var(--color-sol)" />
+            <path d="M32 44h56M40 53h40M48 61h24" stroke="var(--color-realce)" stroke-width="4" stroke-linecap="round" />
+          </svg>
+          <p>{{ textoBuscado() === '' ? textosPortada.sinNoticias : textosPortada.sinResultados }}</p>
+          <app-boton variante="secundaria" (click)="cargar()">{{ textosPortada.actualizar }}</app-boton>
+        </div>
+        <ng-container [ngTemplateOutlet]="fichasPropias" />
+      } @else {
+        <app-mosaico
+          [delDia]="delDia()"
+          [anteriores]="anteriores()"
+          [hayMas]="hayMas()"
+          [dia]="dia()"
+          [esHoy]="esHoy()"
+          [conNoticiasDelDia]="conNoticiasDelDia()"
+          [pestanaActiva]="pestana()"
+          [aviso]="sinNoticiasDelFiltro() ? textosPortada.sinFiltro : null"
           (abrir)="abrirNoticia($event)"
-        />
+          (pestana)="elegirPestana($event)"
+          (verMas)="verMas()"
+        >
+          <app-ficha-mapa
+            fichaMapa
+            [noticias]="noticias()"
+            [conteo]="conteo()"
+            [ciudadActiva]="ciudadActiva()"
+            [municipioUsuario]="perfil()?.ciudad?.nombre ?? null"
+            (ciudad)="elegirCiudad($event)"
+          />
+          @if (perfil(); as perfil) {
+            <app-tu-nivel fichaNivel [perfil]="perfil" />
+          }
+          <app-avisos-cerca fichaAvisos />
+        </app-mosaico>
       }
     </div>
+  </main>
+</app-marco>
 
-    @if (hayMas()) {
-      <div class="ver-mas">
-        <app-boton variante="secundaria" (click)="verMas()">{{ textosPortada.verMas }}</app-boton>
-      </div>
+<!-- Sin noticias, o si falla la carga, el mosaico conserva «Tu nivel» y «Avisos cerca de ti». -->
+<ng-template #fichasPropias>
+  <div class="fichas-propias">
+    @if (perfil(); as perfil) {
+      <app-tu-nivel [perfil]="perfil" />
     }
-  }
-</main>
+    <app-avisos-cerca />
+  </div>
+</ng-template>
 
-<app-modal-noticia [noticia]="noticiaAbierta()" (cerrada)="noticiaAbierta.set(null)" />
+<!-- La vista rápida de la noticia se queda en claro aunque la portada esté de noche. -->
+<app-modal-noticia data-tema="dia" [noticia]="noticiaAbierta()" (cerrada)="noticiaAbierta.set(null)" />

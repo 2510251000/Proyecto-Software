@@ -13,13 +13,10 @@ import com.aldia.dominio.modelo.TipoNotificacion;
 import com.aldia.dominio.modelo.Usuario;
 
 /**
- * Reglas de comentar, calificar y reportar (HU MF03_001, MF03_002 y MF03_003), y los avisos
+ * Reglas de comentar, votar al autor y reportar (HU MF03_001, MF03_002 y MF03_003), y los avisos
  * que recibe el autor de la noticia.
  */
 public class ReglasInteraccion {
-
-    public static final int CALIFICACION_MINIMA = 1;
-    public static final int CALIFICACION_MAXIMA = 5;
 
     private final ParametrosInteraccion parametros;
 
@@ -51,14 +48,13 @@ public class ReglasInteraccion {
         }
     }
 
-    /** Un valor de 1 a 5, y nunca sobre la noticia propia. */
-    public void verificarCalificacion(Usuario quien, Noticia noticia, Integer valor) {
-        if (valor == null || valor < CALIFICACION_MINIMA || valor > CALIFICACION_MAXIMA) {
-            throw new DatosInvalidosExcepcion("La calificación va de " + CALIFICACION_MINIMA + " a "
-                    + CALIFICACION_MAXIMA + " estrellas");
+    /** El voto dice sí o no, y nadie se vota a sí mismo. */
+    public void verificarCalificacion(Usuario quien, Noticia noticia, Boolean recomienda) {
+        if (recomienda == null) {
+            throw new DatosInvalidosExcepcion("Elige si el autor debe seguir publicando así o no");
         }
         if (quien.getId().equals(noticia.getAutorId())) {
-            throw new AccionNoPermitidaExcepcion("No puedes calificar tu propia noticia");
+            throw new AccionNoPermitidaExcepcion("No puedes calificarte a ti mismo");
         }
     }
 
@@ -91,14 +87,16 @@ public class ReglasInteraccion {
                 quien.nombreVisible() + " comentó tu noticia «" + noticia.getTitulo() + "»", noticia.getId(), fecha));
     }
 
-    /** Aviso al autor de que calificaron su noticia. */
-    public Optional<Notificacion> avisoCalificacion(Noticia noticia, Usuario quien, int valor, LocalDateTime fecha) {
+    /** Aviso al autor de lo que opinó un lector sobre lo que publicó. */
+    public Optional<Notificacion> avisoCalificacion(Noticia noticia, Usuario quien, boolean recomienda,
+                                                    LocalDateTime fecha) {
         if (noticia.getAutorId() == null) {
             return Optional.empty();
         }
-        String estrellas = valor == 1 ? "1 estrella" : valor + " estrellas";
-        return Optional.of(Notificacion.nueva(noticia.getAutorId(), TipoNotificacion.CALIFICACION,
-                quien.nombreVisible() + " le dio " + estrellas + " a tu noticia «" + noticia.getTitulo() + "»",
+        String mensaje = recomienda
+                ? quien.nombreVisible() + " quiere que sigas publicando así por «" + noticia.getTitulo() + "»"
+                : "A " + quien.nombreVisible() + " no le gustó que publicaras «" + noticia.getTitulo() + "»";
+        return Optional.of(Notificacion.nueva(noticia.getAutorId(), TipoNotificacion.CALIFICACION, mensaje,
                 noticia.getId(), fecha));
     }
 }

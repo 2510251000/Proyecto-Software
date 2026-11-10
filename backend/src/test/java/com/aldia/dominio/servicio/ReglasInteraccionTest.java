@@ -14,7 +14,7 @@ import com.aldia.dominio.modelo.EstadoReporte;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.modelo.Notificacion;
 import com.aldia.dominio.modelo.ParametrosInteraccion;
-import com.aldia.dominio.modelo.ResumenCalificaciones;
+import com.aldia.dominio.modelo.ReputacionAutor;
 import com.aldia.dominio.modelo.TipoNotificacion;
 import com.aldia.dominio.modelo.Usuario;
 
@@ -47,14 +47,13 @@ class ReglasInteraccionTest {
     }
 
     @Test
-    void laCalificacionVaDe1A5YNoSobreLaNoticiaPropia() {
-        reglas.verificarCalificacion(otro, noticia, 5);
-        assertThatThrownBy(() -> reglas.verificarCalificacion(otro, noticia, 0)).isInstanceOf(DatosInvalidosExcepcion.class);
-        assertThatThrownBy(() -> reglas.verificarCalificacion(otro, noticia, 6)).isInstanceOf(DatosInvalidosExcepcion.class);
+    void elVotoEsSiONoYNadieSeVotaASiMismo() {
+        reglas.verificarCalificacion(otro, noticia, true);
+        reglas.verificarCalificacion(otro, noticia, false);
         assertThatThrownBy(() -> reglas.verificarCalificacion(otro, noticia, null)).isInstanceOf(DatosInvalidosExcepcion.class);
-        assertThatThrownBy(() -> reglas.verificarCalificacion(autor, noticia, 4))
+        assertThatThrownBy(() -> reglas.verificarCalificacion(autor, noticia, true))
                 .isInstanceOf(AccionNoPermitidaExcepcion.class)
-                .hasMessage("No puedes calificar tu propia noticia");
+                .hasMessage("No puedes calificarte a ti mismo");
     }
 
     @Test
@@ -82,18 +81,23 @@ class ReglasInteraccionTest {
         assertThat(aviso.noticiaId()).isEqualTo(9L);
         assertThat(reglas.avisoComentario(noticia, autor, AHORA)).isEmpty();
 
-        assertThat(reglas.avisoCalificacion(noticia, otro, 1, AHORA).orElseThrow().mensaje()).contains("1 estrella ");
-        assertThat(reglas.avisoCalificacion(noticia, otro, 4, AHORA).orElseThrow().tipo())
+        assertThat(reglas.avisoCalificacion(noticia, otro, true, AHORA).orElseThrow().mensaje())
+                .contains("quiere que sigas publicando así");
+        assertThat(reglas.avisoCalificacion(noticia, otro, false, AHORA).orElseThrow().mensaje())
+                .contains("no le gustó que publicaras");
+        assertThat(reglas.avisoCalificacion(noticia, otro, true, AHORA).orElseThrow().tipo())
                 .isEqualTo(TipoNotificacion.CALIFICACION);
         Noticia sinAutor = Fixtures.noticia(10L, AHORA, true, 1, null);
-        assertThat(reglas.avisoCalificacion(sinAutor, otro, 4, AHORA)).isEmpty();
+        assertThat(reglas.avisoCalificacion(sinAutor, otro, true, AHORA)).isEmpty();
         assertThat(reglas.avisoComentario(sinAutor, otro, AHORA)).isEmpty();
     }
 
     @Test
-    void elPromedioSeRedondeaAUnDecimal() {
-        assertThat(new ResumenCalificaciones(3.666, 3).promedio()).isEqualTo(3.7);
-        assertThat(noticia.conCalificaciones(null).getCalificaciones()).isEqualTo(ResumenCalificaciones.VACIO);
+    void laAprobacionEsElPorcentajeRedondeadoONullSinVotos() {
+        assertThat(new ReputacionAutor(2, 3).aprobacion()).isEqualTo(67);
+        assertThat(new ReputacionAutor(0, 4).aprobacion()).isZero();
+        assertThat(ReputacionAutor.SIN_VOTOS.aprobacion()).isNull();
+        assertThat(noticia.conReputacionAutor(null).getReputacionAutor()).isEqualTo(ReputacionAutor.SIN_VOTOS);
         assertThat(reglas.parametros().maximoReportesListado()).isEqualTo(50);
     }
 }

@@ -57,13 +57,6 @@ export const TEXTOS_AUTH = {
   iniciarSesion: 'Inicia sesión',
 } as const;
 
-/** Entrada animada del login. */
-export const TEXTOS_ENTRADA = {
-  saltar: 'Saltar',
-  saltarDescripcion: 'Saltar la animación de entrada',
-  entrando: 'Entrando a Al Día…',
-} as const;
-
 export const TEXTOS_COMUNES = {
   cargando: 'Cargando…',
 } as const;

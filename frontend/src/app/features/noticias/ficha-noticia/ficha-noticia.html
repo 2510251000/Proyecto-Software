@@ -1,0 +1,55 @@
+<a class="ficha" [class]="variante()" [appEnlaceNoticia]="noticia()" (abrirNoticia)="abrir.emit($event)">
+  @switch (variante()) {
+    @case ('foto-grande') {
+      <app-miniatura class="foto" [categoria]="categoria()" [foto]="foto()" />
+      <span class="degradado" aria-hidden="true"></span>
+      <span class="texto">
+        <span class="fila">
+          <span class="etiqueta">{{ etiqueta() }}</span>
+          @if (cuando()) {
+            <time class="etiqueta hora" [attr.datetime]="noticia().fechaPublicacion">{{ cuando() }}</time>
+          }
+        </span>
+        <h3 class="titular">{{ noticia().titulo }}</h3>
+        <span class="datos">
+          {{ autor() }} · {{ noticia().ciudad }} · {{ minutos() }} {{ etiquetas.minutos }} {{ etiquetas.deLectura }}
+        </span>
+      </span>
+    }
+    @case ('color') {
+      <span class="fila">
+        <span class="etiqueta">{{ etiqueta() }}</span>
+        <svg class="flecha" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+          <path d="M7 17L17 7M9 7h8v8" />
+        </svg>
+      </span>
+      <span class="texto">
+        <h3 class="titular">{{ noticia().titulo }}</h3>
+        <span class="datos">
+          {{ autor() }} · {{ noticia().ciudad }}
+          @if (cuando()) {
+            · <time [attr.datetime]="noticia().fechaPublicacion">{{ cuando() }}</time>
+          }
+        </span>
+      </span>
+    }
+    @default {
+      <app-miniatura class="foto" [categoria]="categoria()" [foto]="foto()" />
+      <span class="texto">
+        <span class="fila">
+          <span class="etiqueta" [class.oficial]="noticia().oficial">{{ etiqueta() }}</span>
+          <span class="datos">
+            {{ noticia().ciudad }}
+            @if (cuando()) {
+              · <time [attr.datetime]="noticia().fechaPublicacion">{{ cuando() }}</time>
+            }
+          </span>
+        </span>
+        <h3 class="titular">{{ noticia().titulo }}</h3>
+        @if (variante() === 'horizontal') {
+          <span class="datos">{{ autor() }}</span>
+        }
+      </span>
+    }
+  }
+</a>

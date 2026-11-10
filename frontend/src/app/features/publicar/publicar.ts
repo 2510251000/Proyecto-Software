@@ -23,7 +23,7 @@ import { NoticiaService } from '../../core/services/noticia.service';
 import { PerfilService } from '../../core/services/perfil.service';
 import { Boton } from '../../shared/boton/boton';
 import { Campo } from '../../shared/campo/campo';
-import { Encabezado } from '../../shared/encabezado/encabezado';
+import { Marco } from '../../shared/marco/marco';
 import { SelectorCiudad } from '../../shared/selector-ciudad/selector-ciudad';
 import { SelectorImagenes } from '../../shared/selector-imagenes/selector-imagenes';
 import { AlmacenNoticias } from '../noticias/almacen-noticias';
@@ -34,7 +34,7 @@ import { AlmacenNoticias } from '../noticias/almacen-noticias';
  */
 @Component({
   selector: 'app-publicar',
-  imports: [ReactiveFormsModule, Encabezado, Campo, Boton, SelectorCiudad, SelectorImagenes],
+  imports: [ReactiveFormsModule, Marco, Campo, Boton, SelectorCiudad, SelectorImagenes],
   templateUrl: './publicar.html',
 })
 export class Publicar implements OnInit {

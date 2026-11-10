@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +18,7 @@ import com.aldia.dominio.modelo.FiltroNoticias;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.modelo.NuevaNoticia;
 import com.aldia.dominio.modelo.ImagenNoticia;
-import com.aldia.dominio.modelo.ResumenCalificaciones;
+import com.aldia.dominio.modelo.ReputacionAutor;
 import com.aldia.dominio.puerto.salida.CalificacionRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.ImagenRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NoticiaRepositorioPuerto;
@@ -161,20 +162,23 @@ public class NoticiaRepositorioAdaptador implements NoticiaRepositorioPuerto {
         noticiaRepositorioJPA.save(entidad);
     }
 
-    /** La noticia con sus fotos y su resumen de calificaciones. */
+    /** La noticia con sus fotos y la reputación de su autor. */
     private Noticia conImagenes(Noticia noticia) {
-        return noticia.conImagenes(imagenes.buscarDeNoticia(noticia.getId()))
-                .conCalificaciones(calificaciones.resumen(noticia.getId()));
+        ReputacionAutor reputacion = noticia.getAutorId() == null
+                ? ReputacionAutor.SIN_VOTOS
+                : calificaciones.reputacion(noticia.getAutorId());
+        return noticia.conImagenes(imagenes.buscarDeNoticia(noticia.getId())).conReputacionAutor(reputacion);
     }
 
-    /** Las fotos y las calificaciones de todas las noticias, con una consulta para cada cosa. */
+    /** Las fotos de todas las noticias y la reputación de sus autores, con una consulta para cada cosa. */
     private List<Noticia> conImagenes(List<Noticia> noticias) {
         List<Long> ids = noticias.stream().map(Noticia::getId).toList();
         Map<Long, List<ImagenNoticia>> porNoticia = imagenes.buscarDeNoticias(ids);
-        Map<Long, ResumenCalificaciones> resumenes = calificaciones.resumenes(ids);
+        Map<Long, ReputacionAutor> reputaciones = calificaciones.reputaciones(
+                noticias.stream().map(Noticia::getAutorId).filter(Objects::nonNull).distinct().toList());
         return noticias.stream()
                 .map(n -> n.conImagenes(porNoticia.getOrDefault(n.getId(), List.of()))
-                        .conCalificaciones(resumenes.get(n.getId())))
+                        .conReputacionAutor(reputaciones.get(n.getAutorId())))
                 .toList();
     }
 

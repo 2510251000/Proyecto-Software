@@ -12,20 +12,22 @@ import com.aldia.infraestructura.persistencia.entidad.CalificacionEntidad;
 
 public interface CalificacionRepositorioJPA extends JpaRepository<CalificacionEntidad, Long> {
 
-    /** Promedio y cantidad por noticia. */
-    interface Resumen {
-        Long getNoticiaId();
+    /** Votos positivos y totales que recibió un autor en todas sus noticias. */
+    interface Reputacion {
+        Long getAutorId();
 
-        Double getPromedio();
+        Long getPositivos();
 
-        Long getCantidad();
+        Long getVotos();
     }
 
     Optional<CalificacionEntidad> findByUsuarioIdAndNoticiaId(Long usuarioId, Long noticiaId);
 
     List<CalificacionEntidad> findByUsuarioIdAndNoticiaIdIn(Long usuarioId, Collection<Long> noticiaIds);
 
-    @Query("select c.noticiaId as noticiaId, avg(c.valor) as promedio, count(c) as cantidad "
-            + "from CalificacionEntidad c where c.noticiaId in :ids group by c.noticiaId")
-    List<Resumen> resumenes(@Param("ids") Collection<Long> noticiaIds);
+    @Query("select n.usuario.id as autorId, "
+            + "sum(case when c.recomienda = true then 1 else 0 end) as positivos, count(c) as votos "
+            + "from CalificacionEntidad c, NoticiaEntidad n "
+            + "where n.id = c.noticiaId and n.usuario.id in :autores group by n.usuario.id")
+    List<Reputacion> reputaciones(@Param("autores") Collection<Long> autorIds);
 }

@@ -1,9 +1,6 @@
 /*
-  Login: cielo de noche a pantalla completa con la tarjeta del formulario al centro.
-  La primera vez de la sesión corre la entrada (clase .en-entrada): el sol sale, se oculta
-  tras el horizonte y aparece la tarjeta. Las duraciones totales llegan del componente
-  (--duracion-entrada, --inicio-tarjeta, --duracion-amanecer) desde TIEMPOS_ENTRADA.
-  Todo el texto sobre el cielo es blanco y nunca va encima del sol.
+  Login: el muro de noticias ocupa toda la pantalla (fijo detrás) y encima, centrados,
+  el logo grande de Al Día con su lema en blanco y la tarjeta blanca del formulario.
 */
 :host {
   display: block;
@@ -13,134 +10,40 @@
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow: hidden;
-  color: var(--color-sobre-marca);
 }
 
-.cielo {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  background-color: var(--color-noche);
-}
-
-.en-entrada .cielo {
-  animation: cielo-atardece var(--duracion-entrada) linear both;
-}
-
-.amaneciendo .cielo {
-  animation: cielo-amanece var(--duracion-amanecer) ease-in-out both;
-}
-
-@keyframes cielo-atardece {
-  0% {
-    background-color: var(--color-marca);
-  }
-  22% {
-    background-color: var(--color-cielo-alba);
-  }
-  46% {
-    background-color: var(--color-cielo-dia);
-  }
-  60% {
-    background-color: var(--color-cielo-atardecer);
-  }
-  72% {
-    background-color: var(--color-cielo-crepusculo);
-  }
-  86% {
-    background-color: var(--color-cielo-anochecer);
-  }
-  100% {
-    background-color: var(--color-noche);
-  }
-}
-
-@keyframes cielo-amanece {
-  from {
-    background-color: var(--color-noche);
-  }
-  to {
-    background-color: var(--color-cielo-amanecer);
-  }
-}
-
-/* ---------- Estrellas ---------- */
-.estrellas {
-  position: absolute;
-  inset: 0;
-}
-
-.en-entrada .estrellas {
-  animation: aparecer 0.6s ease-out 3.4s both;
-}
-
-.amaneciendo .estrellas {
-  animation: desaparecer calc(var(--duracion-amanecer) * 0.6) ease-in both;
-}
-
-.estrella {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--color-sobre-marca);
-  animation: titilar 2.4s ease-in-out var(--retraso-titileo, 0s) infinite alternate;
-}
-
-@keyframes titilar {
-  from {
-    opacity: 0.25;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes aparecer {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes desaparecer {
-  to {
-    opacity: 0;
-  }
-}
-
-/* ---------- Amanecer al entrar ---------- */
-.sol-amanecer {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 240px;
-  height: 240px;
-  margin-left: -120px;
-  border-radius: 50%;
-  background: var(--color-sol);
-  animation: sol-sube var(--duracion-amanecer) cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-
-@keyframes sol-sube {
-  from {
-    transform: translateY(110%);
-  }
-  to {
-    transform: translateY(30%);
-  }
-}
-
-/* ---------- Tarjeta del formulario ---------- */
-.contenedor-tarjeta {
+.contenido {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--espacio-l);
   min-height: 100vh;
   min-height: 100dvh;
   padding: var(--espacio-xl) var(--espacio-m);
+}
+
+.marca {
+  color: var(--color-sobre-marca);
+  text-align: center;
+  animation: aparece 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* El lockup toma el tamaño de letra de aquí: «Al Día» grande junto al isotipo. */
+.logo-grande {
+  font-size: clamp(3rem, 9vw, 5.25rem);
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.45));
+}
+
+.lema {
+  max-width: 30ch;
+  margin: var(--espacio-s) auto 0;
+  color: var(--color-sobre-marca);
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  font-weight: 600;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  text-wrap: balance;
 }
 
 .tarjeta-login {
@@ -150,64 +53,28 @@
   background: var(--color-tarjeta);
   color: var(--color-texto);
   box-shadow: var(--sombra-3);
+  animation: aparece 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
 }
 
-.en-entrada .tarjeta-login {
-  animation: tarjeta-aparece 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--inicio-tarjeta) both;
-}
-
-.amaneciendo .tarjeta-login {
-  animation: tarjeta-se-va calc(var(--duracion-amanecer) * 0.5) ease-in both;
-}
-
-@keyframes tarjeta-aparece {
+@keyframes aparece {
   from {
-    transform: translateY(48px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes tarjeta-se-va {
-  to {
-    transform: translateY(-24px);
+    transform: translateY(24px);
     opacity: 0;
   }
 }
 
-/* ---------- Saltar ---------- */
-.saltar {
-  position: fixed;
-  right: var(--espacio-l);
-  bottom: var(--espacio-l);
-  min-height: var(--alto-control);
-  padding: 0 var(--espacio-l);
-  border: 1px solid var(--color-sobre-marca);
-  border-radius: 999px;
-  background: var(--color-noche);
-  color: var(--color-sobre-marca);
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.saltar:hover {
-  background: var(--color-marca-oscuro);
-}
-
-.saltar:focus-visible {
-  outline-color: var(--color-sobre-marca);
-}
-
-/* Sin movimiento: se ve el estado final, sin titileo. */
 @media (prefers-reduced-motion: reduce) {
-  .cielo,
-  .estrellas,
-  .estrella,
+  .marca,
   .tarjeta-login {
-    animation: none !important;
+    animation: none;
+  }
+}
+
+/* En el celular, menos aire arriba para que el formulario quepa sin tanto desplazamiento. */
+@media (max-width: 760px) {
+  .contenido {
+    justify-content: flex-start;
+    gap: var(--espacio-m);
+    padding-top: var(--espacio-l);
   }
 }

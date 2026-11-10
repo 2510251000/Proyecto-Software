@@ -1,0 +1,12 @@
+<div class="usuario" [attr.aria-label]="textos.usuario" role="group">
+  @if (perfil()) {
+    <span class="iniciales" aria-hidden="true">{{ iniciales() }}</span>
+    <span class="datos">
+      <span class="usuario-nombre">{{ nombre() }}</span>
+      <span class="usuario-detalle">{{ detalle() }}</span>
+    </span>
+  }
+  <!-- Hueco para un enlace entre los datos y «Salir» (el menú de la cuenta pone «Mi perfil»). -->
+  <ng-content />
+  <button type="button" class="salir" (click)="salir()">{{ textos.salir }}</button>
+</div>

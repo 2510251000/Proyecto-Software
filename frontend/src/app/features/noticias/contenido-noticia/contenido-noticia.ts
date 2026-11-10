@@ -6,6 +6,7 @@ import { Noticia } from '../../../core/models/noticia.model';
 import { categoriaDeNoticia } from '../../../core/utils/categoria-noticia';
 import { portadaDe } from '../../../core/utils/imagenes';
 import { minutosDeLectura } from '../../../core/utils/noticia';
+import { trozosConEnlaces } from '../../../core/utils/texto';
 import { Miniatura } from '../../../shared/miniatura/miniatura';
 
 const FORMATO_FECHA = new Intl.DateTimeFormat(IDIOMA, { dateStyle: 'long', timeStyle: 'short' });
@@ -42,11 +43,15 @@ export class ContenidoNoticia {
     return Number.isNaN(fecha.getTime()) ? '' : FORMATO_FECHA.format(fecha);
   });
 
-  /** El cuerpo llega como texto plano: cada salto de línea separa un párrafo. */
+  /**
+   * El cuerpo llega como texto plano: cada salto de línea separa un párrafo, y las direcciones
+   * web (por ejemplo, la nota original citada como fuente) se vuelven enlaces.
+   */
   protected readonly parrafos = computed(() =>
     this.noticia()
       .contenido.split(/\n+/)
       .map((parrafo) => parrafo.trim())
-      .filter((parrafo) => parrafo !== ''),
+      .filter((parrafo) => parrafo !== '')
+      .map(trozosConEnlaces),
   );
 }

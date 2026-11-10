@@ -13,6 +13,7 @@ import com.aldia.dominio.modelo.Perfil;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.entrada.ActualizarPerfilCasoDeUso;
 import com.aldia.dominio.puerto.entrada.ConsultarPerfilCasoDeUso;
+import com.aldia.dominio.puerto.salida.CalificacionRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.CiudadRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NivelRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NoticiaRepositorioPuerto;
@@ -21,8 +22,8 @@ import com.aldia.dominio.servicio.CalculadoraNivel;
 import com.aldia.dominio.servicio.ReglaLimiteDiario;
 
 /**
- * Perfil del usuario de la sesión: nivel, puntos para el siguiente, cupo de hoy y
- * los datos que puede cambiar (nombre y ciudad).
+ * Perfil del usuario de la sesión: nivel, puntos para el siguiente, cupo de hoy, su aprobación
+ * como autor y los datos que puede cambiar (nombre y ciudad).
  */
 public class PerfilServicio implements ConsultarPerfilCasoDeUso, ActualizarPerfilCasoDeUso {
 
@@ -30,14 +31,17 @@ public class PerfilServicio implements ConsultarPerfilCasoDeUso, ActualizarPerfi
     private final NivelRepositorioPuerto nivelRepositorioPuerto;
     private final NoticiaRepositorioPuerto noticiaRepositorioPuerto;
     private final CiudadRepositorioPuerto ciudadRepositorioPuerto;
+    private final CalificacionRepositorioPuerto calificacionRepositorioPuerto;
     private final ReglaLimiteDiario reglaLimiteDiario;
     private final CalculadoraNivel calculadoraNivel;
     private final Clock reloj;
 
+    @SuppressWarnings("java:S107") // Junta varias consultas del perfil: recibe un puerto por cada una.
     public PerfilServicio(UsuarioRepositorioPuerto usuarioRepositorioPuerto,
                           NivelRepositorioPuerto nivelRepositorioPuerto,
                           NoticiaRepositorioPuerto noticiaRepositorioPuerto,
                           CiudadRepositorioPuerto ciudadRepositorioPuerto,
+                          CalificacionRepositorioPuerto calificacionRepositorioPuerto,
                           ReglaLimiteDiario reglaLimiteDiario,
                           CalculadoraNivel calculadoraNivel,
                           Clock reloj) {
@@ -45,6 +49,7 @@ public class PerfilServicio implements ConsultarPerfilCasoDeUso, ActualizarPerfi
         this.nivelRepositorioPuerto = nivelRepositorioPuerto;
         this.noticiaRepositorioPuerto = noticiaRepositorioPuerto;
         this.ciudadRepositorioPuerto = ciudadRepositorioPuerto;
+        this.calificacionRepositorioPuerto = calificacionRepositorioPuerto;
         this.reglaLimiteDiario = reglaLimiteDiario;
         this.calculadoraNivel = calculadoraNivel;
         this.reloj = reloj;
@@ -58,7 +63,7 @@ public class PerfilServicio implements ConsultarPerfilCasoDeUso, ActualizarPerfi
         CupoDiario cupo = reglaLimiteDiario.cupo(usuario, publicadasHoy);
         Nivel siguiente = calculadoraNivel.siguiente(usuario.getNivel(), nivelRepositorioPuerto.listarTodos())
                 .orElse(null);
-        return new Perfil(usuario, siguiente, cupo);
+        return new Perfil(usuario, siguiente, cupo, calificacionRepositorioPuerto.reputacion(usuario.getId()));
     }
 
     @Override

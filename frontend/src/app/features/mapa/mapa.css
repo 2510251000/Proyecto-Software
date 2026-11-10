@@ -14,12 +14,12 @@
   padding: 0 var(--espacio-s);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-s);
-  background: var(--color-superficie);
+  background: var(--color-tarjeta);
   font: inherit;
 }
 
 .mapa {
-  height: min(65vh, 34rem);
+  height: max(22rem, calc(100dvh - 15rem));
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-m);
   overflow: hidden;
@@ -58,7 +58,7 @@
 .tipo {
   padding: 0.1rem 0.6rem;
   border: 1px solid var(--color-marca);
-  border-radius: 999px;
+  border-radius: var(--radio-chip);
   color: var(--color-marca);
   font-size: 0.8rem;
   font-weight: 800;

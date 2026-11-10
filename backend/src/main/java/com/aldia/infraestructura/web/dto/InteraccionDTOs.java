@@ -10,7 +10,7 @@ import com.aldia.dominio.modelo.Reporte;
 
 import jakarta.validation.constraints.NotNull;
 
-/** DTOs de comentarios, calificaciones y reportes. */
+/** DTOs de comentarios, votos al autor y reportes. */
 public final class InteraccionDTOs {
 
     private InteraccionDTOs() {
@@ -29,14 +29,18 @@ public final class InteraccionDTOs {
         }
     }
 
-    public record CalificarDTO(@NotNull(message = "La calificación es obligatoria") Integer valor) {
+    /** true: «sigue publicando así»; false: «no me gustó esto». */
+    public record CalificarDTO(@NotNull(message = "Elige si el autor debe seguir publicando así o no")
+                               Boolean recomienda) {
     }
 
-    public record CalificacionDTO(double promedio, long cantidadCalificaciones, int miCalificacion) {
+    /** La reputación nueva del autor (aprobación null si no tiene votos) y el voto del usuario. */
+    public record CalificacionDTO(Integer autorAprobacion, long autorVotos, long autorVotosPositivos,
+                                  boolean miVoto) {
 
         public static CalificacionDTO desde(CalificacionPropia calificacion) {
-            return new CalificacionDTO(calificacion.resumen().promedio(), calificacion.resumen().cantidad(),
-                    calificacion.miCalificacion());
+            return new CalificacionDTO(calificacion.reputacion().aprobacion(), calificacion.reputacion().votos(),
+                    calificacion.reputacion().positivos(), calificacion.recomienda());
         }
     }
 
