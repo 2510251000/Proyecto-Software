@@ -1,0 +1,24 @@
+<button
+  #boton
+  type="button"
+  class="circulo"
+  [attr.aria-label]="etiqueta()"
+  [attr.aria-expanded]="abierto()"
+  [attr.aria-controls]="idPanel"
+  (click)="alternar()"
+>
+  @if (iniciales()) {
+    <span aria-hidden="true">{{ iniciales() }}</span>
+  } @else {
+    <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </svg>
+  }
+</button>
+
+<div class="panel" [id]="idPanel" [hidden]="!abierto()">
+  <app-usuario-marco [perfil]="perfil()">
+    <a class="ir-al-perfil" [routerLink]="rutaPerfil" (click)="cerrar()">{{ textos.perfil }}</a>
+  </app-usuario-marco>
+</div>

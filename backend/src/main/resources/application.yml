@@ -18,6 +18,9 @@ spring:
       # La base usa la misma zona que la app (aldia.zona-horaria). Si no, en un servidor en
       # UTC (Docker, GitHub Actions) los DEFAULT CURRENT_TIMESTAMP quedan 5 horas adelante.
       connection-init-sql: SET TIME ZONE '${ZONA_HORARIA:America/Bogota}'
+  lifecycle:
+    # Tiempo máximo para terminar las peticiones en curso al apagar.
+    timeout-per-shutdown-phase: ${TIEMPO_APAGADO:20s}
   jpa:
     hibernate:
       # El esquema lo crean las migraciones de Flyway. Hibernate solo verifica que coincida.
@@ -30,9 +33,26 @@ spring:
     # en la versión 2 y solo recibe las migraciones nuevas.
     baseline-on-migrate: true
     baseline-version: 2
+  servlet:
+    multipart:
+      # Límite de Spring para cada archivo y para la petición completa (todas las fotos + datos).
+      # El tamaño por foto lo revisa además el dominio con un mensaje claro (aldia.imagenes).
+      max-file-size: ${IMAGENES_TAMANO_MAXIMO_MB:5}MB
+      max-request-size: ${IMAGENES_TAMANO_MAXIMO_PETICION_MB:25}MB
 
 server:
   port: ${PUERTO:8080}
+  # Al apagar (docker stop, Ctrl+C) termina las peticiones en curso antes de cerrar (factor IX).
+  shutdown: graceful
+
+logging:
+  # Solo por consola, sin archivos (factor XI): Docker y el servidor recogen la salida.
+  level:
+    root: ${NIVEL_LOGS_GENERAL:INFO}
+    com.aldia: ${NIVEL_LOGS:INFO}
+  pattern:
+    # Fecha, nivel, hilo, clase y mensaje.
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{40} - %msg%n"
 
 jwt:
   clave-secreta: ${JWT_CLAVE_SECRETA}
@@ -59,8 +79,34 @@ aldia:
     # Las noticias oficiales no cuentan contra el límite diario del nivel.
     administrador-sin-limite: ${ADMIN_SIN_LIMITE_DIARIO:true}
 
+  noticias-iniciales:
+    # Al arrancar se publican las noticias reales de datos-iniciales/noticias (con foto y la cita
+    # de la fuente) que todavía no estén. No duplica: se reconocen por el título.
+    cargar: ${NOTICIAS_INICIALES:true}
+
   notificaciones:
     maximo-listado: ${NOTIFICACIONES_MAXIMO_LISTADO:50}
+
+  interaccion:
+    # Comentarios (HU MF03_001) y reportes (HU MF03_003).
+    largo-maximo-comentario: ${COMENTARIO_LARGO_MAXIMO:1000}
+    largo-maximo-descripcion-reporte: ${REPORTE_LARGO_DESCRIPCION:1000}
+    maximo-comentarios-listado: ${COMENTARIOS_MAXIMO_LISTADO:200}
+    maximo-reportes-listado: ${REPORTES_MAXIMO_LISTADO:200}
+
+  imagenes:
+    # Carpeta donde se guardan las fotos (relativa a donde arranca el backend). En Docker es
+    # el volumen «imagenes». Con varios servidores habría que cambiar de adaptador (ver DECISIONES).
+    directorio: ${IMAGENES_DIRECTORIO:imagenes}
+    maximo-por-noticia: ${IMAGENES_MAXIMO_POR_NOTICIA:4}
+    tamano-maximo-mb: ${IMAGENES_TAMANO_MAXIMO_MB:5}
+    ancho-maximo: ${IMAGENES_ANCHO_MAXIMO:8000}
+    alto-maximo: ${IMAGENES_ALTO_MAXIMO:8000}
+    largo-maximo-descripcion: ${IMAGENES_LARGO_DESCRIPCION:250}
+    # Calidad al volver a codificar los JPEG (0 a 1) para quitarles los metadatos.
+    calidad-jpeg: ${IMAGENES_CALIDAD_JPEG:0.9}
+    # Cuánto puede guardar el navegador una foto de una noticia publicada.
+    cache-segundos: ${IMAGENES_CACHE_SEGUNDOS:86400}
 
   geocodificacion:
     # auto: Google Maps si hay GOOGLE_MAPS_API_KEY; si no, Nominatim (OpenStreetMap).

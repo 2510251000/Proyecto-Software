@@ -81,3 +81,20 @@
   font-weight: 700;
   line-height: 0.82;
 }
+
+/* Las fotos que siguen a la portada, en una cuadrícula. */
+.galeria {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: var(--espacio-s);
+  margin: var(--espacio-l) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.foto-galeria {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radio-s);
+}

@@ -1,0 +1,127 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.ficha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  min-height: 410px;
+  padding: 26px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-ficha);
+  background: var(--color-tarjeta);
+  color: var(--color-texto);
+  text-align: center;
+}
+
+.etiqueta {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.anillo {
+  position: relative;
+  flex: none;
+}
+
+/* El avance empieza arriba, como las agujas del reloj. */
+.anillo > svg {
+  display: block;
+  transform: rotate(-90deg);
+}
+
+.pista,
+.avance {
+  fill: none;
+}
+
+.pista {
+  stroke: var(--color-superficie-2);
+}
+
+.avance {
+  stroke: var(--color-sol);
+  stroke-linecap: round;
+}
+
+.centro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.disco {
+  fill: var(--color-sol);
+}
+
+.horizonte {
+  fill: var(--color-texto);
+}
+
+.nivel {
+  margin: 0;
+  font-size: 1.875rem;
+}
+
+.puntos,
+.faltan,
+.cupo {
+  margin: 0;
+}
+
+.puntos {
+  font-size: 1.0625rem;
+  font-weight: 800;
+}
+
+.faltan {
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+.linea {
+  align-self: stretch;
+  margin: 4px 0;
+  border: 0;
+  border-top: 1px solid var(--color-linea);
+}
+
+.cupo {
+  font-size: 0.9375rem;
+}
+
+.cupo strong {
+  font-weight: 800;
+}
+
+.publicar {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: auto;
+  border-radius: 999px;
+  background: var(--color-boton);
+  color: var(--color-boton-texto);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.publicar:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

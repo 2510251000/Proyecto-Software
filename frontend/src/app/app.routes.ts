@@ -28,6 +28,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/noticias/detalle/detalle').then((m) => m.Detalle),
   },
   {
+    path: RUTAS.mapa,
+    title: 'Mapa | Al Día',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/mapa/mapa').then((m) => m.Mapa),
+  },
+  {
     path: RUTAS.publicar,
     title: 'Publicar | Al Día',
     canActivate: [authGuard],

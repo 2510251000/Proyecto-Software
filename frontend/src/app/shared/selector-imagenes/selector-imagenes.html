@@ -1,0 +1,93 @@
+<fieldset class="selector" [disabled]="deshabilitado()">
+  <legend class="titulo">{{ textos.titulo }}</legend>
+  <p class="ayuda" id="fotos-ayuda">{{ textos.ayuda }}</p>
+
+  @if (fotos().length < maximo) {
+    <div
+      class="zona"
+      [class.arrastrando]="arrastrando()"
+      (dragover)="alArrastrar($event)"
+      (dragleave)="arrastrando.set(false)"
+      (drop)="alSoltar($event)"
+    >
+      <div class="botones">
+        <button type="button" class="boton-foto" aria-describedby="fotos-ayuda" (click)="camara.click()">
+          {{ textos.tomarFoto }}
+        </button>
+        <button type="button" class="boton-foto" aria-describedby="fotos-ayuda" (click)="galeria.click()">
+          {{ textos.elegirFotos }}
+        </button>
+      </div>
+      <p class="soltar">{{ textos.soltarAqui }}</p>
+      <label hidden for="fotos-camara">{{ textos.tomarFoto }}</label>
+      <input #camara id="fotos-camara" type="file" hidden [accept]="tiposCamara" capture="environment" (change)="alElegir($event)" />
+      <label hidden for="fotos-galeria">{{ textos.elegirFotos }}</label>
+      <input #galeria id="fotos-galeria" type="file" hidden multiple [accept]="tiposAceptados" (change)="alElegir($event)" />
+    </div>
+  }
+
+  @if (procesando()) {
+    <p class="estado" role="status">{{ textos.procesando }}</p>
+  }
+
+  @if (errores().length > 0) {
+    <ul class="errores" role="alert">
+      @for (error of errores(); track $index) {
+        <li>{{ error }}</li>
+      }
+    </ul>
+  }
+
+  @if (fotos().length > 0) {
+    <ol class="fotos">
+      @for (foto of fotos(); track foto.id; let i = $index; let primera = $first; let ultima = $last) {
+        <li class="foto">
+          <div class="vista">
+            <img [src]="foto.vistaPrevia" alt="" />
+            @if (primera) {
+              <span class="portada">{{ textos.portada }}</span>
+            }
+          </div>
+          <div class="acciones">
+            <button
+              type="button"
+              class="accion"
+              [disabled]="primera"
+              [attr.aria-label]="textos.antes + ': ' + textos.foto + ' ' + (i + 1)"
+              (click)="mover(i, -1)"
+            >
+              {{ textos.flechaAntes }}
+            </button>
+            <button
+              type="button"
+              class="accion"
+              [disabled]="ultima"
+              [attr.aria-label]="textos.despues + ': ' + textos.foto + ' ' + (i + 1)"
+              (click)="mover(i, 1)"
+            >
+              {{ textos.flechaDespues }}
+            </button>
+            <button
+              type="button"
+              class="accion quitar"
+              [attr.aria-label]="textos.quitar + ': ' + textos.foto + ' ' + (i + 1)"
+              (click)="quitar(foto)"
+            >
+              {{ textos.quitar }}
+            </button>
+          </div>
+          <label class="describir">
+            <span>{{ textos.describir }}</span>
+            <input
+              type="text"
+              [value]="foto.descripcion"
+              [attr.maxlength]="largoDescripcion"
+              [attr.aria-description]="textos.ayudaDescribir"
+              (input)="describir(foto, $event)"
+            />
+          </label>
+        </li>
+      }
+    </ol>
+  }
+</fieldset>

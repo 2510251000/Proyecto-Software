@@ -1,0 +1,61 @@
+<div class="filtros">
+  <label>
+    {{ textos.filtro }}
+    <select class="selector" (change)="cambiarFiltro($event)">
+      <option value="" [selected]="estado() === null">{{ textos.todos }}</option>
+      @for (opcion of estados; track opcion) {
+        <option [value]="opcion" [selected]="estado() === opcion">{{ etiquetasEstado[opcion] }}</option>
+      }
+    </select>
+  </label>
+</div>
+
+@if (error(); as mensaje) {
+  <p class="aviso-error-general" role="alert">{{ mensaje }}</p>
+}
+
+@if (reportes(); as lista) {
+  @if (lista.length === 0) {
+    <p class="texto-suave">{{ textos.vacio }}</p>
+  } @else {
+    <ul class="lista-filas">
+      @for (reporte of lista; track reporte.id) {
+        <li class="fila">
+          <div class="datos">
+            <p class="meta">
+              <span class="chip" [class.chip-alerta]="reporte.estado === 'PENDIENTE'">{{ etiquetasEstado[reporte.estado] }}</span>
+              <span class="chip">{{ etiquetasMotivo[reporte.motivo] }}</span>
+              <span class="texto-suave">{{ cuando(reporte.fecha) }}</span>
+            </p>
+            @if (reporte.noticiaEstado === 'PUBLICADA') {
+              <a class="titulo" [routerLink]="['/', rutas.noticias, reporte.noticiaId]">{{ reporte.noticiaTitulo }}</a>
+            } @else {
+              <span class="titulo">{{ reporte.noticiaTitulo }}</span>
+            }
+            @if (reporte.descripcion) {
+              <p class="descripcion">{{ reporte.descripcion }}</p>
+            }
+            <p class="texto-suave autor">{{ textos.por }} {{ reporte.usuario }}</p>
+          </div>
+          <div class="acciones">
+            @if (reporte.noticiaEstado === 'PUBLICADA') {
+              <button type="button" class="accion accion-peligro" [disabled]="ocupado() === reporte.id" (click)="ocultarNoticia(reporte)">
+                {{ textos.ocultarNoticia }}
+              </button>
+            }
+            @if (reporte.estado === 'PENDIENTE') {
+              <button type="button" class="accion" [disabled]="ocupado() === reporte.id" (click)="marcar(reporte, 'REVISADO')">
+                {{ textos.revisado }}
+              </button>
+              <button type="button" class="accion" [disabled]="ocupado() === reporte.id" (click)="marcar(reporte, 'DESCARTADO')">
+                {{ textos.descartado }}
+              </button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+} @else if (error() === null) {
+  <p role="status" class="texto-suave">{{ textosComunes.cargando }}</p>
+}

@@ -1,0 +1,42 @@
+<section class="calificacion" [attr.aria-labelledby]="'pregunta-voto-' + noticia().id">
+  <h3 class="titulo" [id]="'pregunta-voto-' + noticia().id">{{ pregunta() }}</h3>
+
+  @if (esPropia()) {
+    <p class="nota">{{ textos.propia }}</p>
+  } @else {
+    <div class="botones">
+      <button
+        type="button"
+        class="voto sigue"
+        [attr.aria-pressed]="miVoto() === true"
+        [disabled]="guardando()"
+        (click)="votar(true)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7 11v9H4v-9zm3 9h7.5a2 2 0 0 0 2-1.6l1.2-6A2 2 0 0 0 18.7 10H14l.8-4a1.8 1.8 0 0 0-3.4-1L8 11v9z" />
+        </svg>
+        {{ textos.siguePublicando }}
+      </button>
+      <button
+        type="button"
+        class="voto no-gusto"
+        [attr.aria-pressed]="miVoto() === false"
+        [disabled]="guardando()"
+        (click)="votar(false)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M17 13V4h3v9zm-3-9H6.5a2 2 0 0 0-2 1.6l-1.2 6A2 2 0 0 0 5.3 14H10l-.8 4a1.8 1.8 0 0 0 3.4 1L16 13V4z" />
+        </svg>
+        {{ textos.noMeGusto }}
+      </button>
+    </div>
+  }
+
+  <p class="resumen">{{ resumen() }}</p>
+  @if (mensaje(); as texto) {
+    <p class="nota" role="status">{{ texto }}</p>
+  }
+  @if (error(); as texto) {
+    <p class="error" role="alert">{{ texto }}</p>
+  }
+</section>

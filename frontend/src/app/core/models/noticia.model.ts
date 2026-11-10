@@ -1,6 +1,13 @@
 /** Estados de una noticia en el backend. Solo las PUBLICADA se ven en la portada. */
 export type EstadoNoticia = 'PUBLICADA' | 'OCULTA' | 'ELIMINADA';
 
+/** Una foto de la noticia. La url es relativa a la API (environment.apiUrl). El orden 1 es la portada. */
+export interface ImagenNoticia {
+  url: string;
+  orden: number;
+  textoAlternativo: string | null;
+}
+
 /** Respuesta de GET /api/noticias y GET /api/noticias/{id}. */
 export interface Noticia {
   id: number;
@@ -12,11 +19,23 @@ export interface Noticia {
   oficial: boolean;
   ciudad: string;
   ciudadId?: number;
+  autorId?: number | null;
   /** Nombre visible del autor (nunca su correo). */
   autor?: string;
   /** Nivel del autor, de 1 a 3. */
   autorNivel?: number;
   estado?: EstadoNoticia;
+  /** Punto de la noticia (el que dio la API de mapas); null si no tiene. */
+  latitud?: number | null;
+  longitud?: number | null;
+  /** Fotos en orden; vacía o ausente si la noticia no tiene. */
+  imagenes?: ImagenNoticia[];
+  /** % de lectores que quieren que el autor siga publicando así (en todas sus noticias); null sin votos. */
+  autorAprobacion?: number | null;
+  /** Cuántos votos tiene el autor en todas sus noticias. */
+  autorVotos?: number;
+  /** Lo que votó el usuario de la sesión en esta noticia; null si no ha votado. */
+  miVoto?: boolean | null;
 }
 
 /** Cuerpo de POST /api/noticias. */
@@ -27,10 +46,15 @@ export interface NuevaNoticia {
   ciudadId: number;
   latitud?: number;
   longitud?: number;
+  /** Descripción de cada foto, en el mismo orden (solo al publicar con fotos). */
+  descripcionesImagenes?: string[];
 }
 
 export type TipoNoticias = 'TODAS' | 'OFICIALES' | 'COMUNITARIAS';
 export type OrdenNoticias = 'RECIENTES' | 'RECOMENDADAS';
+
+/** Pestaña de la portada: un orden (recomendadas o recientes) o un tipo (oficiales o comunidad). */
+export type PestanaPortada = OrdenNoticias | Exclude<TipoNoticias, 'TODAS'>;
 
 /** Filtros opcionales del listado. */
 export interface CriteriosNoticias {

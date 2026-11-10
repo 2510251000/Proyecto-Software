@@ -32,10 +32,14 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.aldia.dominio.ImagenesDePrueba;
 import com.aldia.dominio.excepcion.CiudadNoEncontradaExcepcion;
+import com.aldia.dominio.excepcion.ImagenInvalidaExcepcion;
 import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.excepcion.LimiteDiarioAlcanzadoExcepcion;
 import com.aldia.dominio.modelo.AccionHistorial;
+import com.aldia.dominio.modelo.ImagenNoticia;
+import com.aldia.dominio.modelo.ImagenSubida;
 import com.aldia.dominio.modelo.Nivel;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.modelo.Notificacion;
@@ -46,6 +50,7 @@ import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.salida.CiudadRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.EjecutorTransaccionalPuerto;
 import com.aldia.dominio.puerto.salida.HistorialRepositorioPuerto;
+import com.aldia.dominio.puerto.salida.ImagenRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NivelRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NoticiaRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NotificacionRepositorioPuerto;
@@ -53,6 +58,7 @@ import com.aldia.dominio.puerto.salida.UsuarioRepositorioPuerto;
 import com.aldia.dominio.servicio.AvisosPorCiudad;
 import com.aldia.dominio.servicio.CalculadoraNivel;
 import com.aldia.dominio.servicio.ReglaLimiteDiario;
+import com.aldia.dominio.servicio.ValidadorImagenes;
 
 @ExtendWith(MockitoExtension.class)
 class PublicarNoticiaServicioTest {
@@ -97,8 +103,16 @@ class PublicarNoticiaServicioTest {
     @Mock
     private NotificacionRepositorioPuerto notificacionRepositorioPuerto;
 
+    @Mock
+    private ImagenRepositorioPuerto imagenRepositorioPuerto;
+
     @Captor
     private ArgumentCaptor<List<Notificacion>> notificaciones;
+
+    @Captor
+    private ArgumentCaptor<List<ImagenNoticia>> imagenesGuardadas;
+
+    private ImagenesDePrueba.AlmacenEnMemoria almacen;
 
     @Captor
     private ArgumentCaptor<Usuario> usuarioGuardado;
@@ -107,10 +121,14 @@ class PublicarNoticiaServicioTest {
 
     @BeforeEach
     void preparar() {
+        almacen = new ImagenesDePrueba.AlmacenEnMemoria();
+        ArchivosDeImagenes archivos = new ArchivosDeImagenes(new ValidadorImagenes(ImagenesDePrueba.PARAMETROS),
+                new ImagenesDePrueba.ProcesadorFalso(800, 600), almacen);
         servicio = new PublicarNoticiaServicio(usuarioRepositorioPuerto, ciudadRepositorioPuerto,
                 noticiaRepositorioPuerto, historialRepositorioPuerto, nivelRepositorioPuerto,
                 notificacionRepositorioPuerto, SIN_TRANSACCION, new ReglaLimiteDiario(true),
-                new CalculadoraNivel(new ParametrosNiveles(10, 20)), new AvisosPorCiudad(), RELOJ);
+                new CalculadoraNivel(new ParametrosNiveles(10, 20)), new AvisosPorCiudad(), RELOJ,
+                archivos, imagenRepositorioPuerto);
         lenient().when(nivelRepositorioPuerto.listarTodos()).thenReturn(NIVELES);
     }
 
@@ -238,5 +256,86 @@ class PublicarNoticiaServicioTest {
                 .isInstanceOf(CuentaDesactivadaExcepcion.class);
 
         verify(noticiaRepositorioPuerto, never()).guardarNueva(any(), anyLong(), anyBoolean(), any());
+    }
+
+    // ------------------------------------------------------------------ fotos
+
+    private void publicacionValida() {
+        autorYCiudadValidos(autor(Usuario.Rol.USUARIO_COMUN, true));
+        when(noticiaRepositorioPuerto.contarDelAutorDesde(AUTOR_ID, INICIO_DEL_DIA)).thenReturn(0L);
+    }
+
+    @Test
+    void publicaConFotosEnOrdenYLaPrimeraEsLaPortada() {
+        publicacionValida();
+        when(noticiaRepositorioPuerto.guardarNueva(DATOS, AUTOR_ID, false, AHORA)).thenReturn(noticiaGuardada(false));
+        List<ImagenSubida> fotos = List.of(ImagenesDePrueba.foto("portada.jpg"), ImagenesDePrueba.foto("segunda.jpg"));
+
+        Noticia publicada = servicio.publicar(CORREO, DATOS, fotos);
+
+        verify(imagenRepositorioPuerto).guardarTodas(eq(50L), imagenesGuardadas.capture());
+        assertThat(imagenesGuardadas.getValue()).extracting(ImagenNoticia::orden).containsExactly(1, 2);
+        assertThat(imagenesGuardadas.getValue().get(0).textoAlternativo()).isEqualTo("Descripción de portada.jpg");
+        assertThat(publicada.getImagenes()).hasSize(2);
+        assertThat(almacen.archivos).hasSize(2);
+    }
+
+    @Test
+    void sinFotosNoTocaLaTablaMultimedia() {
+        publicacionValida();
+        when(noticiaRepositorioPuerto.guardarNueva(DATOS, AUTOR_ID, false, AHORA)).thenReturn(noticiaGuardada(false));
+
+        servicio.publicar(CORREO, DATOS, List.of());
+
+        verify(imagenRepositorioPuerto, never()).guardarTodas(any(), any());
+    }
+
+    @Test
+    void siLaBaseFallaSeBorranLosArchivosYaGuardados() {
+        publicacionValida();
+        when(noticiaRepositorioPuerto.guardarNueva(DATOS, AUTOR_ID, false, AHORA))
+                .thenThrow(new IllegalStateException("la base se cayó"));
+
+        List<ImagenSubida> fotos = List.of(ImagenesDePrueba.foto("a.jpg"), ImagenesDePrueba.foto("b.jpg"));
+        assertThatThrownBy(() -> servicio.publicar(CORREO, DATOS, fotos))
+                .isInstanceOf(IllegalStateException.class);
+
+        assertThat(almacen.archivos).isEmpty();
+    }
+
+    @Test
+    void siYaNoTieneCupoTampocoQuedanArchivos() {
+        autorYCiudadValidos(autor(Usuario.Rol.USUARIO_COMUN, true));
+        when(noticiaRepositorioPuerto.contarDelAutorDesde(AUTOR_ID, INICIO_DEL_DIA)).thenReturn(3L);
+
+        List<ImagenSubida> fotos = List.of(ImagenesDePrueba.foto("a.jpg"));
+        assertThatThrownBy(() -> servicio.publicar(CORREO, DATOS, fotos))
+                .isInstanceOf(LimiteDiarioAlcanzadoExcepcion.class);
+
+        assertThat(almacen.archivos).isEmpty();
+    }
+
+    @Test
+    void siFallaGuardarUnArchivoSeBorranLosAnterioresYNoSePublica() {
+        almacen.fallarDesdeElGuardado(2);
+        List<ImagenSubida> fotos = List.of(ImagenesDePrueba.foto("a.jpg"), ImagenesDePrueba.foto("b.jpg"));
+
+        assertThatThrownBy(() -> servicio.publicar(CORREO, DATOS, fotos))
+                .isInstanceOf(IllegalStateException.class);
+
+        assertThat(almacen.archivos).isEmpty();
+        verify(noticiaRepositorioPuerto, never()).guardarNueva(any(), anyLong(), anyBoolean(), any());
+    }
+
+    @Test
+    void unaFotoInvalidaNoGuardaNada() {
+        List<ImagenSubida> fotos = List.of(new ImagenSubida("falsa.jpg", "no soy una foto".getBytes(), null));
+
+        assertThatThrownBy(() -> servicio.publicar(CORREO, DATOS, fotos))
+                .isInstanceOf(ImagenInvalidaExcepcion.class)
+                .hasMessageContaining("falsa.jpg");
+
+        assertThat(almacen.archivos).isEmpty();
+        verify(usuarioRepositorioPuerto, never()).buscarPorCorreo(any());
     }
 }

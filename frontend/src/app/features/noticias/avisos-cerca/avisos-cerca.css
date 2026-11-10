@@ -1,0 +1,73 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  min-height: 290px;
+  padding: 22px 22px 16px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-ficha);
+  background: var(--color-tarjeta);
+  color: var(--color-texto);
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.375rem;
+}
+
+/* Contador ámbar con texto azul (6.96:1). */
+.contador {
+  display: grid;
+  flex: none;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--color-sol);
+  color: var(--color-marca);
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+.punto {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: var(--color-sol);
+}
+
+.vacio {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+.ver-todos {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  min-height: var(--alto-control);
+  margin-top: auto;
+  color: var(--color-realce);
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

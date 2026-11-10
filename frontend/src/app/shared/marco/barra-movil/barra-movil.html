@@ -1,0 +1,34 @@
+<header class="barra">
+  <a class="marca" [routerLink]="['/', rutas.noticias]">
+    <app-logo [tamano]="30" [conNombre]="true" />
+  </a>
+
+  <div class="acciones">
+    <button type="button" class="accion" [attr.aria-label]="textos.buscar" (click)="buscar()">
+      <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="11" cy="11" r="7" />
+        <path d="M20 20l-3.5-3.5" />
+      </svg>
+    </button>
+
+    @if (esAdministrador) {
+      <a class="accion" [routerLink]="['/', rutas.admin]" [attr.aria-label]="textos.admin">
+        <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z" />
+          <path d="M9 12l2 2 4-4" />
+        </svg>
+      </a>
+    }
+
+    <a class="accion" [routerLink]="['/', rutas.perfil]" [attr.aria-label]="textos.perfil">
+      @if (iniciales()) {
+        <span class="iniciales" aria-hidden="true">{{ iniciales() }}</span>
+      } @else {
+        <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21a8 8 0 0 1 16 0" />
+        </svg>
+      }
+    </a>
+  </div>
+</header>

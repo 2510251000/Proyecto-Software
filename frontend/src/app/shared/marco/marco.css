@@ -1,0 +1,153 @@
+:host {
+  display: block;
+
+  /* Blanco translúcido sobre el azul de la barra: enlace activo y al pasar el mouse. */
+  --barra-resalte: rgba(255, 255, 255, 0.16);
+  --barra-resalte-suave: rgba(255, 255, 255, 0.08);
+}
+
+/* El fondo y la letra salen de las variables: en la portada de noche cambian solos. */
+.marco {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--color-pagina);
+  color: var(--color-texto);
+}
+
+/*
+  Computador: una barra arriba con el logo, los destinos y, a la derecha, «Publicar» y la
+  cuenta. Azul oscuro con letra blanca (17.3:1) en todas las pantallas.
+*/
+.barra-superior {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  padding: 14px clamp(24px, 4.5vw, 64px);
+  background: var(--color-marca-oscuro);
+  color: var(--color-sobre-marca);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alto-control);
+  border-radius: var(--radio-s);
+  color: inherit;
+  font-size: 1.5625rem;
+  text-decoration: none;
+}
+
+.marca:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/*
+  Sobre la foto de la portada: transparente y pegada arriba. Al bajar toma el fondo azul.
+  La foto sube por detrás de ella (ver portada-cine).
+*/
+.sobre-foto {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  background: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.sobre-foto.solida {
+  background: var(--color-marca-oscuro);
+}
+
+.herramientas:empty {
+  display: none;
+}
+
+/* Relleno ámbar con letra azul: 6.96:1. */
+.publicar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--alto-control);
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--color-sol);
+  color: var(--color-marca);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.publicar:hover {
+  color: var(--color-marca);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Sobre el azul, el foco va en ámbar para que se vea. */
+.barra-superior :focus-visible {
+  outline-color: var(--color-sol);
+}
+
+.contenido {
+  min-width: 0;
+}
+
+.solo-celular {
+  display: none;
+}
+
+/*
+  Tableta y celular (menos de 1024px): la barra superior no cabe y se esconde; arriba va la
+  barra con el logo y abajo la barra fija de 76px. El contenido deja ese espacio libre al
+  final para no quedar tapado.
+*/
+@media (max-width: 63.99rem) {
+  /* De la barra superior solo queda lo que agregó la pantalla, debajo de la barra del logo. */
+  .barra-superior {
+    position: static;
+    display: block;
+    padding: 0;
+    background: none;
+    color: inherit;
+  }
+
+  .marca,
+  app-navegacion,
+  .publicar,
+  app-menu-cuenta {
+    display: none;
+  }
+
+  .acciones {
+    display: block;
+    margin: 0;
+  }
+
+  /* Aquí lo que queda va sobre la página clara: el foco vuelve a su color normal. */
+  .barra-superior :focus-visible {
+    outline-color: var(--color-texto);
+  }
+
+  .solo-celular {
+    display: block;
+  }
+
+  .contenido {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sobre-foto {
+    transition: none;
+  }
+}

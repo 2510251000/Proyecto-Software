@@ -11,13 +11,20 @@
 }
 
 .aviso {
+  position: relative;
   padding-left: var(--espacio-m) !important;
-  border-left: 4px solid transparent;
 }
 
-/* Las que no se han leído llevan el filete azul a la izquierda. */
-.no-leida {
-  border-left-color: var(--color-marca);
+/* Las que no se han leído llevan el punto ámbar a la izquierda, como en la portada. */
+.no-leida::before {
+  position: absolute;
+  top: calc(var(--espacio-m) + 6px);
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-sol);
+  content: '';
 }
 
 .meta {

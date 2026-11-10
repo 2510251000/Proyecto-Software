@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { textoAprobacion } from '../../core/constants/interaccion.constants';
 import { ERRORES_NOMBRE, TEXTOS_AUTH, TEXTOS_COMUNES } from '../../core/constants/mensajes.constants';
 import { TEXTOS_PERFIL } from '../../core/constants/pantallas.constants';
 import { ROLES } from '../../core/constants/roles.constants';
@@ -10,13 +11,14 @@ import { Ciudad } from '../../core/models/ubicacion.model';
 import { PerfilService } from '../../core/services/perfil.service';
 import { Boton } from '../../shared/boton/boton';
 import { Campo } from '../../shared/campo/campo';
-import { Encabezado } from '../../shared/encabezado/encabezado';
+import { Marco } from '../../shared/marco/marco';
+import { UsuarioMarco } from '../../shared/marco/usuario-marco/usuario-marco';
 import { SelectorCiudad } from '../../shared/selector-ciudad/selector-ciudad';
 
 /** Perfil: nivel, puntos para el siguiente, cupo de hoy y datos editables (nombre y municipio). */
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule, Encabezado, Campo, Boton, SelectorCiudad],
+  imports: [ReactiveFormsModule, Marco, Campo, Boton, SelectorCiudad, UsuarioMarco],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -38,6 +40,12 @@ export class Perfil implements OnInit {
   protected readonly formulario = this.fb.group({
     nombre: ['', [Validators.maxLength(LONGITUD_MAXIMA_NOMBRE)]],
     ciudadId: this.fb.control<number | null>(null),
+  });
+
+  /** «92 % de aprobación (25 votos)» como autor, o null si nadie ha votado. */
+  protected readonly aprobacion = computed(() => {
+    const datos = this.datos();
+    return datos ? textoAprobacion(datos.aprobacion, datos.votos) : null;
   });
 
   protected readonly esAdministrador = computed(() => this.datos()?.rol === ROLES.administrador);

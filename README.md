@@ -85,10 +85,16 @@ noticia → entrar como `vecina@aldia.com` y ver la notificación → entrar com
 ## Calidad del código (SonarQube Cloud)
 
 En cada push a `dev` o `main` y en cada PR, GitHub Actions (`.github/workflows/sonar.yml`)
-corre las pruebas de los dos lados y envía el código y la cobertura a
-[SonarQube Cloud](https://sonarcloud.io/project/overview?id=2510251000_Proyecto-Software).
-Allí se ven los bugs, las vulnerabilidades, el código duplicado, la cobertura y el
-Quality Gate (aprobado / no aprobado). La configuración está en `sonar-project.properties`.
+corre dos jobs en paralelo, uno por lado, y cada uno envía su código y su cobertura a su
+propio proyecto de SonarQube Cloud con su propio Quality Gate:
+
+| Lado | Proyecto en SonarQube Cloud | Configuración |
+|---|---|---|
+| Backend | [2510251000_Proyecto-Software](https://sonarcloud.io/project/overview?id=2510251000_Proyecto-Software) | `backend/sonar-project.properties` |
+| Frontend | [2510251000_Proyecto-Software-frontend](https://sonarcloud.io/project/overview?id=2510251000_Proyecto-Software-frontend) | `frontend/sonar-project.properties` |
+
+Allí se ven los bugs, las vulnerabilidades, el código duplicado, la cobertura y el Quality
+Gate (aprobado / no aprobado). Si el Quality Gate de un lado no pasa, su job queda en rojo.
 
 Para ver la cobertura en tu equipo:
 - Backend: `cd backend` y `.\mvnw.cmd verify` → `backend/target/site/jacoco/index.html`.
@@ -99,6 +105,33 @@ Para ver la cobertura en tu equipo:
 Por defecto el backend solo acepta peticiones que vengan de `http://localhost:4200` (CORS,
 variable `CORS_ORIGENES` del `.env`). Si Angular arranca en otro puerto, por ejemplo el
 4201 porque el 4200 estaba ocupado, la aplicación abre pero ninguna petición funciona.
+
+## Probar desde el celular (misma red Wi-Fi)
+
+Sirve para subir fotos con la cámara del celular. El computador y el celular deben estar
+conectados a la **misma Wi-Fi**.
+
+1. Averigua la IP del computador en la red: en PowerShell, `ipconfig` → «Dirección IPv4» del
+   adaptador Wi-Fi (por ejemplo `192.168.1.50`). En los pasos siguientes cámbiala por la tuya.
+2. Permite al backend recibir peticiones desde esa dirección. En `backend/.env` agrega el
+   origen nuevo, separado por coma (no se borra el de `localhost`):
+   `CORS_ORIGENES=http://localhost:4200,http://192.168.1.50:4200`
+   y reinicia el backend. Con Docker, la variable va en el `docker-compose.lite.yml`.
+3. Arranca el frontend escuchando en toda la red y con el ambiente `red`:
+   `cd frontend` y `npx ng serve --host 0.0.0.0 --configuration red`
+   El ambiente `red` (`src/environments/environment.red.ts`) **no tiene la IP escrita**: busca
+   la API en el mismo equipo desde el que se abrió la página, en el puerto 8080.
+4. En el celular abre `http://192.168.1.50:4200`.
+5. Si no abre, Windows puede estar bloqueando los puertos: la primera vez acepta el aviso del
+   Firewall para «Redes privadas», o permite los puertos 4200 y 8080 en esa red.
+
+Notas:
+
+- **«Tomar foto» funciona sin HTTPS**: abre la cámara con un campo de archivo normal.
+- **«Usar mi ubicación» necesita HTTPS** (o `localhost`): por `http://192.168…` el celular
+  no deja leer el GPS. Para registrarse desde el celular, busca el municipio por nombre.
+- Las fotos se reducen en el celular antes de subir (máximo 1600 px y sin datos de ubicación)
+  y el backend las vuelve a limpiar.
 
 ## Ramas
 

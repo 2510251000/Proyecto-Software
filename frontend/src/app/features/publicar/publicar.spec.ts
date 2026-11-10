@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
+import { TEXTOS_FOTOS } from '../../core/constants/imagenes.constants';
+import { FotoSeleccionada, ProgresoPublicacion } from '../../core/models/imagen.model';
+import { ImagenService } from '../../core/services/imagen.service';
 import { TEXTOS_PUBLICAR } from '../../core/constants/pantallas.constants';
 import { ROLES } from '../../core/constants/roles.constants';
 import { Noticia } from '../../core/models/noticia.model';
@@ -30,18 +33,23 @@ function perfil(cupo: CupoDiario): Perfil {
 
 describe('Publicar', () => {
   let publicar: ReturnType<typeof vi.fn>;
+  let publicarConImagenes: ReturnType<typeof vi.fn>;
   let respuesta: Subject<Noticia>;
+  let pasos: Subject<ProgresoPublicacion>;
   let fixture: ComponentFixture<Publicar>;
 
   async function crear(cupo: CupoDiario): Promise<HTMLElement> {
     respuesta = new Subject<Noticia>();
     publicar = vi.fn(() => respuesta);
+    pasos = new Subject<ProgresoPublicacion>();
+    publicarConImagenes = vi.fn(() => pasos);
     await TestBed.configureTestingModule({
       imports: [Publicar],
       providers: [
         provideRouter([]),
         { provide: PerfilService, useValue: { obtener: () => of(perfil(cupo)) } },
-        { provide: NoticiaService, useValue: { publicar } },
+        { provide: NoticiaService, useValue: { publicar, publicarConImagenes } },
+        { provide: ImagenService, useValue: { reducir: (b: Blob) => Promise.resolve(b) } },
         { provide: AlmacenNoticias, useValue: { cargar: () => undefined } },
         { provide: AuthService, useValue: { obtenerContenidoToken: () => null, cerrarSesion: () => undefined } },
         campanaFalsa(),
@@ -104,5 +112,49 @@ describe('Publicar', () => {
     const raiz = await crear({ limite: 3, publicadasHoy: 0, restantes: 3, ilimitado: false });
     raiz.querySelector('form')?.dispatchEvent(new Event('submit'));
     expect(publicar).not.toHaveBeenCalled();
+  });
+
+  it('con fotos publica por multipart, muestra el progreso y abre la noticia', async () => {
+    vi.stubGlobal('URL', Object.assign(URL, { createObjectURL: vi.fn(() => 'blob:x'), revokeObjectURL: vi.fn() }));
+    const raiz = await crear({ limite: 3, publicadasHoy: 0, restantes: 3, ilimitado: false });
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    await escribir(raiz, '#publicar-titulo', 'Así quedó el parque');
+    await escribir(raiz, '#publicar-contenido', 'Fotos del parque.');
+    expect(raiz.textContent).toContain(TEXTOS_FOTOS.titulo);
+
+    const galeria = raiz.querySelectorAll<HTMLInputElement>('input[type="file"]')[1];
+    Object.defineProperty(galeria, 'files', { value: [new File(['x'], 'parque.jpg', { type: 'image/jpeg' })] });
+    galeria.dispatchEvent(new Event('change'));
+    await vi.waitFor(() => expect(raiz.querySelectorAll('app-selector-imagenes .foto')).toHaveLength(1));
+
+    raiz.querySelector('form')?.dispatchEvent(new Event('submit'));
+    expect(publicar).not.toHaveBeenCalled();
+    const fotos = publicarConImagenes.mock.calls[0][1] as FotoSeleccionada[];
+    expect(fotos.map((f) => f.nombre)).toEqual(['parque.jpg']);
+
+    pasos.next({ tipo: 'progreso', porcentaje: 45 });
+    await fixture.whenStable();
+    expect(raiz.querySelector('.progreso-subida')?.textContent).toContain('45 %');
+
+    pasos.next({ tipo: 'listo', noticia: { id: 41, titulo: 't', resumen: '', contenido: 'c', fechaPublicacion: '', oficial: false, ciudad: 'Fusagasugá' } });
+    expect(navegar).toHaveBeenCalledWith(['/', 'noticias', 41]);
+    vi.unstubAllGlobals();
+  });
+
+  it('si falla la subida muestra el error y quita la barra', async () => {
+    vi.stubGlobal('URL', Object.assign(URL, { createObjectURL: vi.fn(() => 'blob:x'), revokeObjectURL: vi.fn() }));
+    const raiz = await crear({ limite: 3, publicadasHoy: 0, restantes: 3, ilimitado: false });
+    await escribir(raiz, '#publicar-titulo', 'Con foto');
+    await escribir(raiz, '#publicar-contenido', 'Texto.');
+    const galeria = raiz.querySelectorAll<HTMLInputElement>('input[type="file"]')[1];
+    Object.defineProperty(galeria, 'files', { value: [new File(['x'], 'a.jpg', { type: 'image/jpeg' })] });
+    galeria.dispatchEvent(new Event('change'));
+    await vi.waitFor(() => expect(raiz.querySelectorAll('app-selector-imagenes .foto')).toHaveLength(1));
+    raiz.querySelector('form')?.dispatchEvent(new Event('submit'));
+    pasos.error({ estado: 413, mensaje: 'Las fotos son muy pesadas' });
+    await fixture.whenStable();
+    expect(raiz.querySelector('[role="alert"]')?.textContent).toContain('Las fotos son muy pesadas');
+    expect(raiz.querySelector('.progreso-subida')).toBeNull();
+    vi.unstubAllGlobals();
   });
 });

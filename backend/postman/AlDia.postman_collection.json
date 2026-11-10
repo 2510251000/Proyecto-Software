@@ -2,419 +2,19 @@
   "info": {
     "_postman_id": "45bd1f0a-44f8-4ea0-9113-3376622024a6",
     "name": "Al Día - API",
-    "description": "API REST del portal de noticias Al Día",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "52910066",
-    "_collection_link": "https://go.postman.co/collection/52910066-45bd1f0a-44f8-4ea0-9113-3376622024a6?source=collection_link"
+    "description": "API REST del portal de noticias Al Día. Primero corre «Iniciar sesión (usuario)» y «Iniciar sesión (administrador)»: guardan los tokens en las variables {{token}} y {{tokenAdmin}}. Las cuentas son las de demostración del README.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "item": [
-    {
-      "name": "api",
-      "item": [
-        {
-          "name": "auth",
-          "item": [
-            {
-              "name": "registro",
-              "item": [
-                {
-                  "name": "registrar",
-                  "request": {
-                    "method": "POST",
-                    "header": [
-                      {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                      },
-                      {
-                        "key": "Accept",
-                        "value": "*/*"
-                      }
-                    ],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\n  \"contrasena\": \"stringstring\",\n  \"correo\": \"string\"\n}",
-                      "options": {
-                        "raw": {
-                          "headerFamily": "json",
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{baseUrl}}/api/auth/registro",
-                      "host": [
-                        "{{baseUrl}}"
-                      ],
-                      "path": [
-                        "api",
-                        "auth",
-                        "registro"
-                      ]
-                    }
-                  },
-                  "response": [
-                    {
-                      "name": "OK",
-                      "originalRequest": {
-                        "method": "POST",
-                        "header": [
-                          {
-                            "key": "Content-Type",
-                            "value": "application/json"
-                          },
-                          {
-                            "key": "Accept",
-                            "value": "*/*"
-                          }
-                        ],
-                        "body": {
-                          "mode": "raw",
-                          "raw": "{\n  \"contrasena\": \"stringstring\",\n  \"correo\": \"string\"\n}",
-                          "options": {
-                            "raw": {
-                              "headerFamily": "json",
-                              "language": "json"
-                            }
-                          }
-                        },
-                        "url": {
-                          "raw": "{{baseUrl}}/api/auth/registro",
-                          "host": [
-                            "{{baseUrl}}"
-                          ],
-                          "path": [
-                            "api",
-                            "auth",
-                            "registro"
-                          ]
-                        }
-                      },
-                      "status": "OK",
-                      "code": 200,
-                      "_postman_previewlanguage": "text",
-                      "header": [
-                        {
-                          "key": "Content-Type",
-                          "value": "*/*"
-                        }
-                      ],
-                      "cookie": [],
-                      "body": "{\n  \"id\": 9372,\n  \"correo\": \"string\",\n  \"rol\": \"string\"\n}"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "login",
-              "item": [
-                {
-                  "name": "login",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "type": "text/javascript",
-                        "exec": [
-                          "pm.collectionVariables.set(\"token\", pm.response.json().token);"
-                        ]
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [
-                      {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                      },
-                      {
-                        "key": "Accept",
-                        "value": "*/*"
-                      }
-                    ],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "   { \"correo\": \"prueba2@correo.com\", \"contrasena\": \"clave12345\" }",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{baseUrl}}/api/auth/login",
-                      "host": [
-                        "{{baseUrl}}"
-                      ],
-                      "path": [
-                        "api",
-                        "auth",
-                        "login"
-                      ]
-                    }
-                  },
-                  "response": [
-                    {
-                      "name": "OK",
-                      "originalRequest": {
-                        "method": "POST",
-                        "header": [
-                          {
-                            "key": "Content-Type",
-                            "value": "application/json"
-                          },
-                          {
-                            "key": "Accept",
-                            "value": "*/*"
-                          }
-                        ],
-                        "body": {
-                          "mode": "raw",
-                          "raw": "{\n  \"contrasena\": \"string\",\n  \"correo\": \"string\"\n}",
-                          "options": {
-                            "raw": {
-                              "headerFamily": "json",
-                              "language": "json"
-                            }
-                          }
-                        },
-                        "url": {
-                          "raw": "{{baseUrl}}/api/auth/login",
-                          "host": [
-                            "{{baseUrl}}"
-                          ],
-                          "path": [
-                            "api",
-                            "auth",
-                            "login"
-                          ]
-                        }
-                      },
-                      "status": "OK",
-                      "code": 200,
-                      "_postman_previewlanguage": "text",
-                      "header": [
-                        {
-                          "key": "Content-Type",
-                          "value": "*/*"
-                        }
-                      ],
-                      "cookie": [],
-                      "body": "{\n  \"token\": \"string\"\n}"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "usuarios",
-          "item": [
-            {
-              "name": "me",
-              "item": [
-                {
-                  "name": "obtener Usuario Actual",
-                  "request": {
-                    "auth": {
-                      "type": "bearer",
-                      "bearer": [
-                        {
-                          "key": "token",
-                          "value": "{{token}}",
-                          "type": "string"
-                        }
-                      ]
-                    },
-                    "method": "GET",
-                    "header": [
-                      {
-                        "key": "Accept",
-                        "value": "*/*"
-                      }
-                    ],
-                    "url": {
-                      "raw": "{{baseUrl}}/api/usuarios/me",
-                      "host": [
-                        "{{baseUrl}}"
-                      ],
-                      "path": [
-                        "api",
-                        "usuarios",
-                        "me"
-                      ]
-                    }
-                  },
-                  "response": [
-                    {
-                      "name": "OK",
-                      "originalRequest": {
-                        "method": "GET",
-                        "header": [
-                          {
-                            "key": "Accept",
-                            "value": "*/*"
-                          },
-                          {
-                            "description": "Added as a part of security scheme: bearer",
-                            "key": "Authorization",
-                            "value": "Bearer <token>"
-                          }
-                        ],
-                        "url": {
-                          "raw": "{{baseUrl}}/api/usuarios/me",
-                          "host": [
-                            "{{baseUrl}}"
-                          ],
-                          "path": [
-                            "api",
-                            "usuarios",
-                            "me"
-                          ]
-                        }
-                      },
-                      "status": "OK",
-                      "code": 200,
-                      "_postman_previewlanguage": "text",
-                      "header": [
-                        {
-                          "key": "Content-Type",
-                          "value": "*/*"
-                        }
-                      ],
-                      "cookie": [],
-                      "body": "{\n  \"id\": 2519,\n  \"correo\": \"string\",\n  \"rol\": \"string\",\n  \"nivel\": \"string\",\n  \"fechaRegistro\": \"1966-11-25T16:06:29.312Z\"\n}"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "noticias",
-          "item": [
-            {
-              "name": "listar",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Accept",
-                    "value": "*/*"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseUrl}}/api/noticias",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "noticias"
-                  ]
-                }
-              },
-              "response": [
-                {
-                  "name": "OK",
-                  "originalRequest": {
-                    "method": "GET",
-                    "header": [
-                      {
-                        "key": "Accept",
-                        "value": "*/*"
-                      }
-                    ],
-                    "url": {
-                      "raw": "{{baseUrl}}/api/noticias",
-                      "host": [
-                        "{{baseUrl}}"
-                      ],
-                      "path": [
-                        "api",
-                        "noticias"
-                      ]
-                    }
-                  },
-                  "status": "OK",
-                  "code": 200,
-                  "_postman_previewlanguage": "text",
-                  "header": [
-                    {
-                      "key": "Content-Type",
-                      "value": "*/*"
-                    }
-                  ],
-                  "cookie": [],
-                  "body": "[\n  {\n    \"id\": 986,\n    \"titulo\": \"string\",\n    \"resumen\": \"string\",\n    \"contenido\": \"string\",\n    \"fechaPublicacion\": \"2006-04-20T13:04:42.411Z\",\n    \"oficial\": true,\n    \"ciudad\": \"string\"\n  },\n  {\n    \"id\": 8457,\n    \"titulo\": \"string\",\n    \"resumen\": \"string\",\n    \"contenido\": \"string\",\n    \"fechaPublicacion\": \"1953-12-18T19:22:46.337Z\",\n    \"oficial\": false,\n    \"ciudad\": \"string\"\n  }\n]"
-                }
-              ]
-            },
-            {
-              "name": "publicar noticia",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{token}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"titulo\": \"Cierre de la vía principal\",\r\n  \"resumen\": \"Obras hasta el viernes\",\r\n  \"contenido\": \"La alcaldía informa que la vía estará cerrada.\",\r\n  \"ciudadId\": 1\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/noticias",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "noticias"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "ver noticia",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/api/noticias/2",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "noticias",
-                    "2"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        }
-      ]
-    }
-  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
   "variable": [
     {
       "key": "baseUrl",
@@ -423,6 +23,973 @@
     {
       "key": "token",
       "value": ""
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "ciudadId",
+      "value": "1"
+    },
+    {
+      "key": "noticiaId",
+      "value": "1"
+    },
+    {
+      "key": "comentarioId",
+      "value": "1"
+    },
+    {
+      "key": "reporteId",
+      "value": "1"
+    },
+    {
+      "key": "notificacionId",
+      "value": "1"
+    },
+    {
+      "key": "usuarioId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Registrarse",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"nuevo@correo.com\",\n  \"contrasena\": \"clave12345\",\n  \"nombre\": \"Vecino nuevo\",\n  \"ciudadId\": {{ciudadId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Iniciar sesión (usuario)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde bien\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+                  "if (pm.response.code === 200 || pm.response.code === 201) { pm.collectionVariables.set(\"token\", pm.response.json().token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"vecina@aldia.com\",\n  \"contrasena\": \"Usuario12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Iniciar sesión (administrador)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde bien\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+                  "if (pm.response.code === 200 || pm.response.code === 201) { pm.collectionVariables.set(\"tokenAdmin\", pm.response.json().token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"admin@aldia.com\",\n  \"contrasena\": \"Admin12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mi perfil",
+      "item": [
+        {
+          "name": "Ver mi perfil, nivel y cupo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar nombre o ciudad",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Laura Méndez\",\n  \"ciudadId\": {{ciudadId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Noticias",
+      "item": [
+        {
+          "name": "Listar (filtros opcionales)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias?tipo=TODAS&ciudadId={{ciudadId}}&q=feria&orden=RECOMENDADAS",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "TODAS"
+                },
+                {
+                  "key": "ciudadId",
+                  "value": "{{ciudadId}}"
+                },
+                {
+                  "key": "q",
+                  "value": "feria"
+                },
+                {
+                  "key": "orden",
+                  "value": "RECOMENDADAS"
+                }
+              ]
+            },
+            "description": "tipo: TODAS, OFICIALES o COMUNITARIAS. orden: RECIENTES o RECOMENDADAS. Todos son opcionales.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver una noticia",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias/{{noticiaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias",
+                "{{noticiaId}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publicar (JSON, sin fotos)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde bien\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+                  "if (pm.response.code === 200 || pm.response.code === 201) { pm.collectionVariables.set(\"noticiaId\", pm.response.json().id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Cierre de la vía principal\",\n  \"resumen\": \"Por obras\",\n  \"contenido\": \"La vía estará cerrada el sábado.\",\n  \"ciudadId\": {{ciudadId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publicar con fotos (multipart)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde bien\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+                  "if (pm.response.code === 200 || pm.response.code === 201) { pm.collectionVariables.set(\"noticiaId\", pm.response.json().id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias"
+              ]
+            },
+            "description": "Parte «datos» con el JSON (tipo application/json) y hasta 4 partes «imagenes» (JPEG, PNG o WebP). Elige los archivos en Body › form-data.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "datos",
+                  "type": "text",
+                  "contentType": "application/json",
+                  "value": "{\"titulo\":\"Así quedó el parque\",\"resumen\":\"Con fotos\",\"contenido\":\"Fotos del parque después de la lluvia.\",\"ciudadId\":1,\"descripcionesImagenes\":[\"Árboles caídos\"]}"
+                },
+                {
+                  "key": "imagenes",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver una foto de la noticia",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias/{{noticiaId}}/imagenes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias",
+                "{{noticiaId}}",
+                "imagenes",
+                "1"
+              ]
+            },
+            "description": "Si la noticia no está publicada, solo responde a su autor y a los administradores.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comentarios, calificación y reportes",
+      "item": [
+        {
+          "name": "Listar comentarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias/{{noticiaId}}/comentarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias",
+                "{{noticiaId}}",
+                "comentarios"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Comentar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde bien\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+                  "if (pm.response.code === 200 || pm.response.code === 201) { pm.collectionVariables.set(\"comentarioId\", pm.response.json().id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias/{{noticiaId}}/comentarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias",
+                "{{noticiaId}}",
+                "comentarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contenido\": \"¡Gracias por avisar!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar comentario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias/{{noticiaId}}/comentarios/{{comentarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias",
+                "{{noticiaId}}",
+                "comentarios",
+                "{{comentarioId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calificar (1 a 5)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias/{{noticiaId}}/calificacion",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias",
+                "{{noticiaId}}",
+                "calificacion"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"valor\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reportar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde bien\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+                  "if (pm.response.code === 200 || pm.response.code === 201) { pm.collectionVariables.set(\"reporteId\", pm.response.json().id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/noticias/{{noticiaId}}/reportes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "noticias",
+                "{{noticiaId}}",
+                "reportes"
+              ]
+            },
+            "description": "motivo: NOTICIA_FALSA, CONTENIDO_OFENSIVO, SPAM u OTRO. Repetir responde 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"NOTICIA_FALSA\",\n  \"descripcion\": \"No es cierto\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notificaciones",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notificaciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cuántas sin leer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/no-leidas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notificaciones",
+                "no-leidas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar una como leída",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/{{notificacionId}}/leida",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notificaciones",
+                "{{notificacionId}}",
+                "leida"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar todas como leídas",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/leidas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notificaciones",
+                "leidas"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ubicación",
+      "item": [
+        {
+          "name": "Ciudades registradas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/ubicacion/ciudades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ubicacion",
+                "ciudades"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar municipio por nombre",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/ubicacion/buscar?q=Fusagasugá",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ubicacion",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Fusagasugá"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resolver por coordenadas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ubicacion/resolver",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ubicacion",
+                "resolver"
+              ]
+            },
+            "description": "Se manda idLugar (de «Buscar») o latitud y longitud.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitud\": 4.3372,\n  \"longitud\": -74.3639\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Administración",
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{tokenAdmin}}",
+            "type": "string"
+          }
+        ]
+      },
+      "item": [
+        {
+          "name": "Noticias para moderar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/noticias?estado=PUBLICADA&tipo=COMUNITARIAS",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "noticias"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "PUBLICADA"
+                },
+                {
+                  "key": "tipo",
+                  "value": "COMUNITARIAS"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ocultar / volver a publicar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/noticias/{{noticiaId}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "noticias",
+                "{{noticiaId}}",
+                "estado"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"OCULTA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar noticia",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/noticias/{{noticiaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "noticias",
+                "{{noticiaId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activar, rol o nivel de un usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/usuarios/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "usuarios",
+                "{{usuarioId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": true,\n  \"nivel\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reportes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/reportes?estado=PENDIENTE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "reportes"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "PENDIENTE"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar reporte",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/reportes/{{reporteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "reportes",
+                "{{reporteId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"REVISADO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }

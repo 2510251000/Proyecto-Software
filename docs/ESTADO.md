@@ -3,6 +3,90 @@
 Se actualiza a medida que avanza el trabajo, para poder retomarlo si la sesión se corta.
 Leyenda: ✅ hecho · 🔄 en curso · ⬜ falta
 
+## Seis fases nuevas (desde 2026-11-04, Claude Code en modo autónomo)
+
+Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas prueba y sube.
+
+| Fase | Rama | Estado |
+|---|---|---|
+| 1. Entrada con atardecer y «Hoy» tipo historias | `feature/entrada-e-historias` | ✅ |
+| 2. Imágenes en las noticias (MF02_003) | `feature/imagenes-noticias` | ✅ |
+| 3. Comentarios, calificaciones y reportes (MF03) | `feature/interaccion` | ✅ |
+| 4. Propuesta de la regla de niveles (MF04_001) | `feature/interaccion` | ✅ propuesta en `docs/PROPUESTA-NIVELES.md` (sin programar: decide el equipo) |
+| 5. Mapa de noticias (MF05_002) | `feature/mapa` | ✅ |
+| 6. Pendientes técnicos | `fix/pendientes-tecnicos` | ✅ |
+
+### Fase 1 — qué quedó
+- **Login**: cielo de noche a pantalla completa con la tarjeta al centro. La primera vez de cada
+  sesión del navegador corre la entrada de 4.8 s (el sol sale, se oculta tras las tres barras del
+  isotipo, salen las estrellas y aparece la tarjeta), con botón «Saltar». Al entrar, amanece
+  (1.6 s) y se abre «Hoy». Formulario, validación, errores y avisos siguen igual.
+- **Hoy** (`/hoy`, en el menú antes de «Portada»): saludo según la hora con el nombre, el
+  municipio letra por letra, y las noticias de hoy del municipio como historias de 5 s (barra de
+  progreso, foto que se acerca, titular palabra por palabra, toques a los lados, flechas,
+  barra espaciadora o botón para pausar, mantener presionado en el celular). Al final, «Ya estás
+  al día en…» con «Cerca de ti» (otros municipios).
+- Con «reducir movimiento» no hay animaciones ni avance automático.
+- Verificación: `ng test` 244 pruebas (32 archivos), `ng lint` limpio, `ng build` sin avisos;
+  `mvnw verify` en verde (el backend no cambió). Revisado en Edge a 1366 px y a 390 px.
+
+### Fase 2 — qué quedó
+- **Backend**: `POST /api/noticias` acepta además `multipart/form-data` (parte `datos` con el
+  mismo JSON y hasta 4 partes `imagenes`); el JSON solo sigue igual. Cada foto se valida por sus
+  primeros bytes (JPEG, PNG o WebP), por peso y por dimensiones, y se guarda **sin metadatos**
+  (JPEG y PNG se vuelven a codificar; a WebP se le quitan los bloques EXIF y XMP). Los archivos
+  van al puerto `AlmacenImagenesPuerto` (adaptador en disco, `IMAGENES_DIRECTORIO`; en Docker el
+  volumen `imagenes`). Si la base falla, se borran los archivos ya guardados.
+  `GET /api/noticias/{id}/imagenes/{orden}` las sirve con `Cache-Control`; si la noticia no está
+  publicada solo la ven su autor y los administradores. `NoticiaResponseDTO.imagenes`.
+  Migración `V4__imagenes_noticia.sql` (descripción de la foto y orden único por noticia).
+- **Frontend**: `selector-imagenes` en Publicar con «Tomar foto» (cámara del celular), «Elegir
+  fotos», arrastrar y soltar y Ctrl+V; vista previa, quitar, reordenar (la primera es la
+  portada) y «Describe la foto». Cada foto se reduce en el navegador (1600 px, JPEG 0.82, sin
+  EXIF, respetando la rotación) y se sube con barra de progreso. Las fotos reales se ven en la
+  portada, la apertura, el detalle (con galería), las historias de «Hoy» y la moderación.
+- `README.md`: cómo probar desde el celular en la misma Wi-Fi (ambiente `red`, sin IP escrita).
+- Verificación: `mvnw verify` 124 pruebas; `ng test` 270 pruebas (35 archivos); lint y build
+  limpios. Revisado en Edge (Publicar con fotos a 1280 y 390 px, detalle con galería).
+
+### Fase 3 — qué quedó
+- **Comentarios**: `GET /api/noticias/{id}/comentarios` (público), `POST` con sesión (1 a 1000
+  caracteres), `DELETE …/comentarios/{id}` (su autor o un administrador). Aviso `COMENTARIO` al
+  autor de la noticia e historial `COMENTARIO`.
+- **Calificaciones**: `PUT /api/noticias/{id}/calificacion` con `valor` de 1 a 5; una por usuario
+  (si ya calificó, se cambia); el autor no puede calificarse (403). `NoticiaResponseDTO` trae
+  `promedio`, `cantidadCalificaciones`, `miCalificacion` y `autorId`. Aviso `CALIFICACION` (solo la
+  primera vez) e historial.
+- **Reportes**: `POST /api/noticias/{id}/reportes` (motivo y descripción opcional; repetir → 409),
+  `GET /api/admin/reportes?estado=` y `PUT /api/admin/reportes/{id}` (REVISADO o DESCARTADO).
+  Historial `REPORTE`.
+- **Frontend**: en el detalle, estrellas (grupo de radios), comentarios con su formulario y botón
+  «Reportar» con diálogo de motivos. En Administración, pestaña «Reportes» que también oculta la
+  noticia reportada con la moderación de siempre.
+- No hizo falta migración: las tablas `comentario`, `calificacion` y `reporte` ya existían en V1.
+- Verificación: `mvnw verify` 142 pruebas; `ng test` 292 (37 archivos); lint y build limpios.
+
+### Fase 5 — qué quedó
+- Ruta `mapa` (en el menú, después de «Portada») con Leaflet y teselas de OpenStreetMap: un
+  marcador por noticia con latitud y longitud (azul con borde ámbar si es oficial, blanco con
+  borde azul si es de la comunidad), centrado en la ciudad del usuario, filtro por tipo y una
+  ventanita con el titular y el enlace. Debajo, la misma lista en texto.
+- El modelo `Noticia` del frontend ganó `latitud` y `longitud` (el backend ya las enviaba).
+- Verificación: `ng test` 303 (38 archivos), lint y build limpios. Revisado en Edge.
+
+### Fase 6 — qué quedó
+- **Logs** solo por consola (factor XI): nivel de `com.aldia` con `NIVEL_LOGS` y del resto con
+  `NIVEL_LOGS_GENERAL`; formato con fecha, nivel, hilo y clase. Ningún log escribe contraseñas,
+  tokens ni la clave de Google (el adaptador de Google solo registra el tipo de error).
+- **Historial**: el registro (`REGISTRO`) y cada inicio de sesión correcto (`INICIO_SESION`).
+- **Spring Boot 3.3.4 → 3.5.16** y springdoc 2.6.0 → 2.8.17. Prueba nueva de `/v3/api-docs`.
+- **Frontend**: `npm audit fix` (sin `--force`): de 33 riesgos a 22 (ver `PENDIENTES.md`).
+- **SonarQube** también corre en los push a `pre`.
+- **12 factores**: `server.shutdown: graceful` y `TIEMPO_APAGADO`.
+- **Postman**: `backend/postman/AlDia.postman_collection.json` con los 28 endpoints (29
+  peticiones), token por variable y los ids que se guardan solos.
+- Verificación: `mvnw verify` 144 pruebas; `ng test` 303; lint y build limpios.
+
 ## Punto de partida (2026-10-18)
 
 - `dev` (`cbe2b4b`): registro, login con JWT, listado de noticias y diseño «Amanecer».
@@ -92,6 +176,37 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ falta
   5. `admin@aldia.com` ocultó la noticia (el público recibe 404, el autor recibe aviso de moderación).
   6. Celular (390 px): sin desplazamiento horizontal.
 - Capturas en `docs/capturas/`.
+
+## Cambios del 2026-11-09 (rama feature/login-noticias)
+- **Login**: muro de noticias difuminado de fondo, logo grande y lema al centro, tarjeta debajo.
+  Sin entrada animada ni amanecer. Al iniciar sesión se abre la portada.
+- **«Hoy» se quitó** (ruta, menú lateral y barra inferior). Lo de la Fase 1 sobre «Hoy» y la
+  entrada con atardecer ya no aplica.
+- **Calificar al autor**: reemplaza las estrellas de la Fase 3. Dos botones en el detalle
+  («Sigue publicando así» / «No me gustó esto») y la aprobación del autor en las tarjetas y el
+  perfil. Migración V5. Detalle en `DECISIONES.md` (64 a 68).
+- **Noticias reales incluidas**: 18 noticias de la semana con foto, cita y enlace a la fuente, que
+  el backend publica solo al arrancar (`datos-iniciales/noticias`, ver `FUENTES.md` ahí mismo).
+  V6 agrega Silvania al catálogo. Detalle en `DECISIONES.md` (69 a 72).
+
+## Cambios del 2026-11-10 (rama feature/dia-en-vivo)
+Rediseño «El día en vivo» de la portada, según `docs/dia-en-vivo/ESPECIFICACION.md`. Solo frontend:
+sin endpoints, servicios ni modelos nuevos.
+- **Barra superior** en computador en todas las pantallas (el menú lateral desaparece). El celular
+  conserva sus barras.
+- **Portada de cine**: la noticia del momento a pantalla completa, con su foto, velos y tinte según
+  la hora (amanecer, día, atardecer, crepúsculo, noche).
+- **Línea del sol**: arco del amanecer al atardecer con una marca por noticia del día. Se arrastra
+  el sol (un `input type="range"`) o se toca una marca para volver atrás en el día; «Volver a
+  ahora» lo regresa. Desde las 5:30 p. m. la portada pasa a tema de noche y de 6 p. m. a 6 a. m.
+  el astro es la luna. Con noticias solo de días anteriores muestra el último día con noticias.
+- **Reloj** a la derecha, con la hora vista y los botones de día anterior y siguiente.
+- **Mosaico** debajo: ficha de foto, «Dónde está pasando» (municipios como puntos que laten; tocar
+  uno filtra), «Tu nivel» con anillo, ficha ámbar, tarjetas con foto, «Avisos cerca de ti»,
+  «Días anteriores» y «Ver más noticias».
+- Se borraron `barra-portada`, `bienvenida`, `columna-derecha` y `shared/tarjeta-noticia`.
+- La lógica del día son funciones puras en `core/utils/dia-en-vivo.ts`, con sus pruebas.
+- **Celular sin ajustar** a propósito (decisión 74).
 
 ## Bitácora
 - Ver `git log --oneline origin/dev..feature/completar-app`.

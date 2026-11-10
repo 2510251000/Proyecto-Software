@@ -27,6 +27,7 @@ import com.aldia.dominio.modelo.Nivel;
 import com.aldia.dominio.modelo.NuevoUsuario;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.salida.CifradorPuerto;
+import com.aldia.dominio.puerto.salida.HistorialRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.CiudadRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NivelRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.UsuarioRepositorioPuerto;
@@ -54,10 +55,13 @@ class RegistrarUsuarioServicioTest {
 
     private RegistrarUsuarioServicio servicio;
 
+    @Mock
+    private HistorialRepositorioPuerto historialRepositorioPuerto;
+
     @BeforeEach
     void preparar() {
         servicio = new RegistrarUsuarioServicio(usuarioRepositorioPuerto, nivelRepositorioPuerto,
-                ciudadRepositorioPuerto, cifradorPuerto, RELOJ);
+                ciudadRepositorioPuerto, cifradorPuerto, RELOJ, historialRepositorioPuerto);
     }
 
     @Test

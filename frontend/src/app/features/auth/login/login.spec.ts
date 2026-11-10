@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { RECORTES_FONDO_LOGIN } from '../../../core/constants/fondo-login.constants';
+import { NOMBRE_PORTAL, TEXTOS_PANEL_MARCA } from '../../../core/constants/marca.constants';
 import {
   MENSAJES_ERROR_HTTP,
   MENSAJES_EXITO,
@@ -72,6 +74,16 @@ describe('Login', () => {
     expect(buscar('.aviso')).toBeNull();
   });
 
+  it('muestra el logo grande con el nombre, el lema y el muro de noticias de fondo', async () => {
+    await crear();
+    expect(buscar('.marca')?.textContent).toContain(NOMBRE_PORTAL);
+    expect(buscar('.lema')?.textContent).toContain(TEXTOS_PANEL_MARCA.titularLogin);
+    const fondo = buscar('app-fondo-noticias .fondo');
+    expect(fondo?.getAttribute('aria-hidden')).toBe('true');
+    expect(fondo?.querySelectorAll('.recorte').length).toBe(RECORTES_FONDO_LOGIN.length * 2);
+    expect(fondo?.textContent).toContain(RECORTES_FONDO_LOGIN[0].titular);
+  });
+
   it('con campos vacíos muestra los errores y no llama al backend', async () => {
     await crear();
     await enviar();
@@ -105,13 +117,23 @@ describe('Login', () => {
     expect(buscar<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(true);
   });
 
-  it('con credenciales correctas redirige al listado de noticias', async () => {
+  it('con credenciales correctas lleva a la portada', async () => {
     await crear();
     await llenarValido();
     await enviar();
     respuesta.next({ token: 'abc' });
-    await fixture.whenStable();
     expect(navegar).toHaveBeenCalledWith([RUTAS.noticias]);
+  });
+
+  it('si la navegación a la portada no se da, vuelve a habilitar el formulario', async () => {
+    await crear();
+    navegar.mockResolvedValue(false);
+    await llenarValido();
+    await enviar();
+    respuesta.next({ token: 'abc' });
+    await Promise.resolve();
+    await fixture.whenStable();
+    expect(buscar<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(false);
   });
 
   it('con credenciales incorrectas muestra el error y vuelve a habilitar el botón', async () => {
@@ -143,6 +165,6 @@ describe('Login', () => {
 
   it('enlaza al registro', async () => {
     await crear();
-    expect(buscar<HTMLAnchorElement>('a')?.getAttribute('href')).toBe(`/${RUTAS.registro}`);
+    expect(buscar<HTMLAnchorElement>(`a[href="/${RUTAS.registro}"]`)).not.toBeNull();
   });
 });
