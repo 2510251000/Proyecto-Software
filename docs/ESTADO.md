@@ -185,6 +185,9 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
 - **Calificar al autor**: reemplaza las estrellas de la Fase 3. Dos botones en el detalle
   («Sigue publicando así» / «No me gustó esto») y la aprobación del autor en las tarjetas y el
   perfil. Migración V5. Detalle en `DECISIONES.md` (64 a 68).
+- **Noticias reales incluidas**: 18 noticias de la semana con foto, cita y enlace a la fuente, que
+  el backend publica solo al arrancar (`datos-iniciales/noticias`, ver `FUENTES.md` ahí mismo).
+  V6 agrega Silvania al catálogo. Detalle en `DECISIONES.md` (69 a 72).
 
 ## Bitácora
 - Ver `git log --oneline origin/dev..feature/completar-app`.

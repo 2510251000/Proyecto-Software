@@ -79,6 +79,11 @@ aldia:
     # Las noticias oficiales no cuentan contra el límite diario del nivel.
     administrador-sin-limite: ${ADMIN_SIN_LIMITE_DIARIO:true}
 
+  noticias-iniciales:
+    # Al arrancar se publican las noticias reales de datos-iniciales/noticias (con foto y la cita
+    # de la fuente) que todavía no estén. No duplica: se reconocen por el título.
+    cargar: ${NOTICIAS_INICIALES:true}
+
   notificaciones:
     maximo-listado: ${NOTIFICACIONES_MAXIMO_LISTADO:50}
 

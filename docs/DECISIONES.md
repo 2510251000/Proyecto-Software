@@ -262,3 +262,16 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     `autorAprobacion` (null sin votos), `autorVotos`, `autorVotosPositivos` y `miVoto`.
     `NoticiaResponseDTO` cambia `promedio`, `cantidadCalificaciones` y `miCalificacion` por
     `autorAprobacion`, `autorVotos` y `miVoto`; `/api/usuarios/me` agrega `aprobacion` y `votos`.
+69. **Noticias reales incluidas en la aplicación.** 18 noticias de la semana del 2 al 9 de
+    noviembre de 2026 (Fusagasugá, Soacha, Zipaquirá, Chía, Girardot, Facatativá y Silvania) viven
+    en `backend/src/main/resources/datos-iniciales/noticias/` (JSON + fotos). Al arrancar,
+    `CargaNoticiasIniciales` publica las que falten (se reconocen por el título), en todos los
+    ambientes; se apaga con `NOTICIAS_INICIALES=false`. Los textos son resúmenes propios y cada
+    noticia termina con «Fuente: medio. Nota original: enlace» y «Foto: medio» (pedido de Sebastián:
+    citar y enlazar la fuente). Las fotos pasan por el almacén de imágenes (disco o nube).
+70. Si la cuenta de demostración que publica una noticia inicial no existe (por ejemplo, en
+    producción), la publica el primer administrador activo. (decidido por Claude Code; revisar)
+71. V6 agrega Silvania al catálogo de ciudades (una de las noticias es de allí), con los datos de
+    Nominatim; si ya existe, no hace nada.
+72. Las direcciones http(s) del contenido de una noticia se muestran como enlaces que abren en
+    otra pestaña; el resto sigue siendo texto plano, nunca HTML.

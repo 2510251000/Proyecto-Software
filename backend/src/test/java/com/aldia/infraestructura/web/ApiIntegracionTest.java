@@ -42,6 +42,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import com.aldia.dominio.modelo.UbicacionEncontrada;
 import com.aldia.dominio.puerto.salida.GeocodificadorPuerto;
+import com.aldia.infraestructura.datosiniciales.CargaNoticiasIniciales;
+import com.aldia.infraestructura.datosiniciales.NoticiaInicial;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -76,6 +78,9 @@ class ApiIntegracionTest {
 
     @Autowired
     private JdbcTemplate jdbc;
+
+    @Autowired
+    private CargaNoticiasIniciales cargaNoticiasIniciales;
 
     private static EmbeddedPostgres arrancarBase() {
         try {
@@ -529,5 +534,21 @@ class ApiIntegracionTest {
         JsonNode documento = leer(get("/v3/api-docs"), 200);
         assertThat(documento.get("paths").has("/api/noticias/{noticiaId}/comentarios")).isTrue();
         assertThat(documento.get("paths").has("/api/noticias/{id}/imagenes/{orden}")).isTrue();
+    }
+
+    @Test
+    void lasNoticiasInicialesSePublicanUnaSolaVezConFotoYFuente() throws Exception {
+        List<String> titulos = cargaNoticiasIniciales.leer().stream().map(NoticiaInicial::titulo).toList();
+        String contar = "SELECT COUNT(*) FROM noticia WHERE titulo = ANY (?)";
+        String[] arreglo = titulos.toArray(String[]::new);
+        assertThat(jdbc.queryForObject(contar, Integer.class, (Object) arreglo)).isEqualTo(titulos.size());
+
+        cargaNoticiasIniciales.run(null);
+        assertThat(jdbc.queryForObject(contar, Integer.class, (Object) arreglo)).isEqualTo(titulos.size());
+
+        Long id = jdbc.queryForObject("SELECT id FROM noticia WHERE titulo = ?", Long.class, titulos.get(0));
+        JsonNode noticia = leer(get("/api/noticias/" + id), 200);
+        assertThat(noticia.get("contenido").asText()).contains("Nota original: https://");
+        mvc.perform(get("/api/noticias/" + id + "/imagenes/1")).andExpect(status().isOk());
     }
 }
