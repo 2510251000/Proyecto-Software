@@ -117,6 +117,20 @@ describe('Listado', () => {
     expect(cine()).toBeNull();
   });
 
+  it('sin noticias conserva «Avisos cerca de ti» (y «Tu nivel» cuando llega el perfil)', async () => {
+    respuesta.next([]);
+    await fixture.whenStable();
+    expect(buscar('.fichas-propias app-avisos-cerca')).not.toBeNull();
+    // En estas pruebas el perfil nunca llega: «Tu nivel» espera a tenerlo.
+    expect(buscar('.fichas-propias app-tu-nivel')).toBeNull();
+  });
+
+  it('si falla la carga también deja sus fichas debajo del error', async () => {
+    respuesta.error({ estado: 500, mensaje: MENSAJES_ERROR_HTTP.generico });
+    await fixture.whenStable();
+    expect(buscar('.fichas-propias app-avisos-cerca')).not.toBeNull();
+  });
+
   it('muestra el error y permite reintentar', async () => {
     const error: ErrorApi = { estado: 403, mensaje: MENSAJES_ERROR_HTTP.generico };
     respuesta.error(error);

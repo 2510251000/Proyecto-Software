@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
@@ -44,6 +45,7 @@ import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNot
 @Component({
   selector: 'app-listado',
   imports: [
+    NgTemplateOutlet,
     AvisosCerca,
     Boton,
     EsqueletoPortada,

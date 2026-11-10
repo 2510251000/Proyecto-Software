@@ -50,6 +50,18 @@
   margin: 0 0 var(--espacio-s);
 }
 
+/* «Tu nivel» y «Avisos cerca de ti» debajo del mensaje cuando no hay mosaico. */
+.fichas-propias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.fichas-propias > * {
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
 .estado-error {
   border-color: var(--color-error);
   color: var(--color-error);

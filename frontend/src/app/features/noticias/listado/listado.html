@@ -52,6 +52,7 @@
           <p>{{ mensaje }}</p>
           <app-boton (click)="cargar()">{{ textosPortada.reintentar }}</app-boton>
         </div>
+        <ng-container [ngTemplateOutlet]="fichasPropias" />
       } @else if (noticias().length === 0) {
         <div class="estado">
           <svg class="dibujo" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
@@ -61,6 +62,7 @@
           <p>{{ textoBuscado() === '' ? textosPortada.sinNoticias : textosPortada.sinResultados }}</p>
           <app-boton variante="secundaria" (click)="cargar()">{{ textosPortada.actualizar }}</app-boton>
         </div>
+        <ng-container [ngTemplateOutlet]="fichasPropias" />
       } @else {
         <app-mosaico
           [delDia]="delDia()"
@@ -92,6 +94,16 @@
     </div>
   </main>
 </app-marco>
+
+<!-- Sin noticias, o si falla la carga, el mosaico conserva «Tu nivel» y «Avisos cerca de ti». -->
+<ng-template #fichasPropias>
+  <div class="fichas-propias">
+    @if (perfil(); as perfil) {
+      <app-tu-nivel [perfil]="perfil" />
+    }
+    <app-avisos-cerca />
+  </div>
+</ng-template>
 
 <!-- La vista rápida de la noticia se queda en claro aunque la portada esté de noche. -->
 <app-modal-noticia data-tema="dia" [noticia]="noticiaAbierta()" (cerrada)="noticiaAbierta.set(null)" />

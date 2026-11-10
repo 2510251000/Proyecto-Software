@@ -2,99 +2,84 @@
   display: block;
 }
 
-/* La misma forma del feed: dos publicaciones grandes y tarjetas compactas en dos columnas. */
-.esqueleto,
-.seccion {
+/* La misma forma de la portada: el bloque oscuro y, debajo, las dos filas del mosaico. */
+.esqueleto {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
-.tarjeta {
+/* Bloque oscuro sin foto, del color de la portada de cine. */
+.portada {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  min-height: 420px;
+  padding: clamp(22px, 4vw, 48px);
+  border-radius: var(--radio-ficha);
+  background: var(--color-marca-oscuro);
+}
+
+.portada .bloque {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.linea {
+  height: 1rem;
+}
+
+.chip {
+  width: 8rem;
+}
+
+.titular {
+  width: min(36rem, 90%);
+  height: 2.25rem;
+}
+
+.corta {
+  width: min(22rem, 60%);
+}
+
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.ficha {
   border: 1px solid var(--color-linea);
-  border-radius: var(--radio-m);
-  background: var(--color-tarjeta);
-}
-
-.grande {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 22px;
-}
-
-.autor {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.compactas {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.compacta {
-  display: flex;
-  gap: 14px;
-  padding: 14px;
-}
-
-.texto {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-
-.bloque {
-  border-radius: var(--radio-chip);
+  border-radius: var(--radio-ficha);
   background: var(--color-superficie-2);
   animation: respirar 1.6s ease-in-out infinite;
 }
 
-.etiqueta {
-  width: 11rem;
-  height: 0.75rem;
-  margin-top: 8px;
+.alta {
+  min-height: 410px;
 }
 
-.avatar {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radio-s);
+.baja {
+  flex: 3 1 260px;
+  min-height: 290px;
 }
 
-.linea {
-  height: 0.9rem;
+/* Los mismos anchos 5 : 4 : 3 del mosaico. */
+.grande {
+  flex: 5 1 420px;
 }
 
-.nombre {
-  width: 40%;
+.mapa {
+  flex: 4 1 340px;
 }
 
-.titulo {
-  width: 85%;
-  height: 1.8rem;
+.nivel {
+  flex: 3 1 260px;
 }
 
-.corta {
-  width: 35%;
-}
-
-.foto {
-  aspect-ratio: 2 / 1;
-  border-radius: var(--radio-s);
-}
-
-.miniatura {
-  flex: none;
-  width: 104px;
-  height: 78px;
-  border-radius: var(--radio-s);
+.bloque {
+  border-radius: var(--radio-chip);
+  animation: respirar 1.6s ease-in-out infinite;
 }
 
 @keyframes respirar {
@@ -103,15 +88,9 @@
   }
 }
 
-/* Si el feed es angosto (tableta, celular), las compactas van en una columna. */
-@container (max-width: 640px) {
-  .compactas {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .bloque {
+  .bloque,
+  .ficha {
     animation: none;
   }
 }

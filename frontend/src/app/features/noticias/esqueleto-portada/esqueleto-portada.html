@@ -1,34 +1,21 @@
 <div class="esqueleto" role="status">
   <span class="solo-lectores-pantalla">{{ textos.cargando }}</span>
 
-  <div class="seccion" aria-hidden="true">
-    <div class="bloque etiqueta"></div>
-    @for (n of grandes; track n) {
-      <div class="tarjeta grande">
-        <div class="autor">
-          <div class="bloque avatar"></div>
-          <div class="bloque linea nombre"></div>
-        </div>
-        <div class="bloque linea titulo"></div>
-        <div class="bloque linea"></div>
-        <div class="bloque foto"></div>
-      </div>
+  <div class="portada" aria-hidden="true">
+    <div class="bloque linea chip"></div>
+    <div class="bloque linea titular"></div>
+    <div class="bloque linea titular corta"></div>
+  </div>
+
+  <div class="fila" aria-hidden="true">
+    @for (ficha of fila1; track ficha) {
+      <div class="ficha alta" [class]="ficha"></div>
     }
   </div>
 
-  <div class="seccion" aria-hidden="true">
-    <div class="bloque etiqueta"></div>
-    <div class="compactas">
-      @for (n of compactas; track n) {
-        <div class="tarjeta compacta">
-          <div class="bloque miniatura"></div>
-          <div class="texto">
-            <div class="bloque linea nombre"></div>
-            <div class="bloque linea"></div>
-            <div class="bloque linea corta"></div>
-          </div>
-        </div>
-      }
-    </div>
+  <div class="fila" aria-hidden="true">
+    @for (n of fila2; track n) {
+      <div class="ficha baja"></div>
+    }
   </div>
 </div>
