@@ -1,40 +1,21 @@
 <nav class="menu" [attr.aria-label]="textos.menu">
   <a class="enlace" [routerLink]="['/', rutas.noticias]" routerLinkActive="activo" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">
-    <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />
-    </svg>
     {{ textos.portada }}
   </a>
   <a class="enlace" [routerLink]="['/', rutas.mapa]" routerLinkActive="activo" ariaCurrentWhenActive="page">
-    <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z" />
-      <path d="M9 4v14M15 6v14" />
-    </svg>
     {{ textos.mapa }}
   </a>
   <a class="enlace" [routerLink]="['/', rutas.notificaciones]" routerLinkActive="activo" ariaCurrentWhenActive="page">
-    <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9" />
-      <path d="M10 20a2 2 0 0 0 4 0" />
-    </svg>
     {{ textos.notificaciones }}
     @if (noLeidas() > 0) {
       <span class="contador">{{ noLeidas() }}<span class="solo-lectores-pantalla"> {{ textos.sinLeer }}</span></span>
     }
   </a>
   <a class="enlace" [routerLink]="['/', rutas.perfil]" routerLinkActive="activo" ariaCurrentWhenActive="page">
-    <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21a8 8 0 0 1 16 0" />
-    </svg>
     {{ textos.perfil }}
   </a>
   @if (esAdministrador) {
     <a class="enlace" [routerLink]="['/', rutas.admin]" routerLinkActive="activo" ariaCurrentWhenActive="page">
-      <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z" />
-        <path d="M9 12l2 2 4-4" />
-      </svg>
       {{ textos.admin }}
     </a>
   }

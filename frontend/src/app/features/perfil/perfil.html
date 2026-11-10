@@ -64,7 +64,7 @@
         <app-boton tipo="submit" [cargando]="guardando()">{{ textos.guardar }}</app-boton>
       </form>
 
-      <!-- En el celular no hay menú lateral: la cuenta y «Salir» quedan aquí. -->
+      <!-- En tableta y celular no hay barra superior: la cuenta y «Salir» quedan aquí. -->
       <app-usuario-marco class="cuenta-movil" [perfil]="perfil" />
     } @else if (error() === null) {
       <p role="status" class="texto-suave">{{ textosComunes.cargando }}</p>

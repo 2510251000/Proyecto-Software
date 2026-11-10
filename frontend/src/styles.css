@@ -199,6 +199,7 @@ html:has(dialog:modal) {
 
 .pagina-interna {
   max-width: 54rem;
+  margin-inline: auto;
   padding: 28px;
 }
 

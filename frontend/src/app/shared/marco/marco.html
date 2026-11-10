@@ -1,22 +1,24 @@
 <div class="marco">
   <app-barra-movil class="solo-celular" [perfil]="perfil()" />
 
-  <aside class="lateral" [attr.aria-label]="textos.lateral">
+  <header class="barra-superior">
     <a class="marca" [routerLink]="['/', rutas.noticias]">
-      <app-logo [tamano]="36" [conNombre]="true" />
+      <app-logo [tamano]="38" [conNombre]="true" />
     </a>
 
     <app-navegacion />
 
-    <a class="publicar" [routerLink]="['/', rutas.publicar]">
-      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-        <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
-      </svg>
-      {{ textos.publicar }}
-    </a>
+    <div class="acciones">
+      <a class="publicar" [routerLink]="['/', rutas.publicar]">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false">
+          <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" />
+        </svg>
+        {{ textos.publicar }}
+      </a>
 
-    <app-usuario-marco class="cuenta" [perfil]="perfil()" />
-  </aside>
+      <app-menu-cuenta [perfil]="perfil()" />
+    </div>
+  </header>
 
   <div class="contenido">
     <ng-content />

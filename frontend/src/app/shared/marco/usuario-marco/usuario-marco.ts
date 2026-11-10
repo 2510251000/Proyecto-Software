@@ -6,7 +6,10 @@ import { Perfil } from '../../../core/models/perfil.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { iniciales } from '../../../core/utils/texto';
 
-/** Pie del menú lateral: quién tiene la sesión abierta, su nivel y municipio, y «Salir». */
+/**
+ * Quién tiene la sesión abierta, su nivel y municipio, y «Salir». Va en el menú de la cuenta
+ * de la barra superior y, en tableta y celular, al final de «Mi perfil».
+ */
 @Component({
   selector: 'app-usuario-marco',
   templateUrl: './usuario-marco.html',

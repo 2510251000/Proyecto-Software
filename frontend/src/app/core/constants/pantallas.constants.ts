@@ -12,12 +12,17 @@ export const TEXTOS_NAVEGACION = {
   perfil: 'Mi perfil',
   admin: 'Administración',
   salir: 'Salir',
-  /** Nombre del menú lateral (escritorio) o de la barra inferior (celular). */
+  /** Nombre de la barra inferior (tableta y celular). */
   lateral: 'Menú',
   usuario: 'Tu cuenta',
   nivel: 'Nivel',
   buscar: 'Buscar noticias',
 } as const;
+
+/** Nombre accesible del círculo de la cuenta: «Tu cuenta: Carlos Activo, nivel 2». */
+export function etiquetaCuenta(nombre: string, nivel: number): string {
+  return `${TEXTOS_NAVEGACION.usuario}: ${nombre}, ${TEXTOS_NAVEGACION.nivel.toLowerCase()} ${nivel}`;
+}
 
 /** Id del campo de búsqueda de la portada: la lupa del celular lleva el foco ahí. */
 export const ID_BUSQUEDA_NOTICIAS = 'busqueda-noticias';

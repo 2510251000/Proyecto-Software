@@ -12,6 +12,7 @@
   align-items: flex-start;
   gap: 28px;
   max-width: 1180px;
+  margin-inline: auto;
   padding: 28px;
 }
 

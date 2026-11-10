@@ -67,7 +67,7 @@ describe('Listado', () => {
   });
 
   it('muestra el nombre del portal y pide las noticias al abrir', () => {
-    expect(buscar('aside')?.textContent).toContain('Al Día');
+    expect(buscar('header.barra-superior')?.textContent).toContain('Al Día');
     expect(listar).toHaveBeenCalledTimes(1);
   });
 

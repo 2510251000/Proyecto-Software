@@ -55,9 +55,10 @@
   display: none;
 }
 
-@media (max-width: 47.99rem) {
+@media (max-width: 63.99rem) {
   .cuenta-movil {
     display: block;
     margin-top: var(--espacio-l);
+    border-top: 1px solid var(--color-linea);
   }
 }

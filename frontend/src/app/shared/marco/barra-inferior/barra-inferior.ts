@@ -6,7 +6,7 @@ import { CampanaNotificaciones } from '../../../core/services/campana-notificaci
 
 /**
  * Menú del celular, fijo abajo: portada, publicar (el botón ámbar), mapa y
- * avisos con cuántos hay sin leer. La consulta de la campana la arranca el menú lateral.
+ * avisos con cuántos hay sin leer. La consulta de la campana la arranca la barra superior.
  */
 @Component({
   selector: 'app-barra-inferior',

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
-import { TEXTOS_NAVEGACION } from '../../core/constants/pantallas.constants';
+import { etiquetaCuenta, TEXTOS_NAVEGACION } from '../../core/constants/pantallas.constants';
 import { ROLES } from '../../core/constants/roles.constants';
 import { RUTAS } from '../../core/constants/rutas.constants';
 import { Perfil } from '../../core/models/perfil.model';
@@ -50,9 +50,10 @@ describe('Marco', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('muestra el contenido de la pantalla al lado del menú', async () => {
+  it('muestra el contenido de la pantalla debajo de la barra superior', async () => {
     const raiz = await crear(of(PERFIL));
-    expect(raiz.querySelector('aside nav')).not.toBeNull();
+    expect(raiz.querySelector('header.barra-superior nav')).not.toBeNull();
+    expect(raiz.querySelector('aside')).toBeNull();
     expect(raiz.querySelector('.contenido #pantalla')?.textContent).toContain('Contenido');
   });
 
@@ -62,9 +63,16 @@ describe('Marco', () => {
     expect(raiz.querySelector('.marca')?.getAttribute('href')).toBe(`/${RUTAS.noticias}`);
   });
 
-  it('abajo muestra las iniciales, el nombre, el nivel y el municipio', async () => {
+  it('el círculo de la cuenta lleva las iniciales y se anuncia con el nombre y el nivel', async () => {
     const raiz = await crear(of(PERFIL));
-    expect(raiz.querySelector('.iniciales')?.textContent?.trim()).toBe('CA');
+    const circulo = raiz.querySelector('.barra-superior .circulo');
+    expect(circulo?.textContent?.trim()).toBe('CA');
+    expect(circulo?.getAttribute('aria-label')).toBe(etiquetaCuenta('Carlos Activo', 2));
+  });
+
+  it('el menú de la cuenta muestra las iniciales, el nombre, el nivel y el municipio', async () => {
+    const raiz = await crear(of(PERFIL));
+    expect(raiz.querySelector('.panel .iniciales')?.textContent?.trim()).toBe('CA');
     expect(raiz.querySelector('.usuario-nombre')?.textContent?.trim()).toBe('Carlos Activo');
     expect(raiz.querySelector('.usuario-detalle')?.textContent?.trim()).toBe(`${TEXTOS_NAVEGACION.nivel} 2 · Fusagasugá`);
   });
@@ -77,6 +85,7 @@ describe('Marco', () => {
 
   it('si el perfil no carga, el menú y «Salir» siguen ahí', async () => {
     const raiz = await crear(throwError(() => new Error('sin red')));
+    expect(raiz.querySelector('.circulo')?.getAttribute('aria-label')).toBe(TEXTOS_NAVEGACION.usuario);
     expect(raiz.querySelector('.usuario-nombre')).toBeNull();
     expect(raiz.querySelector('.salir')?.textContent).toContain(TEXTOS_NAVEGACION.salir);
   });

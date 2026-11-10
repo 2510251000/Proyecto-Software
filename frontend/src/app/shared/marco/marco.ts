@@ -9,16 +9,16 @@ import { Logo } from '../logo/logo';
 import { Navegacion } from '../navegacion/navegacion';
 import { BarraInferior } from './barra-inferior/barra-inferior';
 import { BarraMovil } from './barra-movil/barra-movil';
-import { UsuarioMarco } from './usuario-marco/usuario-marco';
+import { MenuCuenta } from './menu-cuenta/menu-cuenta';
 
 /**
- * Marco común de las pantallas con sesión. Desde tableta: el menú lateral (logo, destinos,
- * «Publicar» y la cuenta) y, a la derecha, el contenido. En el celular: una barra arriba
+ * Marco común de las pantallas con sesión. En computador: una barra arriba (logo, destinos,
+ * «Publicar» y la cuenta) y, debajo, el contenido. En tableta y celular: una barra arriba
  * con el logo y las iniciales, y el menú fijo abajo.
  */
 @Component({
   selector: 'app-marco',
-  imports: [BarraInferior, BarraMovil, Logo, Navegacion, RouterLink, UsuarioMarco],
+  imports: [BarraInferior, BarraMovil, Logo, MenuCuenta, Navegacion, RouterLink],
   templateUrl: './marco.html',
   styleUrl: './marco.css',
 })

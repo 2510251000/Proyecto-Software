@@ -7,7 +7,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { CampanaNotificaciones } from '../../core/services/campana-notificaciones';
 
 /**
- * Destinos del menú lateral: portada, mapa, avisos (con cuántos hay sin leer),
+ * Destinos de la barra superior: portada, mapa, avisos (con cuántos hay sin leer),
  * perfil y administración (solo administradores).
  */
 @Component({

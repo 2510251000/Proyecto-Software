@@ -1,5 +1,6 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { TEXTOS_NAVEGACION } from '../../core/constants/pantallas.constants';
 import { Rol, ROLES } from '../../core/constants/roles.constants';
 import { RUTAS } from '../../core/constants/rutas.constants';
@@ -43,10 +44,44 @@ describe('Navegacion', () => {
     expect(menu.querySelector('.contador')?.textContent).toContain('3');
   });
 
-  it('los íconos son decorativos', async () => {
+  it('sin avisos por leer no muestra el contador', async () => {
     const menu = await crear(ROLES.usuarioComun);
-    const iconos = [...menu.querySelectorAll('svg')];
-    expect(iconos.length).toBeGreaterThan(0);
-    expect(iconos.every((icono) => icono.getAttribute('aria-hidden') === 'true')).toBe(true);
+    expect(menu.querySelector('.contador')).toBeNull();
+  });
+
+  it('los destinos van con su nombre, sin íconos, dentro de un menú con nombre', async () => {
+    const menu = await crear(ROLES.usuarioComun);
+    expect(menu.querySelector('nav')?.getAttribute('aria-label')).toBe(TEXTOS_NAVEGACION.menu);
+    expect(menu.querySelectorAll('svg')).toHaveLength(0);
+    expect([...menu.querySelectorAll('a')].map((a) => a.textContent?.trim())).toEqual([
+      TEXTOS_NAVEGACION.portada,
+      TEXTOS_NAVEGACION.mapa,
+      TEXTOS_NAVEGACION.notificaciones,
+      TEXTOS_NAVEGACION.perfil,
+    ]);
+  });
+
+  it('marca el destino de la pantalla actual con aria-current', async () => {
+    @Component({ template: '' })
+    class PantallaVacia {}
+
+    await TestBed.configureTestingModule({
+      imports: [Navegacion],
+      providers: [
+        provideRouter([{ path: RUTAS.mapa, component: PantallaVacia }]),
+        { provide: AuthService, useValue: { obtenerContenidoToken: () => ({ rol: ROLES.usuarioComun }) } },
+        campanaFalsa(),
+      ],
+    }).compileComponents();
+    await TestBed.inject(Router).navigate(['/', RUTAS.mapa]);
+    const fixture = TestBed.createComponent(Navegacion);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const menu = fixture.nativeElement as HTMLElement;
+
+    const actual = menu.querySelector('a[aria-current="page"]');
+    expect(actual?.getAttribute('href')).toBe(`/${RUTAS.mapa}`);
+    expect(actual?.classList).toContain('activo');
+    expect(menu.querySelectorAll('a[aria-current]')).toHaveLength(1);
   });
 });

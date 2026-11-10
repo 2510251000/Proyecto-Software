@@ -1,73 +1,81 @@
 :host {
   display: block;
+
+  /* Blanco translúcido sobre el azul de la barra: enlace activo y al pasar el mouse. */
+  --barra-resalte: rgba(255, 255, 255, 0.16);
+  --barra-resalte-suave: rgba(255, 255, 255, 0.08);
 }
 
-/* Desde tableta: menú lateral de 236px y el contenido a la derecha. */
 .marco {
-  display: grid;
-  grid-template-columns: 236px minmax(0, 1fr);
   min-height: 100vh;
   min-height: 100dvh;
 }
 
-.lateral {
-  position: sticky;
-  top: 0;
+/*
+  Computador: una barra arriba con el logo, los destinos y, a la derecha, «Publicar» y la
+  cuenta. Azul oscuro con letra blanca (17.3:1) en todas las pantallas.
+*/
+.barra-superior {
   display: flex;
-  flex-direction: column;
-  gap: 22px;
-  height: 100vh;
-  height: 100dvh;
-  padding: 20px 16px;
-  overflow-y: auto;
-  border-right: 1px solid var(--color-linea);
-  background: var(--color-tarjeta);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  padding: 14px clamp(24px, 4.5vw, 64px);
+  background: var(--color-marca-oscuro);
+  color: var(--color-sobre-marca);
 }
 
 .marca {
   display: inline-flex;
   align-items: center;
-  align-self: flex-start;
   min-height: var(--alto-control);
-  padding: 0 6px;
   border-radius: var(--radio-s);
-  font-size: 1.5rem;
+  color: inherit;
+  font-size: 1.5625rem;
   text-decoration: none;
 }
 
-.publicar {
+.marca:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+.acciones {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* Relleno ámbar con letra azul: 6.96:1. */
+.publicar {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-  min-height: 46px;
-  border-radius: var(--radio-s);
-  background: var(--color-marca);
-  color: var(--color-sobre-marca);
+  min-height: var(--alto-control);
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--color-sol);
+  color: var(--color-marca);
   font-size: 0.9375rem;
-  font-weight: 700;
+  font-weight: 800;
   text-decoration: none;
 }
 
 .publicar:hover {
-  background: var(--color-marca-oscuro);
-  color: var(--color-sobre-marca);
-  text-decoration: none;
+  color: var(--color-marca);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.cuenta {
-  margin-top: auto;
+/* Sobre el azul, el foco va en ámbar para que se vea. */
+.barra-superior :focus-visible {
+  outline-color: var(--color-sol);
 }
 
 .contenido {
-  grid-column: 2;
-  grid-row: 1;
   min-width: 0;
-}
-
-.lateral {
-  grid-column: 1;
-  grid-row: 1;
 }
 
 .solo-celular {
@@ -75,15 +83,12 @@
 }
 
 /*
-  Celular: el menú lateral se esconde; arriba va la barra con el logo y abajo la barra
-  fija de 76px. El contenido deja ese espacio libre al final para no quedar tapado.
+  Tableta y celular (menos de 1024px): la barra superior no cabe y se esconde; arriba va la
+  barra con el logo y abajo la barra fija de 76px. El contenido deja ese espacio libre al
+  final para no quedar tapado.
 */
-@media (max-width: 47.99rem) {
-  .marco {
-    display: block;
-  }
-
-  .lateral {
+@media (max-width: 63.99rem) {
+  .barra-superior {
     display: none;
   }
 
