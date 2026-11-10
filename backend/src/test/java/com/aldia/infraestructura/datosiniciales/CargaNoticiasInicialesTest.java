@@ -14,11 +14,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -77,6 +80,44 @@ class CargaNoticiasInicialesTest {
         when(jdbc.queryForObject(startsWith("SELECT COUNT(*)"), eq(Integer.class), any())).thenReturn(1);
         assertThat(carga.cargar(noticia)).isFalse();
         verify(almacen, never()).guardar(any(), anyString());
+    }
+
+    private void fotoGuardada(Optional<byte[]> contenido) {
+        when(jdbc.queryForObject(startsWith("SELECT COUNT(*)"), eq(Integer.class), any())).thenReturn(1);
+        when(jdbc.queryForList(startsWith("SELECT m.url"), eq(String.class), any())).thenReturn(List.of("vieja.jpg"));
+        when(almacen.leer("vieja.jpg")).thenReturn(contenido);
+    }
+
+    @Test
+    void siYaExisteYSuFotoCambioLaReemplaza() throws IOException {
+        fotoGuardada(Optional.of(new byte[] {1, 2, 3}));
+
+        assertThat(carga.cargar(noticia)).isFalse();
+        verify(almacen).guardar(any(), eq("jpg"));
+        verify(jdbc).update("UPDATE multimedia SET url = ? WHERE url = ?", "clave.jpg", "vieja.jpg");
+        verify(almacen).borrar("vieja.jpg");
+    }
+
+    @Test
+    void siYaExisteYTieneLaMismaFotoNoLaToca() throws IOException {
+        byte[] igual;
+        try (InputStream entrada = new ClassPathResource(CargaNoticiasIniciales.CARPETA + "fotos/" + noticia.foto())
+                .getInputStream()) {
+            igual = entrada.readAllBytes();
+        }
+        fotoGuardada(Optional.of(igual));
+
+        assertThat(carga.actualizarFoto(noticia)).isFalse();
+        verify(almacen, never()).guardar(any(), anyString());
+        verify(almacen, never()).borrar(anyString());
+    }
+
+    @Test
+    void siLaFotoGuardadaSePerdioLaVuelveAGuardar() throws IOException {
+        fotoGuardada(Optional.empty());
+
+        assertThat(carga.actualizarFoto(noticia)).isTrue();
+        verify(almacen).borrar("vieja.jpg");
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.aldia.infraestructura.datosiniciales;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Al arrancar, publica las noticias reales que trae la aplicación (con su foto y la cita de la
  * fuente) si todavía no están. Se reconoce cada una por su título, así que arrancar muchas veces
  * no duplica nada ni toca lo que publicaron los usuarios. La foto se guarda con el almacén de
- * imágenes de siempre (disco o nube), igual que una foto subida desde Publicar.
+ * imágenes de siempre (disco o nube), igual que una foto subida desde Publicar. Si la noticia ya
+ * está pero su foto cambió en el repositorio (por ejemplo, por una versión más nítida), se
+ * reemplaza la foto guardada.
  * Se apaga con NOTICIAS_INICIALES=false.
  */
 @Component
@@ -71,6 +74,7 @@ public class CargaNoticiasIniciales implements ApplicationRunner {
         Integer existentes = jdbc.queryForObject("SELECT COUNT(*) FROM noticia WHERE titulo = ?", Integer.class,
                 noticia.titulo());
         if (existentes != null && existentes > 0) {
+            actualizarFoto(noticia);
             return false;
         }
         Optional<Long> ciudad = primero("SELECT id FROM ciudad WHERE nombre = ?", noticia.ciudad());
@@ -88,6 +92,31 @@ public class CargaNoticiasIniciales implements ApplicationRunner {
             almacen.borrar(clave);
             throw error;
         }
+        return true;
+    }
+
+    /**
+     * Si la noticia ya está y su foto del repositorio es distinta a la guardada, guarda la nueva y
+     * borra la vieja. Devuelve true si la cambió.
+     */
+    boolean actualizarFoto(NoticiaInicial noticia) throws IOException {
+        List<String> claves = jdbc.queryForList("""
+                SELECT m.url FROM multimedia m JOIN noticia n ON n.id = m.noticia_id
+                WHERE n.titulo = ? AND m.tipo = 'IMAGEN' AND m.orden = 1
+                """, String.class, noticia.titulo());
+        if (claves.size() != 1) {
+            return false;
+        }
+        String vieja = claves.get(0);
+        byte[] nueva = foto(noticia.foto());
+        Optional<byte[]> guardada = almacen.leer(vieja);
+        if (guardada.isPresent() && Arrays.equals(guardada.get(), nueva)) {
+            return false;
+        }
+        String clave = almacen.guardar(nueva, "jpg");
+        jdbc.update("UPDATE multimedia SET url = ? WHERE url = ?", clave, vieja);
+        almacen.borrar(vieja);
+        LOG.info("Noticias iniciales: se actualizó la foto de «{}»", noticia.titulo());
         return true;
     }
 

@@ -3,7 +3,7 @@
 Noticias reales de la semana del 2 al 9 de noviembre de 2026 que la aplicación publica sola al
 arrancar (`CargaNoticiasIniciales`). Los textos son resúmenes propios; cada noticia termina con
 la cita del medio, el enlace a la nota original y el crédito de la foto, que es la del medio.
-Para agregar más: sumar una entrada a `noticias.json` y su foto en `fotos/` (JPG de hasta 960 px).
+Para agregar más: sumar una entrada a `noticias.json` y su foto en `fotos/` (JPG de hasta 1920 px de ancho, para que se vea nítida en la portada a pantalla completa).
 
 | Fecha | Municipio | Titular | Medio | Nota original |
 | --- | --- | --- | --- | --- |
