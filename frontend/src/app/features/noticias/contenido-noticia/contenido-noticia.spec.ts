@@ -4,12 +4,13 @@ import { noticiaFalsa } from '../../../../testing/noticia-falsa';
 import { ContenidoNoticia } from './contenido-noticia';
 
 describe('ContenidoNoticia', () => {
-  async function crear(imagenes = 0): Promise<HTMLElement> {
+  async function crear(imagenes = 0, contenido?: string): Promise<HTMLElement> {
     await TestBed.configureTestingModule({ imports: [ContenidoNoticia] }).compileComponents();
     const fixture = TestBed.createComponent(ContenidoNoticia);
     fixture.componentRef.setInput(
       'noticia',
       noticiaFalsa({
+        ...(contenido ? { contenido } : {}),
         imagenes: Array.from({ length: imagenes }, (_, i) => ({
           url: `/api/noticias/1/imagenes/${i + 1}`,
           orden: i + 1,
@@ -34,5 +35,17 @@ describe('ContenidoNoticia', () => {
     const raiz = await crear(0);
     expect(raiz.querySelector('.galeria')).toBeNull();
     expect(raiz.querySelector('.imagen img')).not.toBeNull();
+  });
+
+  it('la dirección de la fuente es un enlace que abre en otra pestaña; el resto sigue como texto', async () => {
+    const raiz = await crear(0, 'Primer párrafo.\n\nFuente: Medio. Nota original: https://medio.co/nota.');
+    const parrafos = raiz.querySelectorAll('.parrafo');
+    expect(parrafos).toHaveLength(2);
+    const enlace = parrafos[1].querySelector<HTMLAnchorElement>('a.enlace-fuente');
+    expect(enlace?.getAttribute('href')).toBe('https://medio.co/nota');
+    expect(enlace?.target).toBe('_blank');
+    expect(enlace?.rel).toBe('noopener noreferrer');
+    expect(parrafos[1].textContent?.replace(/\s+/g, ' ').trim()).toBe('Fuente: Medio. Nota original: https://medio.co/nota.');
+    expect(parrafos[0].querySelector('a')).toBeNull();
   });
 });
