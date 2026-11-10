@@ -189,5 +189,24 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
   el backend publica solo al arrancar (`datos-iniciales/noticias`, ver `FUENTES.md` ahí mismo).
   V6 agrega Silvania al catálogo. Detalle en `DECISIONES.md` (69 a 72).
 
+## Cambios del 2026-11-10 (rama feature/dia-en-vivo)
+Rediseño «El día en vivo» de la portada, según `docs/dia-en-vivo/ESPECIFICACION.md`. Solo frontend:
+sin endpoints, servicios ni modelos nuevos.
+- **Barra superior** en computador en todas las pantallas (el menú lateral desaparece). El celular
+  conserva sus barras.
+- **Portada de cine**: la noticia del momento a pantalla completa, con su foto, velos y tinte según
+  la hora (amanecer, día, atardecer, crepúsculo, noche).
+- **Línea del sol**: arco del amanecer al atardecer con una marca por noticia del día. Se arrastra
+  el sol (un `input type="range"`) o se toca una marca para volver atrás en el día; «Volver a
+  ahora» lo regresa. Desde las 5:30 p. m. la portada pasa a tema de noche y de 6 p. m. a 6 a. m.
+  el astro es la luna. Con noticias solo de días anteriores muestra el último día con noticias.
+- **Reloj** a la derecha, con la hora vista y los botones de día anterior y siguiente.
+- **Mosaico** debajo: ficha de foto, «Dónde está pasando» (municipios como puntos que laten; tocar
+  uno filtra), «Tu nivel» con anillo, ficha ámbar, tarjetas con foto, «Avisos cerca de ti»,
+  «Días anteriores» y «Ver más noticias».
+- Se borraron `barra-portada`, `bienvenida`, `columna-derecha` y `shared/tarjeta-noticia`.
+- La lógica del día son funciones puras en `core/utils/dia-en-vivo.ts`, con sus pruebas.
+- **Celular sin ajustar** a propósito (decisión 74).
+
 ## Bitácora
 - Ver `git log --oneline origin/dev..feature/completar-app`.

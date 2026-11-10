@@ -275,3 +275,16 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     Nominatim; si ya existe, no hace nada.
 72. Las direcciones http(s) del contenido de una noticia se muestran como enlaces que abren en
     otra pestaña; el resto sigue siendo texto plano, nunca HTML.
+
+### Rediseño «El día en vivo» (2026-11-10, rama feature/dia-en-vivo)
+73. La portada sigue `docs/dia-en-vivo/ESPECIFICACION.md`. El tema de noche es solo de la portada:
+    el modal de la noticia, el detalle y las demás pantallas siguen en claro.
+74. **El celular no se ajusta en este rediseño** (pedido de Sebastián, para no gastar más tiempo).
+    En el celular se ve la misma portada, con las barras de siempre.
+75. «Tu nivel» deja de tener el enlace «Ver mi perfil»: el perfil se abre desde el círculo con las
+    iniciales en la barra superior. (decidido por Claude Code; revisar)
+76. En «Dónde está pasando» los municipios que quedan casi a la misma altura (por ejemplo,
+    Fusagasugá y Silvania) se separan un poco en vertical para que los nombres no se monten; se
+    conserva el orden de norte a sur. El margen del área es 14 % (la especificación decía 12 %)
+    para que los nombres no se corten en los bordes. (decidido por Claude Code; revisar)
+77. Sin noticias, o si falla la carga, debajo del mensaje siguen «Tu nivel» y «Avisos cerca de ti».

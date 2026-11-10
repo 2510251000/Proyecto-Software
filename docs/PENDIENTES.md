@@ -58,3 +58,8 @@ ejemplo (`https://api-test.aldia.example`, `https://api.aldia.example`) que ya e
   cubren el endpoint con multipart y la limpieza del EXIF).
 - La visual se revisó en Edge contra una API de mentira, no contra tu base.
 
+## 9. Rediseño «El día en vivo» (2026-11-10)
+- **Celular**: la portada nueva no tiene ajustes propios para el celular (decisión 74). Si se
+  quiere, falta proponer y programar la versión de 390 px.
+- **Orden de los PR a `dev`**: hay varios abiertos que dependen unos de otros. Ver el PR de
+  `feature/dia-en-vivo` para el orden de merge.
