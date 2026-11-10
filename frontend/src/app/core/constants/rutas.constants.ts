@@ -3,6 +3,7 @@ export const RUTAS = {
   login: 'login',
   registro: 'registro',
   noticias: 'noticias',
+  mapa: 'mapa',
   publicar: 'publicar',
   perfil: 'perfil',
   notificaciones: 'notificaciones',

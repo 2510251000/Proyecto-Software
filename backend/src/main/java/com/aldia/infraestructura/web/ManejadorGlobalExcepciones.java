@@ -12,10 +12,17 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.aldia.dominio.excepcion.AccionNoPermitidaExcepcion;
 import com.aldia.dominio.excepcion.CiudadNoEncontradaExcepcion;
+import com.aldia.dominio.excepcion.ComentarioNoEncontradoExcepcion;
 import com.aldia.dominio.excepcion.DatosInvalidosExcepcion;
+import com.aldia.dominio.excepcion.ReporteDuplicadoExcepcion;
+import com.aldia.dominio.excepcion.ReporteNoEncontradoExcepcion;
+import com.aldia.dominio.excepcion.ImagenNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.NotificacionNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.ServicioUbicacionNoDisponibleExcepcion;
 import com.aldia.dominio.excepcion.UbicacionNoEncontradaExcepcion;
@@ -31,6 +38,24 @@ import com.aldia.infraestructura.web.dto.ErrorResponseDTO;
 public class ManejadorGlobalExcepciones {
 
     private static final Logger LOG = LoggerFactory.getLogger(ManejadorGlobalExcepciones.class);
+
+    private final int tamanoMaximoMb;
+
+    public ManejadorGlobalExcepciones(@Value("${aldia.imagenes.tamano-maximo-mb}") int tamanoMaximoMb) {
+        this.tamanoMaximoMb = tamanoMaximoMb;
+    }
+
+    /** Una foto (o la petición completa) pasó del límite de spring.servlet.multipart. */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponseDTO> manejarArchivoMuyGrande(MaxUploadSizeExceededException ex) {
+        return responder(HttpStatus.PAYLOAD_TOO_LARGE,
+                "Las fotos son muy pesadas: cada una puede pesar máximo " + tamanoMaximoMb + " MB");
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ErrorResponseDTO> manejarParteFaltante(MissingServletRequestPartException ex) {
+        return responder(HttpStatus.BAD_REQUEST, "Falta la parte '" + ex.getRequestPartName() + "' de la petición");
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> manejarValidacion(MethodArgumentNotValidException ex) {
@@ -67,7 +92,9 @@ public class ManejadorGlobalExcepciones {
         return responder(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
-    @ExceptionHandler({UbicacionNoEncontradaExcepcion.class, NotificacionNoEncontradaExcepcion.class})
+    @ExceptionHandler({UbicacionNoEncontradaExcepcion.class, NotificacionNoEncontradaExcepcion.class,
+            ImagenNoEncontradaExcepcion.class, ComentarioNoEncontradoExcepcion.class,
+            ReporteNoEncontradoExcepcion.class})
     public ResponseEntity<ErrorResponseDTO> manejarNoEncontrado(RuntimeException ex) {
         return responder(HttpStatus.NOT_FOUND, ex.getMessage());
     }
@@ -105,6 +132,11 @@ public class ManejadorGlobalExcepciones {
     @ExceptionHandler(UsuarioNoEncontradoExcepcion.class)
     public ResponseEntity<ErrorResponseDTO> manejarUsuarioNoEncontrado(UsuarioNoEncontradoExcepcion ex) {
         return responder(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ReporteDuplicadoExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarReporteDuplicado(ReporteDuplicadoExcepcion ex) {
+        return responder(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(UsuarioYaExisteExcepcion.class)

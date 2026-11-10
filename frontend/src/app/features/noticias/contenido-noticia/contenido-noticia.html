@@ -1,5 +1,5 @@
 <article class="noticia">
-  <app-miniatura class="imagen" [categoria]="categoria()" />
+  <app-miniatura class="imagen" [categoria]="categoria()" [foto]="portada()" />
 
   <div class="cuerpo">
     <p class="seccion">{{ seccion() }}, {{ noticia().ciudad }}</p>
@@ -30,9 +30,19 @@
 
     <p class="resumen">{{ noticia().resumen }}</p>
 
-    <!-- El contenido viene del backend: se interpola como texto, nunca como HTML. -->
+    <!-- El contenido viene del backend: se interpola como texto, nunca como HTML. Solo las
+         direcciones http(s) se vuelven enlaces, que abren en otra pestaña. -->
     @for (parrafo of parrafos(); track $index) {
-      <p class="parrafo">{{ parrafo }}</p>
+      <!-- En una sola línea: los saltos entre trozos meterían espacios de más. -->
+      <p class="parrafo">@for (trozo of parrafo; track $index) {@if (trozo.enlace) {<a class="enlace-fuente" [href]="trozo.texto" target="_blank" rel="noopener noreferrer">{{ trozo.texto }}</a>} @else {{{ trozo.texto }}}}</p>
+    }
+
+    @if (galeria().length > 0) {
+      <ul class="galeria" [attr.aria-label]="textoGaleria">
+        @for (foto of galeria(); track foto.orden) {
+          <li><app-miniatura class="foto-galeria" [categoria]="categoria()" [foto]="foto" /></li>
+        }
+      </ul>
     }
   </div>
 </article>

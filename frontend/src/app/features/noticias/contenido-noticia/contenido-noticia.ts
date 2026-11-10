@@ -1,10 +1,12 @@
 import { Component, computed, input } from '@angular/core';
 import { SECCION_POR_CATEGORIA } from '../../../core/constants/categorias.constants';
-import { ETIQUETAS_NOTICIA } from '../../../core/constants/portada.constants';
+import { ETIQUETAS_NOTICIA, TEXTOS_NOTICIA } from '../../../core/constants/portada.constants';
 import { IDIOMA } from '../../../core/constants/regional.constants';
 import { Noticia } from '../../../core/models/noticia.model';
 import { categoriaDeNoticia } from '../../../core/utils/categoria-noticia';
+import { portadaDe } from '../../../core/utils/imagenes';
 import { minutosDeLectura } from '../../../core/utils/noticia';
+import { trozosConEnlaces } from '../../../core/utils/texto';
 import { Miniatura } from '../../../shared/miniatura/miniatura';
 
 const FORMATO_FECHA = new Intl.DateTimeFormat(IDIOMA, { dateStyle: 'long', timeStyle: 'short' });
@@ -27,8 +29,12 @@ export class ContenidoNoticia {
   readonly nivelTitulo = input<1 | 2>(2);
 
   protected readonly etiquetas = ETIQUETAS_NOTICIA;
+  protected readonly textoGaleria = TEXTOS_NOTICIA.galeria;
 
   protected readonly categoria = computed(() => categoriaDeNoticia(this.noticia().titulo));
+  protected readonly portada = computed(() => portadaDe(this.noticia()));
+  /** Las fotos después de la portada. */
+  protected readonly galeria = computed(() => (this.noticia().imagenes ?? []).slice(1));
   protected readonly seccion = computed(() => SECCION_POR_CATEGORIA[this.categoria()]);
   protected readonly minutosLectura = computed(() => minutosDeLectura(this.noticia().contenido));
 
@@ -37,11 +43,15 @@ export class ContenidoNoticia {
     return Number.isNaN(fecha.getTime()) ? '' : FORMATO_FECHA.format(fecha);
   });
 
-  /** El cuerpo llega como texto plano: cada salto de línea separa un párrafo. */
+  /**
+   * El cuerpo llega como texto plano: cada salto de línea separa un párrafo, y las direcciones
+   * web (por ejemplo, la nota original citada como fuente) se vuelven enlaces.
+   */
   protected readonly parrafos = computed(() =>
     this.noticia()
       .contenido.split(/\n+/)
       .map((parrafo) => parrafo.trim())
-      .filter((parrafo) => parrafo !== ''),
+      .filter((parrafo) => parrafo !== '')
+      .map(trozosConEnlaces),
   );
 }

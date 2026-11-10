@@ -1,14 +1,15 @@
-@if (!fallo()) {
+@if (rutaFoto(); as ruta) {
   <img
-    [src]="rutaFoto()"
-    [alt]="textoAlternativo()"
+    [src]="ruta"
+    [alt]="decorativa() ? '' : textoAlternativo()"
     width="1280"
     height="720"
-    loading="lazy"
+    [attr.loading]="prioridad() ? 'eager' : 'lazy'"
+    [attr.fetchpriority]="prioridad() ? 'high' : null"
     decoding="async"
-    (error)="fallo.set(true)"
+    (error)="alFallar()"
   />
-} @else {
+} @else if (!esperando()) {
 <!-- Es decoración: el titular ya dice de qué trata la noticia. -->
 <svg
   viewBox="0 0 320 180"

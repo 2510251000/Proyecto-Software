@@ -1,0 +1,32 @@
+<form class="busqueda" role="search" (submit)="enviar($event)">
+  <label class="solo-lectores-pantalla" [for]="idCampo">{{ textos.etiqueta }}</label>
+  <svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="11" cy="11" r="7" />
+    <path d="M20 20l-3.5-3.5" />
+  </svg>
+  <input
+    [id]="idCampo"
+    class="control entrada"
+    type="search"
+    autocomplete="off"
+    enterkeyhint="search"
+    [placeholder]="textos.marcador"
+    [value]="escrito()"
+    (input)="escribir($event)"
+  />
+</form>
+
+<span class="caja-municipio">
+  <label class="solo-lectores-pantalla" for="municipio-portada">{{ textos.municipio }}</label>
+  <svg class="icono pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
+  </svg>
+  <select id="municipio-portada" class="control municipio" (change)="elegirCiudad($event)">
+    <option value="" [selected]="ciudadActiva() === null">{{ textos.todosMunicipios }} ({{ total() }})</option>
+    @for (opcion of ciudades(); track opcion.ciudad) {
+      <option [value]="opcion.ciudad" [selected]="opcion.ciudad === ciudadActiva()">
+        {{ opcion.ciudad }} ({{ opcion.cantidad }})
+      </option>
+    }
+  </select>
+</span>

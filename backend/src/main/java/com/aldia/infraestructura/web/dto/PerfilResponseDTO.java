@@ -22,7 +22,10 @@ public record PerfilResponseDTO(
         NivelDTO siguienteNivel,
         CiudadResponseDTO ciudad,
         CupoDTO cupo,
-        LocalDateTime fechaRegistro
+        LocalDateTime fechaRegistro,
+        /** % de votos «sigue publicando así» en todas sus noticias; null si nadie ha votado. */
+        Integer aprobacion,
+        long votos
 ) {
 
     public record NivelDTO(int numero, String nombre, int puntajeMinimo, int limiteNoticiasDiarias) {
@@ -55,7 +58,9 @@ public record PerfilResponseDTO(
                 NivelDTO.desde(perfil.siguienteNivel()),
                 CiudadResponseDTO.desde(usuario.getCiudad()),
                 CupoDTO.desde(perfil.cupo()),
-                usuario.getFechaRegistro()
+                usuario.getFechaRegistro(),
+                perfil.reputacion().aprobacion(),
+                perfil.reputacion().votos()
         );
     }
 }

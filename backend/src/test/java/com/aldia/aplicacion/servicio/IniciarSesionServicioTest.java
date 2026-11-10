@@ -12,7 +12,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,7 +19,9 @@ import com.aldia.dominio.excepcion.CredencialesInvalidasExcepcion;
 import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.modelo.Nivel;
 import com.aldia.dominio.modelo.Usuario;
+import com.aldia.dominio.modelo.AccionHistorial;
 import com.aldia.dominio.puerto.salida.CifradorPuerto;
+import com.aldia.dominio.puerto.salida.HistorialRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.TokenPuerto;
 import com.aldia.dominio.puerto.salida.UsuarioRepositorioPuerto;
 
@@ -40,8 +41,16 @@ class IniciarSesionServicioTest {
     @Mock
     private TokenPuerto tokenPuerto;
 
-    @InjectMocks
+    @Mock
+    private HistorialRepositorioPuerto historialRepositorioPuerto;
+
     private IniciarSesionServicio servicio;
+
+    @org.junit.jupiter.api.BeforeEach
+    void preparar() {
+        servicio = new IniciarSesionServicio(usuarioRepositorioPuerto, cifradorPuerto, tokenPuerto,
+                historialRepositorioPuerto, java.time.Clock.systemDefaultZone());
+    }
 
     private Usuario usuarioGuardado() {
         return new Usuario(1L, CORREO, CONTRASENA_CIFRADA, Usuario.Rol.USUARIO_COMUN,
@@ -58,6 +67,9 @@ class IniciarSesionServicioTest {
         String token = servicio.iniciarSesion(CORREO, CONTRASENA);
 
         assertThat(token).isEqualTo("token-generado");
+        org.mockito.Mockito.verify(historialRepositorioPuerto).registrar(org.mockito.ArgumentMatchers.eq(1L),
+                org.mockito.ArgumentMatchers.eq(AccionHistorial.INICIO_SESION), org.mockito.ArgumentMatchers.anyString(),
+                org.mockito.ArgumentMatchers.any());
     }
 
     @Test

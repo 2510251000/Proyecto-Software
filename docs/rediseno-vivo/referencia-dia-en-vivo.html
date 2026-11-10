@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Al Día · referencia «El día en vivo»</title>
+<!--
+  REFERENCIA DEL REDISEÑO «EL DÍA EN VIVO» (portada de computador).
+  Ábrela con doble clic. Funciona: arrastra el sol o toca una hora del arco.
+
+  Cómo leer este archivo:
+  1. <style>: todo el CSS del diseño (temas día y noche, animaciones, deslizador).
+  2. <template id="plantilla">: el HTML de la portada. Los {{huecos}} son valores que calcula la lógica.
+  3. <script>, parte 1 «LÓGICA»: cómo se calcula cada valor a partir de la hora. Esto es lo que se lleva a Angular.
+  4. <script>, parte 2 «MOTOR DE LA MAQUETA»: solo sirve para que esta página funcione sola. No se lleva a Angular.
+
+  Es una maqueta: los datos están escritos a mano. Las especificaciones están en REDISENO-VIVO.md.
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tema-dia{--pagina:#f7f9fc;--tarjeta:#ffffff;--sobre:#edf1f7;--linea:#e3e7ef;--riel:#7a869c;--tinta:#111827;--suave:#5c6880;--realce:#0e2551;--boton:#0e2551;--boton-tinta:#ffffff}
+.tema-noche{--pagina:#081226;--tarjeta:#0f1f3d;--sobre:#182b52;--linea:#263a63;--riel:#6b7fa8;--tinta:#f4f6fb;--suave:#a9b6cf;--realce:#f0a028;--boton:#f0a028;--boton-tinta:#0e2551}
+.portada,.portada .t{transition:background-color .7s ease,color .7s ease,border-color .7s ease,fill .7s ease,stroke .7s ease}
+.capa{transition:opacity .9s ease}
+.paneo{animation:paneo 26s ease-in-out infinite alternate}
+.sol{box-shadow:0 0 0 10px rgba(240,160,40,.16),0 0 70px 24px rgba(240,160,40,.38);transition:left .3s ease-out,top .3s ease-out;animation:respiro 4.5s ease-in-out infinite}
+.plomada{transition:left .3s ease-out,top .3s ease-out}
+.latido{transform:translate(-50%,-50%);animation:latido 2.6s ease-out infinite}
+.ficha img{transition:transform .7s ease}
+.ficha:hover img{transform:scale(1.05)}
+.ficha:hover .titular{text-decoration:underline;text-underline-offset:4px}
+.buscar::placeholder{color:#c3cde0;opacity:1}
+.rango-sol{-webkit-appearance:none;appearance:none;background:transparent;margin:0;height:44px;cursor:grab}
+.rango-sol::-webkit-slider-runnable-track{height:2px;background:var(--riel);border-radius:2px}
+.rango-sol::-moz-range-track{height:2px;background:var(--riel);border-radius:2px}
+.rango-sol::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-11px;border-radius:50%;background:#f0a028;border:4px solid var(--pagina);box-shadow:0 0 0 2px #f0a028}
+.rango-sol::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#f0a028;border:4px solid var(--pagina);box-shadow:0 0 0 2px #f0a028}
+.rango-sol:focus-visible{outline:2px solid #f0a028;outline-offset:2px;border-radius:8px}
+@keyframes paneo{from{transform:scale(1.02)}to{transform:scale(1.09)}}
+@keyframes respiro{0%,100%{box-shadow:0 0 0 10px rgba(240,160,40,.16),0 0 70px 24px rgba(240,160,40,.38)}50%{box-shadow:0 0 0 16px rgba(240,160,40,.1),0 0 90px 34px rgba(240,160,40,.5)}}
+@keyframes latido{0%{transform:translate(-50%,-50%) scale(.6);opacity:.8}100%{transform:translate(-50%,-50%) scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.paneo,.sol,.latido{animation:none}.latido{transform:translate(-50%,-50%) scale(1.7);opacity:.45}.capa,.sol,.plomada,.portada,.portada .t,.ficha img{transition:none}}
+</style>
+<style>html,body{height:100%}</style>
+</head>
+<body>
+<div id="raiz" style="min-height: 100%"></div>
+
+<template id="plantilla">
+<div class="portada {{tema}}" style="min-height: 100%; background: var(--pagina); color: var(--tinta); font-family: 'Manrope', system-ui, sans-serif;">
+
+  <header style="position: relative; overflow: hidden; background: #09193a; color: #ffffff; display: flex; flex-direction: column;">
+    <div aria-hidden="true" style="position: absolute; inset: 0;">
+      <img class="capa paneo" src="../../frontend/public/imagenes/noticias/agua.webp" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{f0}};">
+      <img class="capa paneo" src="../../frontend/public/imagenes/noticias/deporte.webp" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{f1}};">
+      <img class="capa paneo" src="../../frontend/public/imagenes/noticias/mercado.webp" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{f2}};">
+      <img class="capa paneo" src="../../frontend/public/imagenes/noticias/cultura.webp" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{f3}};">
+      <img class="capa paneo" src="../../frontend/public/imagenes/noticias/obra.webp" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{f4}};">
+      <img class="capa paneo" src="../../frontend/public/imagenes/noticias/bici.webp" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{f5}};">
+      <div style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(9,25,58,0.94) 0%, rgba(9,25,58,0.92) 46%, rgba(9,25,58,0.60) 62%, rgba(9,25,58,0.16) 80%, rgba(9,25,58,0.34) 100%);"></div>
+      <div style="position: absolute; left: 0; right: 0; top: 0; height: 150px; background: linear-gradient(180deg, rgba(9,25,58,0.88) 0%, rgba(9,25,58,0) 100%);"></div>
+      <div class="capa" style="position: absolute; inset: 0; opacity: {{tinteAmanecer}}; background: linear-gradient(180deg, rgba(31,74,138,0.34) 0%, rgba(31,74,138,0.12) 50%, rgba(240,160,40,0.44) 100%);"></div>
+      <div class="capa" style="position: absolute; inset: 0; opacity: {{tinteDia}}; background: linear-gradient(180deg, rgba(31,69,128,0.30) 0%, rgba(31,69,128,0.04) 55%, rgba(9,25,58,0.36) 100%);"></div>
+      <div class="capa" style="position: absolute; inset: 0; opacity: {{tinteAtardecer}}; background: linear-gradient(180deg, rgba(79,33,64,0.52) 0%, rgba(143,63,39,0.30) 55%, rgba(228,87,46,0.52) 100%);"></div>
+      <div class="capa" style="position: absolute; inset: 0; opacity: {{tinteAnochecer}}; background: linear-gradient(180deg, rgba(8,18,38,0.72) 0%, rgba(31,27,61,0.42) 46%, rgba(143,63,39,0.46) 78%, rgba(228,87,46,0.60) 100%);"></div>
+    </div>
+
+    <nav aria-label="Menú principal" style="position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; padding: 20px 64px;">
+      <a href="#" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px;">
+        <svg width="38" height="38" viewBox="0 0 64 64" aria-hidden="true"><rect x="1" y="1" width="62" height="62" rx="9" fill="#0e2551" stroke="#ffffff" stroke-opacity="0.35" stroke-width="2"></rect><path d="M18 35.6a14 14 0 0 1 28 0Z" fill="#f0a028"></path><rect x="12" y="37.6" width="40" height="3.8" rx="1.9" fill="#ffffff"></rect><rect x="17" y="45.2" width="30" height="2.9" rx="1.45" fill="#ffffff"></rect><rect x="22.5" y="51" width="19" height="2.9" rx="1.45" fill="#ffffff"></rect></svg>
+        <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 25px; font-weight: 700; letter-spacing: -0.02em;">Al Día</span>
+      </a>
+      <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 15px; font-weight: 600;">
+        <a href="#" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; background: rgba(255,255,255,0.16); font-weight: 800;">Portada</a>
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px;">Mapa</a>
+        <a href="#" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px;">Avisos<span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: #f0a028; color: #0e2551; font-size: 12px; font-weight: 800; display: grid; place-items: center;">2</span></a>
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px;">Mi perfil</a>
+      </div>
+      <div style="margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+        <form role="search" style="margin: 0; position: relative;">
+          <label for="buscar" class="sr">Buscar noticias</label>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="position: absolute; left: 16px; top: 14px;"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          <input id="buscar" class="buscar" type="search" placeholder="Buscar noticias" style="box-sizing: border-box; width: 220px; max-width: 100%; height: 44px; padding: 0 16px 0 42px; border: 1px solid rgba(255,255,255,0.5); border-radius: 999px; background: rgba(9,25,58,0.72); color: #ffffff; font: inherit; font-size: 14px;">
+        </form>
+        <button type="button" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1px solid rgba(255,255,255,0.5); border-radius: 999px; background: rgba(9,25,58,0.72); color: #ffffff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f0a028" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"></path></svg>Fusagasugá<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+        <a href="#" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; background: #f0a028; color: #0e2551; font-size: 15px; font-weight: 800;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0e2551" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Publicar</a>
+        <a href="#" aria-label="Tu cuenta: Carlos Activo, nivel 2" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #f0a028; background: #0e2551; color: #ffffff; display: grid; place-items: center; font-size: 13px; font-weight: 800;">CA</a>
+      </div>
+    </nav>
+
+    <div style="position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 32px 48px; padding: 40px 64px 0;">
+      <div style="flex: 1 1 520px; min-width: 0; max-width: 740px; display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 14px; font-weight: 700;">
+          <span style="display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 999px; background: {{n.chipFondo}}; color: #0e2551; font-weight: 800;">{{n.etiqueta}}</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 13px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.5); background: rgba(9,25,58,0.6);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"></path></svg>{{n.ciudad}}</span>
+          <span>{{n.hora}}</span>
+        </div>
+        <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: clamp(38px, 4.75vw, 68px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; text-shadow: 0 2px 28px rgba(9,25,58,0.6);">{{n.titulo}}</h1>
+        <p style="margin: 0; max-width: 600px; font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; line-height: 1.5; color: #e8edf6;">{{n.resumen}}</p>
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 15px;">
+          <span aria-hidden="true" style="width: 42px; height: 42px; border-radius: 12px; background: #f0a028; color: #0e2551; display: grid; place-items: center; font-size: 14px; font-weight: 800;">{{n.iniciales}}</span>
+          <div style="display: flex; flex-direction: column; gap: 1px;">
+            <span style="font-weight: 800;">{{n.autor}}</span>
+            <span style="color: #c3cde0; font-size: 14px;">{{n.lectura}}</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 6px;">
+          <a href="#" style="display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 999px; background: #f0a028; color: #0e2551; font-size: 16px; font-weight: 800;">Leer la noticia<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0e2551" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+          <a href="#" style="display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 24px; border-radius: 999px; border: 1.5px solid #ffffff; background: rgba(9,25,58,0.55); color: #ffffff; font-size: 16px; font-weight: 700;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"></path><path d="M9 4v14M15 6v14"></path></svg>Ver en el mapa</a>
+        </div>
+      </div>
+
+      <aside aria-label="Hora que estás viendo" style="flex: 0 1 330px; min-width: 0; box-sizing: border-box; border-radius: 26px; border: 1px solid rgba(255,255,255,0.22); background: rgba(9,25,58,0.92); padding: 22px 26px 24px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; text-align: right;">
+        <p style="margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="#f0a028"></circle></svg>{{relojEtiqueta}}</p>
+        <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: clamp(72px, 8vw, 116px); font-weight: 400; line-height: 0.95; letter-spacing: -0.03em; white-space: nowrap;">{{relojNum}}<span style="margin-left: 8px; font-size: 28px; letter-spacing: 0;">{{relojSufijo}}</span></p>
+        <p style="margin: 0; font-size: 15px; font-weight: 600; color: #e8edf6;">Lunes 9 de noviembre · Fusagasugá</p>
+        <p style="margin: 6px 0 0; font-size: 14px; line-height: 1.45; color: #c3cde0;">Arrastra el sol, o toca una hora del arco, para volver atrás en el día.</p>
+        <button type="button" onClick="{{volver}}" style="margin-top: 6px; display: {{volverVer}}; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border: 1.5px solid #f0a028; border-radius: 999px; background: transparent; color: #ffffff; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f0a028" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>Volver a ahora</button>
+      </aside>
+    </div>
+
+    <div style="position: relative; z-index: 1; height: 290px; margin-top: 24px;">
+      <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; left: 8%; top: 30px; width: 84%; height: 170px; overflow: visible;"><path d="M0,100 Q50,-100 100,100" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="2 8" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg>
+      <div class="sol" aria-hidden="true" style="position: absolute; z-index: 1; left: {{solX}}; top: {{solY}}; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: radial-gradient(circle at 38% 34%, #ffd98a 0%, #f0a028 58%, #e98a1c 100%);"></div>
+      <svg aria-hidden="true" viewBox="0 0 1440 120" preserveAspectRatio="none" style="position: absolute; z-index: 2; left: 0; bottom: 0; width: 100%; height: 130px;">
+        <path d="M0,44 L90,24 L170,40 L260,8 L340,32 L430,16 L520,38 L640,4 L740,30 L840,14 L930,36 L1040,2 L1130,28 L1230,12 L1320,34 L1440,10 L1440,120 L0,120 Z" fill="#09193a" fill-opacity="0.66"></path>
+        <path class="t" d="M0,62 L110,46 L210,60 L330,40 L450,58 L560,46 L690,64 L810,38 L920,56 L1050,44 L1170,60 L1290,36 L1440,52 L1440,120 L0,120 Z" style="fill: var(--pagina);"></path>
+      </svg>
+      <div class="plomada" aria-hidden="true" style="position: absolute; z-index: 3; left: {{solX}}; top: {{solY}}; bottom: 50px; width: 0; border-left: 1px dashed rgba(240,160,40,0.75);"></div>
+      <sc-for list="{{marcas}}" as="m" hint-placeholder-count="6">
+        <button type="button" onClick="{{m.ir}}" aria-label="{{m.aria}}" style="position: absolute; z-index: 3; left: {{m.x}}; top: {{m.y}}; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center;">
+          <span style="display: block; width: {{m.tam}}; height: {{m.tam}}; border-radius: 50%; background: {{m.fondo}}; box-shadow: {{m.anillo}};"></span>
+          <span style="position: absolute; left: 50%; bottom: 38px; transform: translateX(-50%); white-space: nowrap; padding: 3px 10px; border-radius: 999px; background: {{m.pildora}}; color: {{m.pildoraTinta}}; font-family: 'Manrope', system-ui, sans-serif; font-size: 12px; font-weight: 800;">{{m.hora}}</span>
+        </button>
+      </sc-for>
+      <span class="t" aria-hidden="true" style="position: absolute; z-index: 3; left: 8%; bottom: 4px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: var(--suave);">6 a. m.</span>
+      <span class="t" aria-hidden="true" style="position: absolute; z-index: 3; left: 29%; bottom: 4px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: var(--suave);">9 a. m.</span>
+      <span class="t" aria-hidden="true" style="position: absolute; z-index: 3; left: 50%; bottom: 4px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: var(--suave);">12 m.</span>
+      <span class="t" aria-hidden="true" style="position: absolute; z-index: 3; left: 71%; bottom: 4px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: var(--suave);">3 p. m.</span>
+      <span class="t" aria-hidden="true" style="position: absolute; z-index: 3; left: 92%; bottom: 4px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: var(--suave);">6 p. m.</span>
+      <label for="rango-sol" class="sr">Hora del día que quieres ver</label>
+      <input id="rango-sol" class="rango-sol" type="range" min="6.5" max="17.67" step="0.01" value="{{hora}}" onChange="{{alMover}}" style="position: absolute; z-index: 4; left: calc(11.5% - 12px); bottom: 14px; width: calc(78.19% + 24px);">
+    </div>
+  </header>
+
+  <main style="max-width: 1312px; margin: 0 auto; padding: 30px 64px 72px; display: flex; flex-direction: column; gap: 22px;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px;">
+      <h2 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 36px; font-weight: 700; letter-spacing: -0.02em;">Lo demás de hoy</h2>
+      <nav aria-label="Orden de las noticias" style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; font-weight: 700;">
+        <a href="#" aria-current="page" class="t" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; background: var(--boton); color: var(--boton-tinta);">Recomendadas</a>
+        <a href="#" class="t" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; background: var(--sobre); color: var(--tinta);">Recientes</a>
+        <a href="#" class="t" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; background: var(--sobre); color: var(--tinta);">Oficiales</a>
+        <a href="#" class="t" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; background: var(--sobre); color: var(--tinta);">Comunidad</a>
+      </nav>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+      <a href="#" class="ficha" style="flex: 5 1 420px; min-width: 0; min-height: 410px; position: relative; overflow: hidden; border-radius: 26px; background: #09193a; color: #ffffff; display: flex; flex-direction: column; justify-content: flex-end;">
+        <img src="../../frontend/public/imagenes/noticias/mercado.webp" alt="Puesto de mercado con tomates, berenjenas, calabacines y habichuelas" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+        <div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,25,58,0) 28%, rgba(9,25,58,0.72) 62%, rgba(9,25,58,0.95) 100%);"></div>
+        <div style="position: relative; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; font-weight: 800;">
+            <span style="padding: 5px 12px; border-radius: 999px; background: #ffffff; color: #0e2551;">Comunidad · Nivel 2</span>
+            <span style="padding: 5px 12px; border-radius: 999px; background: rgba(9,25,58,0.7); border: 1px solid rgba(255,255,255,0.5);">10:30 a. m.</span>
+          </div>
+          <h3 class="titular" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; font-weight: 700; line-height: 1.12; letter-spacing: -0.01em;">El mercado campesino vuelve a la plaza los domingos</h3>
+          <p style="margin: 0; font-size: 15px; color: #e8edf6;">Carlos Activo · Fusagasugá · 1 min de lectura</p>
+        </div>
+      </a>
+
+      <section aria-labelledby="titulo-mapa" style="flex: 4 1 340px; min-width: 0; min-height: 410px; box-sizing: border-box; position: relative; overflow: hidden; border-radius: 26px; background: #0e2551; color: #ffffff; padding: 26px; display: flex; flex-direction: column; gap: 4px;">
+        <svg aria-hidden="true" viewBox="0 0 400 300" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+          <path d="M-20,90 C80,40 150,120 240,80 S350,20 420,50" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.2"></path>
+          <path d="M-20,150 C70,90 140,190 220,140 S340,70 420,110" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.2"></path>
+          <path d="M-20,210 C60,150 120,250 200,200 S330,120 420,170" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.2"></path>
+          <path d="M-20,265 C50,220 130,300 210,255 S320,190 420,230" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.2"></path>
+        </svg>
+        <p style="position: relative; margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #c3cde0;">8 noticias en 4 municipios</p>
+        <h3 id="titulo-mapa" style="position: relative; margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 28px; font-weight: 700; letter-spacing: -0.01em;">Dónde está pasando</h3>
+        <div style="position: relative; flex: 1; min-height: 240px;">
+          <span aria-hidden="true" style="position: absolute; left: 66%; top: 42%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #c3cde0;"><span style="width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #c3cde0;"></span>Bogotá</span>
+          <a href="#" style="position: absolute; left: 60%; top: 12%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px;"><span style="position: relative; flex: none; width: 14px; height: 14px;"><span class="latido" style="position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #f0a028; animation-delay: 0.6s;"></span><span style="position: absolute; inset: 0; border-radius: 50%; background: #f0a028;"></span></span><span><span style="font-weight: 800;">Zipaquirá</span> · 2</span></a>
+          <a href="#" style="position: absolute; left: 24%; top: 34%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px;"><span style="position: relative; flex: none; width: 10px; height: 10px;"><span class="latido" style="position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #f0a028; animation-delay: 1.3s;"></span><span style="position: absolute; inset: 0; border-radius: 50%; background: #f0a028;"></span></span><span><span style="font-weight: 800;">Facatativá</span> · 1</span></a>
+          <a href="#" style="position: absolute; left: 48%; top: 60%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px;"><span style="position: relative; flex: none; width: 14px; height: 14px;"><span class="latido" style="position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #f0a028; animation-delay: 1.9s;"></span><span style="position: absolute; inset: 0; border-radius: 50%; background: #f0a028;"></span></span><span><span style="font-weight: 800;">Soacha</span> · 2</span></a>
+          <a href="#" aria-current="true" style="position: absolute; left: 22%; top: 86%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px 0 10px; border-radius: 999px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.4); font-size: 15px;"><span style="position: relative; flex: none; width: 20px; height: 20px;"><span class="latido" style="position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #f0a028;"></span><span style="position: absolute; inset: 0; border-radius: 50%; background: #f0a028; box-shadow: 0 0 0 3px #ffffff;"></span></span><span><span style="font-weight: 800;">Fusagasugá</span> · 3 · tu municipio</span></a>
+        </div>
+        <a href="#" style="position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 800; text-decoration: underline; text-underline-offset: 4px;">Abrir el mapa completo<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f0a028" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      </section>
+
+      <section aria-labelledby="titulo-nivel" class="t" style="flex: 3 1 260px; min-width: 0; min-height: 410px; box-sizing: border-box; border-radius: 26px; background: var(--tarjeta); border: 1px solid var(--linea); padding: 26px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+        <p class="t" style="margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave);">Tu nivel</p>
+        <div style="position: relative; width: 168px; height: 168px;">
+          <svg width="168" height="168" viewBox="0 0 120 120" role="img" aria-label="60 de 150 puntos para el nivel 3" style="transform: rotate(-90deg);"><circle class="t" cx="60" cy="60" r="52" fill="none" stroke-width="10" style="stroke: var(--sobre);"></circle><circle cx="60" cy="60" r="52" fill="none" stroke="#f0a028" stroke-width="10" stroke-linecap="round" stroke-dasharray="130.7 326.7"></circle></svg>
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+            <svg width="44" height="28" viewBox="0 0 44 28" aria-hidden="true"><path d="M8 20a14 14 0 0 1 28 0Z" fill="#f0a028"></path><rect class="t" x="2" y="22" width="40" height="3.6" rx="1.8" style="fill: var(--tinta);"></rect></svg>
+            <h3 id="titulo-nivel" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 30px; font-weight: 700;">Nivel 2</h3>
+          </div>
+        </div>
+        <p style="margin: 0; font-size: 17px; font-weight: 800;">60 de 150 puntos</p>
+        <p class="t" style="margin: 0; font-size: 14px; color: var(--suave);">Te faltan 90 para el nivel 3.</p>
+        <div class="t" style="width: 100%; height: 1px; background: var(--linea); margin: 4px 0;"></div>
+        <p style="margin: 0; font-size: 15px;">Hoy te quedan <span style="font-weight: 800;">9 de 10</span> publicaciones.</p>
+        <a href="#" class="t" style="margin-top: auto; align-self: stretch; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border-radius: 999px; background: var(--boton); color: var(--boton-tinta); font-size: 15px; font-weight: 800;">Publicar una noticia</a>
+      </section>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+      <a href="#" class="ficha" style="flex: 3 1 260px; min-width: 0; min-height: 290px; box-sizing: border-box; border-radius: 26px; background: #f0a028; color: #0e2551; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+          <span style="padding: 4px 12px; border-radius: 999px; border: 1.5px solid #0e2551; font-size: 13px; font-weight: 800;">Comunidad · Nivel 1</span>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0e2551" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <h3 class="titular" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 27px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em;">Piden semáforo en el cruce del colegio departamental</h3>
+          <p style="margin: 0; font-size: 14px; font-weight: 700;">Laura Vecina · Fusagasugá · 2:45 p. m.</p>
+        </div>
+      </a>
+
+      <a href="#" class="ficha t" style="flex: 3 1 260px; min-width: 0; min-height: 290px; box-sizing: border-box; overflow: hidden; border-radius: 26px; background: var(--tarjeta); border: 1px solid var(--linea); color: var(--tinta); display: flex; flex-direction: column;">
+        <div style="height: 150px; overflow: hidden;"><img src="../../frontend/public/imagenes/noticias/deporte.webp" alt="Niños jugando un partido de fútbol en una cancha sintética" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+        <div style="padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px;">
+            <span class="t" style="padding: 3px 10px; border-radius: 999px; background: var(--boton); color: var(--boton-tinta); font-weight: 800;">Oficial</span>
+            <span class="t" style="color: var(--suave); font-weight: 600;">Zipaquirá · 8:15 a. m.</span>
+          </div>
+          <h3 class="titular" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; font-weight: 700; line-height: 1.22;">Abren las inscripciones para las escuelas deportivas</h3>
+        </div>
+      </a>
+
+      <a href="#" class="ficha t" style="flex: 3 1 260px; min-width: 0; min-height: 290px; box-sizing: border-box; overflow: hidden; border-radius: 26px; background: var(--tarjeta); border: 1px solid var(--linea); color: var(--tinta); display: flex; flex-direction: column;">
+        <div style="height: 150px; overflow: hidden;"><img src="../../frontend/public/imagenes/noticias/agua.webp" alt="Una mano llena una botella roja en un chorro de agua" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+        <div style="padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px;">
+            <span class="t" style="padding: 3px 10px; border-radius: 999px; background: var(--boton); color: var(--boton-tinta); font-weight: 800;">Oficial</span>
+            <span class="t" style="color: var(--suave); font-weight: 600;">Soacha · 6:40 a. m.</span>
+          </div>
+          <h3 class="titular" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; font-weight: 700; line-height: 1.22;">Cortes de agua programados para este jueves</h3>
+        </div>
+      </a>
+
+      <section aria-labelledby="titulo-avisos" class="t" style="flex: 3 1 260px; min-width: 0; min-height: 290px; box-sizing: border-box; border-radius: 26px; background: var(--tarjeta); border: 1px solid var(--linea); padding: 22px 22px 16px; display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px;">
+          <h3 id="titulo-avisos" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 700;">Avisos cerca de ti</h3>
+          <span style="min-width: 24px; height: 24px; padding: 0 7px; box-sizing: border-box; border-radius: 999px; background: #f0a028; color: #0e2551; font-size: 13px; font-weight: 800; display: grid; place-items: center;">2</span>
+        </div>
+        <a href="#" class="t" style="display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--linea);"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; margin-top: 7px; border-radius: 50%; background: #f0a028;"></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 15px; font-weight: 700; line-height: 1.35;">Fusagasugá inaugura la nueva ciclorruta del centro</span><span class="t" style="font-size: 13px; color: var(--suave);">Hoy, 4:20 p. m.</span></span></a>
+        <a href="#" style="display: flex; gap: 10px; padding: 10px 0;"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; margin-top: 7px; border-radius: 50%; background: #f0a028;"></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 15px; font-weight: 700; line-height: 1.35;">Piden semáforo en el cruce del colegio departamental</span><span class="t" style="font-size: 13px; color: var(--suave);">Hoy, 2:45 p. m.</span></span></a>
+        <a href="#" class="t" style="margin-top: auto; display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 800; color: var(--realce); text-decoration: underline; text-underline-offset: 4px;">Ver todos los avisos</a>
+      </section>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px; margin-top: 14px;">
+      <h2 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 28px; font-weight: 700; letter-spacing: -0.01em;">De ayer</h2>
+      <div class="t" aria-hidden="true" style="flex: 1; height: 1px; background: var(--linea);"></div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+      <a href="#" class="ficha t" style="flex: 1 1 420px; min-width: 0; box-sizing: border-box; border-radius: 26px; background: var(--tarjeta); border: 1px solid var(--linea); color: var(--tinta); padding: 14px; display: flex; align-items: center; gap: 18px;">
+        <div style="flex: none; width: 180px; height: 128px; overflow: hidden; border-radius: 16px;"><img src="../../frontend/public/imagenes/noticias/parque.webp" alt="Voluntarias empacando bolsas bajo una carpa" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+        <div style="min-width: 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px;">
+            <span class="t" style="padding: 3px 10px; border-radius: 999px; background: var(--sobre); color: var(--realce); font-weight: 800;">Comunidad · Nivel 3</span>
+            <span class="t" style="color: var(--suave); font-weight: 600;">Soacha</span>
+          </div>
+          <h3 class="titular" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 700; line-height: 1.22;">Vecinos de La Esperanza reparan el parque por su cuenta</h3>
+          <p class="t" style="margin: 0; font-size: 14px; color: var(--suave);">María Corresponsal</p>
+        </div>
+      </a>
+      <a href="#" class="ficha t" style="flex: 1 1 420px; min-width: 0; box-sizing: border-box; border-radius: 26px; background: var(--tarjeta); border: 1px solid var(--linea); color: var(--tinta); padding: 14px; display: flex; align-items: center; gap: 18px;">
+        <div style="flex: none; width: 180px; height: 128px; overflow: hidden; border-radius: 16px;"><img src="../../frontend/public/imagenes/noticias/comida.webp" alt="Personas comiendo en mesas de una calle con puestos de comida" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+        <div style="min-width: 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px;">
+            <span class="t" style="padding: 3px 10px; border-radius: 999px; background: var(--sobre); color: var(--realce); font-weight: 800;">Comunidad · Nivel 3</span>
+            <span class="t" style="color: var(--suave); font-weight: 600;">Facatativá</span>
+          </div>
+          <h3 class="titular" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 700; line-height: 1.22;">La feria gastronómica reunirá a cuarenta emprendedores</h3>
+          <p class="t" style="margin: 0; font-size: 14px; color: var(--suave);">María Corresponsal</p>
+        </div>
+      </a>
+    </div>
+
+    <p class="t" style="margin: 18px 0 0; font-size: 13px; color: var(--suave);">Al Día · Noticias de Cundinamarca, contadas por sus municipios.</p>
+  </main>
+</div>
+</template>
+
+<script>
+/* ============ PARTE 1 · LÓGICA (esto es lo que se lleva a Angular) ============ */
+class DCLogic { constructor(props) { this.props = props || {}; } }
+
+class Component extends DCLogic {
+  state = { viaje: null };
+
+  renderVals() {
+    const AHORA = 17.67;
+    const s = this.state || {};
+    const inicial = Number(this.props.hora ?? AHORA);
+    const pedida = s.viaje === null || s.viaje === undefined ? inicial : s.viaje;
+    const hora = Math.max(6.5, Math.min(pedida, AHORA));
+
+    const noticias = [
+      { h: 6.67, hora: '6:40 a. m.', oficial: true, ciudad: 'Soacha', autor: 'Administración municipal', iniciales: 'AM',
+        titulo: 'Cortes de agua programados para este jueves',
+        resumen: 'La empresa de acueducto anunció mantenimiento en los barrios del sur entre las 8 a. m. y las 4 p. m.' },
+      { h: 8.25, hora: '8:15 a. m.', oficial: true, ciudad: 'Zipaquirá', autor: 'Administración municipal', iniciales: 'AM',
+        titulo: 'Abren las inscripciones para las escuelas deportivas',
+        resumen: 'Los cupos son gratuitos y están dirigidos a niños y jóvenes entre 6 y 17 años.' },
+      { h: 10.5, hora: '10:30 a. m.', oficial: false, nivel: 2, ciudad: 'Fusagasugá', autor: 'Carlos Activo', iniciales: 'CA',
+        titulo: 'El mercado campesino vuelve a la plaza los domingos',
+        resumen: 'Más de treinta familias de las veredas venderán frutas, verduras y lácteos sin intermediarios.' },
+      { h: 12.17, hora: '12:10 p. m.', oficial: true, ciudad: 'Zipaquirá', autor: 'Administración municipal', iniciales: 'AM',
+        titulo: 'Concierto de la banda sinfónica en la catedral de sal',
+        resumen: 'La presentación será gratuita y con aforo limitado; las boletas se reclaman en la Casa de la Cultura.' },
+      { h: 14.75, hora: '2:45 p. m.', oficial: false, nivel: 1, ciudad: 'Fusagasugá', autor: 'Laura Vecina', iniciales: 'LV',
+        titulo: 'Piden semáforo en el cruce del colegio departamental',
+        resumen: 'Padres de familia recogieron firmas para pedir un paso seguro a la salida de clases.' },
+      { h: 16.33, hora: '4:20 p. m.', oficial: true, ciudad: 'Fusagasugá', autor: 'Administración municipal', iniciales: 'AM',
+        titulo: 'Fusagasugá inaugura la nueva ciclorruta del centro',
+        resumen: 'La obra conecta el parque principal con la terminal y beneficia a más de veinte mil ciclistas.' }
+    ];
+
+    let elegida = 0;
+    noticias.forEach((nota, i) => { if (nota.h <= hora + 0.001) elegida = i; });
+    const actual = noticias[elegida];
+
+    const X0 = 8, ANCHO = 84, TOPE = 30, ALTO = 170;
+    const punto = (h) => {
+      const u = (h - 6) / 12;
+      return { x: (X0 + ANCHO * u).toFixed(2) + '%', y: (TOPE + ALTO * (1 - 4 * u * (1 - u))).toFixed(1) + 'px' };
+    };
+    const sol = punto(hora);
+
+    const momento = hora < 7.5 ? 'amanecer' : hora < 16 ? 'dia' : hora < 17.5 ? 'atardecer' : 'anochecer';
+    const visible = (si) => (si ? '1' : '0');
+
+    const total = Math.round(hora * 60);
+    const h24 = Math.floor(total / 60), minutos = total % 60;
+    const relojNum = (((h24 + 11) % 12) + 1) + ':' + String(minutos).padStart(2, '0');
+    const viajando = hora < AHORA - 0.05;
+
+    const marcas = noticias.map((nota, i) => {
+      const p = punto(nota.h), activa = i === elegida;
+      return {
+        x: p.x, y: p.y, hora: nota.hora,
+        aria: 'Ir a las ' + nota.hora + ': ' + nota.titulo,
+        tam: activa ? '20px' : '12px',
+        fondo: activa ? '#f0a028' : '#ffffff',
+        anillo: activa ? '0 0 0 5px rgba(240,160,40,0.4)' : '0 0 0 4px rgba(255,255,255,0.28)',
+        pildora: activa ? '#f0a028' : 'rgba(9,25,58,0.86)',
+        pildoraTinta: activa ? '#0e2551' : '#ffffff',
+        ir: () => this.setState({ viaje: nota.h })
+      };
+    });
+
+    return {
+      tema: momento === 'anochecer' ? 'tema-noche' : 'tema-dia',
+      f0: visible(elegida === 0), f1: visible(elegida === 1), f2: visible(elegida === 2),
+      f3: visible(elegida === 3), f4: visible(elegida === 4), f5: visible(elegida === 5),
+      tinteAmanecer: visible(momento === 'amanecer'), tinteDia: visible(momento === 'dia'),
+      tinteAtardecer: visible(momento === 'atardecer'), tinteAnochecer: visible(momento === 'anochecer'),
+      n: {
+        titulo: actual.titulo, resumen: actual.resumen, ciudad: actual.ciudad, hora: actual.hora,
+        autor: actual.autor, iniciales: actual.iniciales, lectura: '1 min de lectura',
+        etiqueta: actual.oficial ? 'Oficial' : 'Comunidad · Nivel ' + actual.nivel,
+        chipFondo: actual.oficial ? '#f0a028' : '#ffffff'
+      },
+      relojEtiqueta: viajando ? 'Estás viendo las' : 'Ahora',
+      relojNum: relojNum,
+      relojSufijo: h24 < 12 ? 'a. m.' : 'p. m.',
+      volver: () => this.setState({ viaje: AHORA }),
+      volverVer: viajando ? 'inline-flex' : 'none',
+      solX: sol.x, solY: sol.y,
+      marcas: marcas,
+      hora: hora,
+      alMover: (e) => this.setState({ viaje: Number(e.target.value) })
+    };
+  }
+}
+
+/* ============ PARTE 2 · MOTOR DE LA MAQUETA (no se lleva a Angular) ============ */
+(function () {
+  const componente = new Component({ hora: 17.67 });
+  const plantilla = document.getElementById('plantilla').innerHTML;
+  const raiz = document.getElementById('raiz');
+  let valores = null;
+
+  const buscar = (obj, ruta) => ruta.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+
+  function componer(v) {
+    let html = plantilla.replace(/<sc-for list="\{\{\s*([\w.]+)\s*\}\}" as="(\w+)"[^>]*>([\s\S]*?)<\/sc-for>/g, (_, lista, como, dentro) =>
+      (buscar(v, lista) || []).map((_item, i) => dentro.replace(new RegExp('\\{\\{\\s*' + como + '\\.', 'g'), '{{' + lista + '.' + i + '.')).join(''));
+    html = html.replace(/\son(click|change)="\{\{\s*([\w.]+)\s*\}\}"/gi, (_, evento, ruta) => ' data-on-' + evento.toLowerCase() + '="' + ruta + '"');
+    return html.replace(/\{\{\s*([\w.$]+)\s*\}\}/g, (_, ruta) => {
+      const x = buscar(v, ruta);
+      return typeof x === 'function' || x == null ? '' : String(x);
+    });
+  }
+
+  function sincronizar(viejo, nuevo) {
+    if (viejo.nodeType === 3) { if (viejo.nodeValue !== nuevo.nodeValue) viejo.nodeValue = nuevo.nodeValue; return; }
+    if (viejo.nodeType !== 1 || nuevo.nodeType !== 1) return;
+    for (const a of nuevo.attributes) if (viejo.getAttribute(a.name) !== a.value) viejo.setAttribute(a.name, a.value);
+    for (const a of [...viejo.attributes]) if (!nuevo.hasAttribute(a.name)) viejo.removeAttribute(a.name);
+    sincronizarHijos(viejo, nuevo);
+  }
+
+  function sincronizarHijos(viejo, nuevo) {
+    if (viejo.childNodes.length !== nuevo.childNodes.length) { viejo.innerHTML = nuevo.innerHTML; return; }
+    for (let i = 0; i < viejo.childNodes.length; i++) sincronizar(viejo.childNodes[i], nuevo.childNodes[i]);
+  }
+
+  function pintar() {
+    valores = componente.renderVals();
+    const html = componer(valores);
+    if (!raiz.firstChild) {
+      raiz.innerHTML = html;
+    } else {
+      const borrador = document.createElement('div');
+      borrador.innerHTML = html;
+      sincronizarHijos(raiz, borrador);
+    }
+    const rango = document.getElementById('rango-sol');
+    if (rango) rango.value = valores.hora;
+  }
+
+  componente.setState = function (cambios) { this.state = Object.assign({}, this.state, cambios); pintar(); };
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('a[href="#"]')) e.preventDefault();
+    const el = e.target.closest('[data-on-click]');
+    const accion = el && buscar(valores, el.dataset.onClick);
+    if (typeof accion === 'function') accion(e);
+  });
+  document.addEventListener('input', (e) => {
+    const el = e.target.closest('[data-on-change]');
+    const accion = el && buscar(valores, el.dataset.onChange);
+    if (typeof accion === 'function') accion(e);
+  });
+
+  pintar();
+})();
+</script>
+</body>
+</html>

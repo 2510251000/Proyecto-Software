@@ -15,13 +15,15 @@ import { ErrorApi } from '../../../core/models/error-api.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { Boton } from '../../../shared/boton/boton';
 import { Campo } from '../../../shared/campo/campo';
-import { PanelMarca } from '../panel-marca/panel-marca';
+import { Logo } from '../../../shared/logo/logo';
+import { FondoNoticias } from '../fondo-noticias/fondo-noticias';
 
+/** Login: muro de noticias de fondo, el logo grande al centro y debajo el formulario. */
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, Campo, Boton, PanelMarca],
+  imports: [ReactiveFormsModule, RouterLink, Campo, Boton, Logo, FondoNoticias],
   templateUrl: './login.html',
-  styleUrl: '../auth.css',
+  styleUrls: ['../auth.css', './login.css'],
 })
 export class Login {
   private readonly auth = inject(AuthService);
@@ -40,8 +42,8 @@ export class Login {
       inject(ActivatedRoute).snapshot.queryParamMap.get(PARAMETROS_URL.motivo) ?? '',
     ) ?? null;
 
-  protected readonly titular = TEXTOS_PANEL_MARCA.titularLogin;
   protected readonly textos = TEXTOS_AUTH;
+  protected readonly lema = TEXTOS_PANEL_MARCA.titularLogin;
   protected readonly rutas = RUTAS;
   protected readonly erroresCorreo = ERRORES_CORREO;
   protected readonly erroresContrasena = ERRORES_CONTRASENA;
@@ -58,11 +60,20 @@ export class Login {
     this.cargando.set(true);
     this.error.set(null);
     this.auth.iniciarSesion(this.formulario.getRawValue()).subscribe({
-      next: () => void this.router.navigate([RUTAS.noticias]),
+      next: () => this.irALaPortada(),
       error: (error: ErrorApi) => {
         this.error.set(error.mensaje);
         this.cargando.set(false);
       },
+    });
+  }
+
+  /** Si la navegación no se da (por ejemplo, un guard la redirige), el formulario vuelve a usarse. */
+  private irALaPortada(): void {
+    void this.router.navigate([RUTAS.noticias]).then((navego) => {
+      if (!navego) {
+        this.cargando.set(false);
+      }
     });
   }
 }

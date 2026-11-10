@@ -1,0 +1,72 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+.circulo {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid var(--color-sol);
+  border-radius: 50%;
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.icono {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* El menú cuelga del círculo, pegado al borde derecho, por encima del contenido. */
+.panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 20;
+  width: 264px;
+  padding: 4px 12px 14px;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-m);
+  background: var(--color-tarjeta);
+  box-shadow: var(--sombra-2);
+  color: var(--color-texto);
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+/* Dentro del panel el foco vuelve a su color normal. */
+.panel :focus-visible {
+  outline-color: var(--color-realce);
+}
+
+.ir-al-perfil {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--alto-control);
+  padding: 0 8px;
+  border-radius: var(--radio-s);
+  color: var(--color-realce);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ir-al-perfil:hover {
+  background: var(--color-superficie-2);
+  text-decoration: none;
+}

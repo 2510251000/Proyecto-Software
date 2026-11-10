@@ -3,6 +3,8 @@ package com.aldia.infraestructura.persistencia.adaptador;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +17,10 @@ import com.aldia.dominio.excepcion.NoticiaNoEncontradaExcepcion;
 import com.aldia.dominio.modelo.FiltroNoticias;
 import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.modelo.NuevaNoticia;
+import com.aldia.dominio.modelo.ImagenNoticia;
+import com.aldia.dominio.modelo.ReputacionAutor;
+import com.aldia.dominio.puerto.salida.CalificacionRepositorioPuerto;
+import com.aldia.dominio.puerto.salida.ImagenRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NoticiaRepositorioPuerto;
 import com.aldia.infraestructura.persistencia.entidad.NoticiaEntidad;
 import com.aldia.infraestructura.persistencia.mapeador.NoticiaMapeador;
@@ -38,15 +44,21 @@ public class NoticiaRepositorioAdaptador implements NoticiaRepositorioPuerto {
     private final UsuarioRepositorioJPA usuarioRepositorioJPA;
     private final CiudadRepositorioJPA ciudadRepositorioJPA;
     private final NoticiaMapeador mapeador;
+    private final ImagenRepositorioPuerto imagenes;
+    private final CalificacionRepositorioPuerto calificaciones;
 
     public NoticiaRepositorioAdaptador(NoticiaRepositorioJPA noticiaRepositorioJPA,
                                        UsuarioRepositorioJPA usuarioRepositorioJPA,
                                        CiudadRepositorioJPA ciudadRepositorioJPA,
-                                       NoticiaMapeador mapeador) {
+                                       NoticiaMapeador mapeador,
+                                       ImagenRepositorioPuerto imagenes,
+                                       CalificacionRepositorioPuerto calificaciones) {
         this.noticiaRepositorioJPA = noticiaRepositorioJPA;
         this.usuarioRepositorioJPA = usuarioRepositorioJPA;
         this.ciudadRepositorioJPA = ciudadRepositorioJPA;
         this.mapeador = mapeador;
+        this.imagenes = imagenes;
+        this.calificaciones = calificaciones;
     }
 
     @Override
@@ -76,23 +88,24 @@ public class NoticiaRepositorioAdaptador implements NoticiaRepositorioPuerto {
             return cb.and(predicados.toArray(Predicate[]::new));
         };
 
-        return noticiaRepositorioJPA.findAll(condiciones, PageRequest.of(0, limite, MAS_RECIENTES))
+        return conImagenes(noticiaRepositorioJPA.findAll(condiciones, PageRequest.of(0, limite, MAS_RECIENTES))
                 .stream()
                 .map(mapeador::aDominio)
-                .toList();
+                .toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Noticia> buscarPublicadaPorId(Long id) {
         return noticiaRepositorioJPA.findByIdAndEstado(id, NoticiaEntidad.Estado.PUBLICADA)
-                .map(mapeador::aDominio);
+                .map(mapeador::aDominio)
+                .map(this::conImagenes);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Noticia> buscarPorId(Long id) {
-        return noticiaRepositorioJPA.findById(id).map(mapeador::aDominio);
+        return noticiaRepositorioJPA.findById(id).map(mapeador::aDominio).map(this::conImagenes);
     }
 
     @Override
@@ -110,10 +123,10 @@ public class NoticiaRepositorioAdaptador implements NoticiaRepositorioPuerto {
             }
             return cb.and(predicados.toArray(Predicate[]::new));
         };
-        return noticiaRepositorioJPA.findAll(condiciones, PageRequest.of(0, limite, MAS_RECIENTES))
+        return conImagenes(noticiaRepositorioJPA.findAll(condiciones, PageRequest.of(0, limite, MAS_RECIENTES))
                 .stream()
                 .map(mapeador::aDominio)
-                .toList();
+                .toList());
     }
 
     @Override
@@ -147,6 +160,26 @@ public class NoticiaRepositorioAdaptador implements NoticiaRepositorioPuerto {
         NoticiaEntidad entidad = noticiaRepositorioJPA.findById(id).orElseThrow(NoticiaNoEncontradaExcepcion::new);
         entidad.setEstado(NoticiaEntidad.Estado.valueOf(estado.name()));
         noticiaRepositorioJPA.save(entidad);
+    }
+
+    /** La noticia con sus fotos y la reputación de su autor. */
+    private Noticia conImagenes(Noticia noticia) {
+        ReputacionAutor reputacion = noticia.getAutorId() == null
+                ? ReputacionAutor.SIN_VOTOS
+                : calificaciones.reputacion(noticia.getAutorId());
+        return noticia.conImagenes(imagenes.buscarDeNoticia(noticia.getId())).conReputacionAutor(reputacion);
+    }
+
+    /** Las fotos de todas las noticias y la reputación de sus autores, con una consulta para cada cosa. */
+    private List<Noticia> conImagenes(List<Noticia> noticias) {
+        List<Long> ids = noticias.stream().map(Noticia::getId).toList();
+        Map<Long, List<ImagenNoticia>> porNoticia = imagenes.buscarDeNoticias(ids);
+        Map<Long, ReputacionAutor> reputaciones = calificaciones.reputaciones(
+                noticias.stream().map(Noticia::getAutorId).filter(Objects::nonNull).distinct().toList());
+        return noticias.stream()
+                .map(n -> n.conImagenes(porNoticia.getOrDefault(n.getId(), List.of()))
+                        .conReputacionAutor(reputaciones.get(n.getAutorId())))
+                .toList();
     }
 
     private static Expression<String> sinTildes(jakarta.persistence.criteria.CriteriaBuilder cb,

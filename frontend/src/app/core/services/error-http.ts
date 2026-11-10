@@ -12,6 +12,7 @@ const CODIGOS_CON_MENSAJE_DEL_SERVIDOR: readonly number[] = [
   CODIGOS_HTTP.solicitudInvalida,
   CODIGOS_HTTP.prohibido,
   CODIGOS_HTTP.noEncontrado,
+  CODIGOS_HTTP.cargaMuyGrande,
   CODIGOS_HTTP.demasiadasPeticiones,
   CODIGOS_HTTP.noDisponible,
 ];

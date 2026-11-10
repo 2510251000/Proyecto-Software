@@ -40,7 +40,7 @@ public class NoticiaMapeador {
     }
 
     /** Nombre si lo tiene; si no, lo que va antes de la @ del correo (el correo completo no se publica). */
-    private static String nombreVisible(UsuarioEntidad autor) {
+    public static String nombreVisible(UsuarioEntidad autor) {
         if (autor.getNombre() != null && !autor.getNombre().isBlank()) {
             return autor.getNombre();
         }

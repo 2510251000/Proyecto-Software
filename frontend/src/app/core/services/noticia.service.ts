@@ -1,8 +1,10 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ENDPOINTS, PARAMETROS_NOTICIAS } from '../constants/endpoints.constants';
+import { EXTENSION_SALIDA, PARTES_PUBLICAR } from '../constants/imagenes.constants';
+import { FotoSeleccionada, ProgresoPublicacion } from '../models/imagen.model';
 import { CriteriosNoticias, Noticia, NuevaNoticia } from '../models/noticia.model';
 import { conErrorApi } from './error-http';
 
@@ -37,4 +39,42 @@ export class NoticiaService {
   publicar(datos: NuevaNoticia): Observable<Noticia> {
     return this.http.post<Noticia>(this.url, datos).pipe(conErrorApi());
   }
+
+  /**
+   * Publica con fotos (multipart): la parte «datos» lleva el mismo JSON y cada foto va en una
+   * parte «imagenes», en orden. Va avisando el porcentaje subido y al final entrega la noticia.
+   */
+  publicarConImagenes(datos: NuevaNoticia, fotos: readonly FotoSeleccionada[]): Observable<ProgresoPublicacion> {
+    const formulario = new FormData();
+    const conDescripciones: NuevaNoticia = { ...datos, descripcionesImagenes: fotos.map((f) => f.descripcion.trim()) };
+    formulario.append(
+      PARTES_PUBLICAR.datos,
+      new Blob([JSON.stringify(conDescripciones)], { type: 'application/json' }),
+    );
+    fotos.forEach((foto, posicion) =>
+      formulario.append(PARTES_PUBLICAR.imagenes, foto.archivo, nombreJpeg(foto.nombre, posicion)),
+    );
+    return this.http
+      .post<Noticia>(this.url, formulario, { reportProgress: true, observe: 'events' })
+      .pipe(
+        map((evento): ProgresoPublicacion | null => {
+          if (evento.type === HttpEventType.UploadProgress) {
+            const total = evento.total ?? 0;
+            return { tipo: 'progreso', porcentaje: total > 0 ? Math.round((evento.loaded / total) * 100) : 0 };
+          }
+          if (evento.type === HttpEventType.Response && evento.body !== null) {
+            return { tipo: 'listo', noticia: evento.body };
+          }
+          return null;
+        }),
+        filter((progreso): progreso is ProgresoPublicacion => progreso !== null),
+        conErrorApi(),
+      );
+  }
+}
+
+/** La foto ya es JPEG: el nombre lo dice, sin la extensión que traía (que podía ser .heic o .png). */
+function nombreJpeg(nombre: string, posicion: number): string {
+  const base = nombre.replace(/\.[^.]+$/, '').trim() || `foto-${posicion + 1}`;
+  return `${base}${EXTENSION_SALIDA}`;
 }

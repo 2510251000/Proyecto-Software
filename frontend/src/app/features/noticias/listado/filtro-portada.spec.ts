@@ -1,5 +1,5 @@
 import { Noticia } from '../../../core/models/noticia.model';
-import { filtrarNoticias, mismoFiltro } from './filtro-portada';
+import { aplicarPestana, filtrarNoticias, mismoFiltro } from './filtro-portada';
 
 const AHORA = new Date('2026-09-25T12:00:00').getTime();
 const HORA = 3_600_000;
@@ -51,5 +51,25 @@ describe('mismoFiltro', () => {
     expect(mismoFiltro({ tipo: 'oficiales' }, { tipo: 'comunidad' })).toBe(false);
     expect(mismoFiltro({ tipo: 'ciudad', ciudad: 'Soacha' }, { tipo: 'ciudad', ciudad: 'Soacha' })).toBe(true);
     expect(mismoFiltro({ tipo: 'ciudad', ciudad: 'Soacha' }, { tipo: 'ciudad', ciudad: 'Chía' })).toBe(false);
+  });
+});
+
+describe('aplicarPestana', () => {
+  // Llegan en el orden de la API (recomendadas), que no es el de la fecha.
+  const EN_ORDEN_API = [noticia(1, true, 'Soacha', 5), noticia(2, false, 'Soacha', 1), noticia(3, false, 'Chía', 3)];
+  const ids = (lista: Noticia[]) => lista.map((n) => n.id);
+
+  it('«Recomendadas» conserva el orden de la API', () => {
+    expect(ids(aplicarPestana(EN_ORDEN_API, 'RECOMENDADAS'))).toEqual([1, 2, 3]);
+  });
+
+  it('«Recientes» ordena de la más nueva a la más vieja sin cambiar la lista original', () => {
+    expect(ids(aplicarPestana(EN_ORDEN_API, 'RECIENTES'))).toEqual([2, 3, 1]);
+    expect(ids(EN_ORDEN_API)).toEqual([1, 2, 3]);
+  });
+
+  it('«Oficiales» y «Comunidad» separan por quién publica', () => {
+    expect(ids(aplicarPestana(EN_ORDEN_API, 'OFICIALES'))).toEqual([1]);
+    expect(ids(aplicarPestana(EN_ORDEN_API, 'COMUNITARIAS'))).toEqual([2, 3]);
   });
 });

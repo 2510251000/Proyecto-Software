@@ -13,16 +13,19 @@ import {
   LONGITUD_MAXIMA_RESUMEN,
   LONGITUD_MAXIMA_TITULO,
 } from '../../core/constants/validacion.constants';
+import { TEXTOS_FOTOS } from '../../core/constants/imagenes.constants';
 import { ErrorApi } from '../../core/models/error-api.model';
-import { NuevaNoticia } from '../../core/models/noticia.model';
+import { FotoSeleccionada } from '../../core/models/imagen.model';
+import { Noticia, NuevaNoticia } from '../../core/models/noticia.model';
 import { Perfil } from '../../core/models/perfil.model';
 import { Ciudad } from '../../core/models/ubicacion.model';
 import { NoticiaService } from '../../core/services/noticia.service';
 import { PerfilService } from '../../core/services/perfil.service';
 import { Boton } from '../../shared/boton/boton';
 import { Campo } from '../../shared/campo/campo';
-import { Encabezado } from '../../shared/encabezado/encabezado';
+import { Marco } from '../../shared/marco/marco';
 import { SelectorCiudad } from '../../shared/selector-ciudad/selector-ciudad';
+import { SelectorImagenes } from '../../shared/selector-imagenes/selector-imagenes';
 import { AlmacenNoticias } from '../noticias/almacen-noticias';
 
 /**
@@ -31,7 +34,7 @@ import { AlmacenNoticias } from '../noticias/almacen-noticias';
  */
 @Component({
   selector: 'app-publicar',
-  imports: [ReactiveFormsModule, Encabezado, Campo, Boton, SelectorCiudad],
+  imports: [ReactiveFormsModule, Marco, Campo, Boton, SelectorCiudad, SelectorImagenes],
   templateUrl: './publicar.html',
 })
 export class Publicar implements OnInit {
@@ -43,6 +46,7 @@ export class Publicar implements OnInit {
 
   protected readonly textos = TEXTOS_PUBLICAR;
   protected readonly textosComunes = TEXTOS_COMUNES;
+  protected readonly textosFotos = TEXTOS_FOTOS;
   protected readonly maximoTitulo = LONGITUD_MAXIMA_TITULO;
   protected readonly maximoResumen = LONGITUD_MAXIMA_RESUMEN;
   protected readonly erroresTitulo = {
@@ -63,6 +67,9 @@ export class Publicar implements OnInit {
   protected readonly ciudad = signal<Ciudad | null>(null);
   protected readonly cargando = signal(false);
   protected readonly error = signal<string | null>(null);
+  protected readonly fotos = signal<FotoSeleccionada[]>([]);
+  /** Porcentaje subido mientras se publican fotos; null si no se está subiendo. */
+  protected readonly progreso = signal<number | null>(null);
 
   protected readonly esAdministrador = computed(() => this.perfil()?.rol === ROLES.administrador);
   protected readonly sinCupo = computed(() => {
@@ -123,15 +130,31 @@ export class Publicar implements OnInit {
 
     this.cargando.set(true);
     this.error.set(null);
-    this.noticias.publicar(datos).subscribe({
-      next: (publicada) => {
-        this.almacen.cargar();
-        void this.router.navigate(['/', RUTAS.noticias, publicada.id]);
+    const fallar = (error: ErrorApi) => {
+      this.error.set(error.mensaje);
+      this.cargando.set(false);
+      this.progreso.set(null);
+    };
+
+    if (this.fotos().length === 0) {
+      this.noticias.publicar(datos).subscribe({ next: (publicada) => this.listo(publicada), error: fallar });
+      return;
+    }
+    this.progreso.set(0);
+    this.noticias.publicarConImagenes(datos, this.fotos()).subscribe({
+      next: (paso) => {
+        if (paso.tipo === 'progreso') {
+          this.progreso.set(paso.porcentaje);
+        } else {
+          this.listo(paso.noticia);
+        }
       },
-      error: (error: ErrorApi) => {
-        this.error.set(error.mensaje);
-        this.cargando.set(false);
-      },
+      error: fallar,
     });
+  }
+
+  private listo(publicada: Noticia): void {
+    this.almacen.cargar();
+    void this.router.navigate(['/', RUTAS.noticias, publicada.id]);
   }
 }

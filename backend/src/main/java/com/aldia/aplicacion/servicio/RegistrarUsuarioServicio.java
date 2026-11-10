@@ -6,12 +6,14 @@ import java.time.LocalDateTime;
 import com.aldia.dominio.excepcion.CiudadNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.NivelInicialNoConfiguradoExcepcion;
 import com.aldia.dominio.excepcion.UsuarioYaExisteExcepcion;
+import com.aldia.dominio.modelo.AccionHistorial;
 import com.aldia.dominio.modelo.Ciudad;
 import com.aldia.dominio.modelo.Nivel;
 import com.aldia.dominio.modelo.NuevoUsuario;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.entrada.RegistrarUsuarioCasoDeUso;
 import com.aldia.dominio.puerto.salida.CifradorPuerto;
+import com.aldia.dominio.puerto.salida.HistorialRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.CiudadRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.NivelRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.UsuarioRepositorioPuerto;
@@ -23,17 +25,20 @@ public class RegistrarUsuarioServicio implements RegistrarUsuarioCasoDeUso {
     private final CiudadRepositorioPuerto ciudadRepositorioPuerto;
     private final CifradorPuerto cifradorPuerto;
     private final Clock reloj;
+    private final HistorialRepositorioPuerto historialRepositorioPuerto;
 
     public RegistrarUsuarioServicio(UsuarioRepositorioPuerto usuarioRepositorioPuerto,
                                      NivelRepositorioPuerto nivelRepositorioPuerto,
                                      CiudadRepositorioPuerto ciudadRepositorioPuerto,
                                      CifradorPuerto cifradorPuerto,
-                                     Clock reloj) {
+                                     Clock reloj,
+                                     HistorialRepositorioPuerto historialRepositorioPuerto) {
         this.usuarioRepositorioPuerto = usuarioRepositorioPuerto;
         this.nivelRepositorioPuerto = nivelRepositorioPuerto;
         this.ciudadRepositorioPuerto = ciudadRepositorioPuerto;
         this.cifradorPuerto = cifradorPuerto;
         this.reloj = reloj;
+        this.historialRepositorioPuerto = historialRepositorioPuerto;
     }
 
     @Override
@@ -65,6 +70,9 @@ public class RegistrarUsuarioServicio implements RegistrarUsuarioCasoDeUso {
                 0
         );
 
-        return usuarioRepositorioPuerto.guardar(nuevoUsuario);
+        Usuario guardado = usuarioRepositorioPuerto.guardar(nuevoUsuario);
+        historialRepositorioPuerto.registrar(guardado.getId(), AccionHistorial.REGISTRO, "Creó su cuenta",
+                nuevoUsuario.getFechaRegistro());
+        return guardado;
     }
 }

@@ -1,0 +1,56 @@
+<section class="ficha" aria-labelledby="ficha-nivel">
+  <p class="etiqueta">{{ textos.etiqueta }}</p>
+
+  <div class="anillo" [style.width.px]="anillo.tamano" [style.height.px]="anillo.tamano">
+    <svg
+      [attr.width]="anillo.tamano"
+      [attr.height]="anillo.tamano"
+      [attr.viewBox]="'0 0 ' + anillo.caja + ' ' + anillo.caja"
+      role="img"
+      [attr.aria-label]="etiquetaAnillo()"
+    >
+      <circle
+        class="pista"
+        [attr.cx]="centro"
+        [attr.cy]="centro"
+        [attr.r]="anillo.radio"
+        [attr.stroke-width]="anillo.trazo"
+      />
+      <circle
+        class="avance"
+        [attr.cx]="centro"
+        [attr.cy]="centro"
+        [attr.r]="anillo.radio"
+        [attr.stroke-width]="anillo.trazo"
+        [attr.stroke-dasharray]="trazoLleno()"
+      />
+    </svg>
+    <div class="centro">
+      <!-- El sol del logo, sobre su horizonte. -->
+      <svg
+        class="sol"
+        width="44"
+        height="28"
+        viewBox="0 0 44 28"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path class="disco" d="M8 20a14 14 0 0 1 28 0Z" />
+        <rect class="horizonte" x="2" y="22" width="40" height="3.6" rx="1.8" />
+      </svg>
+      <h3 id="ficha-nivel" class="nivel">{{ nivel }} {{ perfil().nivelNumero }}</h3>
+    </div>
+  </div>
+
+  <p class="puntos">{{ puntos() }}</p>
+  <p class="faltan">{{ faltan() }}</p>
+  <hr class="linea" />
+  <p class="cupo">
+    @if (cupo(); as cupo) {
+      {{ textos.hoyTeQuedan }} <strong>{{ cupo }}</strong> {{ textos.publicaciones }}
+    } @else {
+      {{ ilimitado }}
+    }
+  </p>
+  <a class="publicar" [routerLink]="rutaPublicar">{{ textos.publicar }}</a>
+</section>

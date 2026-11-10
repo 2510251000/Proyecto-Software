@@ -4,6 +4,7 @@ export const CODIGOS_HTTP = {
   prohibido: 403,
   noEncontrado: 404,
   conflicto: 409,
+  cargaMuyGrande: 413,
   demasiadasPeticiones: 429,
   noDisponible: 503,
 } as const;

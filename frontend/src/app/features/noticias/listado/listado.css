@@ -2,39 +2,35 @@
   display: block;
 }
 
-.pagina {
+/* Debajo de la portada de cine: 1312px como máximo, con el mismo margen lateral de la barra. */
+.cuerpo {
   display: flex;
   flex-direction: column;
-  gap: clamp(var(--espacio-xl), 5vw, 4rem);
-  max-width: var(--ancho-maximo);
-  margin: 0 auto;
-  padding: clamp(var(--espacio-l), 4vw, 3rem) var(--espacio-m) 4rem;
+  gap: 22px;
+  max-width: 1312px;
+  margin-inline: auto;
+  padding: 30px clamp(16px, 4.5vw, 64px) 72px;
 }
 
-/* Dos columnas parejas: lo oficial y lo de la comunidad. Se apilan en pantallas angostas. */
-.columnas {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--espacio-xl) clamp(var(--espacio-xl), 5vw, 4rem);
-  align-items: start;
-}
-
-/* Con un solo tipo elegido queda una columna de lectura cómoda. */
-.columnas.una {
-  grid-template-columns: minmax(0, 48rem);
-  justify-content: center;
-}
-
-@media (max-width: 48rem) {
-  .columnas {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-.ver-mas {
+.busqueda-activa {
   display: flex;
-  justify-content: center;
-  margin-top: calc(-1 * var(--espacio-l));
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-s);
+  margin: 0;
+  color: var(--color-texto-suave);
+}
+
+.quitar {
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-s);
+  border: 0;
+  background: none;
+  color: var(--color-realce);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .estado {
@@ -43,6 +39,9 @@
   align-items: center;
   gap: var(--espacio-s);
   padding: var(--espacio-xl) var(--espacio-l);
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radio-ficha);
+  background: var(--color-tarjeta);
   color: var(--color-texto-suave);
   text-align: center;
 }
@@ -51,9 +50,20 @@
   margin: 0 0 var(--espacio-s);
 }
 
+/* «Tu nivel» y «Avisos cerca de ti» debajo del mensaje cuando no hay mosaico. */
+.fichas-propias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.fichas-propias > * {
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
 .estado-error {
-  border: 1px solid var(--color-error);
-  border-radius: var(--radio-s);
+  border-color: var(--color-error);
   color: var(--color-error);
   font-weight: 600;
 }
@@ -61,4 +71,11 @@
 .dibujo {
   width: 7.5rem;
   height: auto;
+}
+
+@media (max-width: 47.99rem) {
+  .cuerpo {
+    padding-top: 20px;
+    padding-bottom: 24px;
+  }
 }

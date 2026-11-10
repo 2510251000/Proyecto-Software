@@ -5,7 +5,7 @@ import { TEXTOS_NOTIFICACIONES } from '../../core/constants/pantallas.constants'
 import { Notificacion } from '../../core/models/notificacion.model';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
-import { campanaFalsa } from '../../../testing/menu-falso';
+import { campanaFalsa, perfilFalso } from '../../../testing/menu-falso';
 import { Notificaciones } from './notificaciones';
 
 const AVISOS: Notificacion[] = [
@@ -42,6 +42,7 @@ describe('Notificaciones', () => {
         { provide: NotificacionService, useValue: { listar: () => of(AVISOS), marcarLeida, marcarTodasLeidas } },
         { provide: AuthService, useValue: { obtenerContenidoToken: () => null, cerrarSesion: () => undefined } },
         campanaFalsa(1),
+        perfilFalso(),
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(Notificaciones);

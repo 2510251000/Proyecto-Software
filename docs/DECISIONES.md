@@ -78,8 +78,12 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     pantallas con sesión.
 25. **SonarQube Cloud** (gratis porque el repositorio es público) en lugar de un SonarQube
     local: el análisis corre solo en GitHub Actions y todo el equipo ve el mismo informe. Backend
-    y frontend van en un solo proyecto de Sonar con el escáner genérico
-    (`sonar-project.properties`). La cobertura sale de JaCoCo (backend) y de
+    y frontend van en **proyectos separados**, cada uno con su Quality Gate y su
+    `sonar-project.properties` dentro de su carpeta, en dos jobs paralelos que esperan el
+    resultado del gate (`sonar.qualitygate.wait`). El backend conserva la clave original
+    (`2510251000_Proyecto-Software`) para no perder su historial. Al principio iban en un solo
+    proyecto; se separaron para que la cobertura y los problemas de un lado no tapen los del
+    otro. La cobertura sale de JaCoCo (backend) y de
     `@vitest/coverage-v8` en formato lcov (frontend). Quedan fuera de la cobertura el arranque, la
     configuración, los DTO y las entidades JPA, que no tienen lógica propia.
 
@@ -117,3 +121,174 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
       orquesta, que es lo propio de un caso de uso. En Angular los componentes reciben los
       servicios concretos con `inject()` (práctica habitual del framework); en las pruebas se
       reemplazan por servicios falsos.
+
+## Fase 1 — Entrada con atardecer y «Hoy» (2026-11-04)
+26. Las animaciones son solo CSS (`@keyframes`) y señales; los tiempos que manda el código
+    (entrada, tarjeta, amanecer, intro, historia, retrasos de letras y palabras) están en
+    `core/constants/animaciones.constants.ts` y llegan al CSS como variables `--duracion-…`.
+    Los colores nuevos del cielo son tokens en `styles.css`. Los temporizadores pasan por
+    `core/utils/temporizadores.ts`, que los cancela con el `DestroyRef` del componente.
+27. «Reducir movimiento» se lee con `MovimientoService` (`matchMedia`), así las pruebas lo
+    simulan. Con esa preferencia no hay entrada, ni amanecer, ni avance de la intro o de las
+    historias: la intro de «Hoy» espera el botón «Ver las noticias». (decidido por Claude Code; revisar)
+28. Mientras la tarjeta del login no ha aparecido, el formulario está `inert` para que no se
+    pueda enfocar sin verse; al saltar o a los 3.9 s queda usable. (decidido por Claude Code; revisar)
+29. Si la navegación a «Hoy» no se da (un guard la redirige), el login vuelve al formulario
+    en lugar de quedarse en el amanecer. (decidido por Claude Code; revisar)
+30. El saludo usa solo el **primer nombre** del perfil («Buenos días, Laura»).
+    (decidido por Claude Code; revisar)
+31. Sin ciudad en el perfil, el nombre grande de la intro es «Al Día» y la tarjeta final dice
+    solo «Ya estás al día». «Cerca de ti» toma las más recientes que no salieron en las
+    historias. (decidido por Claude Code; revisar)
+32. Si no hay ninguna noticia publicada, la intro dice «Todavía no hay noticias publicadas» y
+    pasa directo a la tarjeta final, sin «Ver otra vez». (decidido por Claude Code; revisar)
+33. Además del toque largo y la barra espaciadora, cada historia tiene un **botón de pausa**
+    visible (WCAG 2.2.2: el contenido que se mueve solo debe poderse pausar). Las zonas de toque
+    no reciben foco (`tabindex="-1"`): con teclado se usan las flechas. La barra espaciadora no
+    pausa si el foco está en un botón o enlace, para no robarle su función.
+34. «Hoy» no muestra el menú principal (es a pantalla completa); se sale con «Cerrar» o
+    «Ir a la portada». La ruta raíz sigue llevando a la portada; solo el login lleva a «Hoy».
+    (decidido por Claude Code; revisar)
+35. Para respetar el presupuesto de 4 kB de estilos por componente, la escena del atardecer
+    (`features/auth/escena-atardecer`), la lista de titulares (`features/hoy/lista-historias`) y
+    el bloque de texto de cada historia (`features/hoy/texto-historia`) son subcomponentes.
+
+## Fase 2 — Fotos de las noticias (MF02_003)
+36. **Almacenamiento detrás de un puerto.** `AlmacenImagenesPuerto` (guardar, leer, borrar) con un
+    primer adaptador en disco (`IMAGENES_DIRECTORIO`; en Docker, el volumen `imagenes`). **Con
+    varios servidores** el disco de uno no lo ve el otro: habría que cambiar a un adaptador de
+    almacenamiento en la nube (S3, Azure Blob, Cloudinary…). El puerto ya lo permite sin tocar
+    los casos de uso.
+37. En la columna `multimedia.url` se guarda la **clave del archivo** (un UUID con extensión), no
+    una URL pública: la API arma la URL (`/api/noticias/{id}/imagenes/{orden}`) y así puede
+    revisar permisos. El nombre que puso el usuario nunca se usa en el disco.
+38. **El tipo real sale de los primeros bytes** (firma del archivo), nunca del nombre ni del
+    `Content-Type`. Se aceptan JPEG, PNG y WebP. Las dimensiones se leen de la cabecera **antes**
+    de decodificar la foto, para que una imagen con dimensiones gigantes no agote la memoria.
+    Máximo 8000×8000 px (`IMAGENES_ANCHO_MAXIMO`, `IMAGENES_ALTO_MAXIMO`).
+    (decidido por Claude Code; revisar)
+39. **Sin metadatos.** JPEG y PNG se vuelven a codificar desde los píxeles con ImageIO (viene con
+    Java, no se agregó ninguna librería), así desaparecen EXIF (con la ubicación GPS), XMP y
+    comentarios. JPEG se guarda con calidad 0.9 (`IMAGENES_CALIDAD_JPEG`). Java no trae lector de
+    WebP: a esos archivos se les quitan los bloques `EXIF` y `XMP ` del contenedor RIFF sin
+    recodificarlos. (decidido por Claude Code; revisar)
+40. Al volver a codificar, la **orientación EXIF** se pierde. Desde la app no importa (el
+    navegador ya rota la foto antes de subirla), pero una foto subida directo a la API desde un
+    celular podría verse girada. (decidido por Claude Code; revisar)
+41. Orden de la publicación con fotos: se validan y limpian **antes** de tocar la base; los
+    archivos se guardan antes de la transacción y, si cualquier paso falla (base, cupo diario,
+    cuenta desactivada), se borran. Si falla el guardado de una foto, se borran las anteriores.
+42. Las fotos de una noticia **no publicada** responden 404 al público (igual que la noticia)
+    y `Cache-Control: no-store, private` a su autor y a los administradores. Las publicadas,
+    `public, max-age` (`IMAGENES_CACHE_SEGUNDOS`, 1 día).
+43. Un archivo más pesado que `IMAGENES_TAMANO_MAXIMO_MB` lo frena primero Spring
+    (`spring.servlet.multipart.max-file-size`); el manejador global responde **413** con un
+    mensaje claro. La petición completa admite hasta `IMAGENES_TAMANO_MAXIMO_PETICION_MB` (25).
+44. La descripción de cada foto viaja en el JSON de `datos` como `descripcionesImagenes` (en el
+    mismo orden de las partes) y se guarda en la columna nueva `multimedia.texto_alternativo`
+    (máximo 250). Sin descripción, la foto se muestra con `alt=""` porque el titular ya dice de
+    qué trata. (decidido por Claude Code; revisar)
+45. En el navegador cada foto se reduce con `createImageBitmap` (`imageOrientation: 'from-image'`)
+    y un canvas de máximo 1600 px exportado a JPEG 0.82, con fondo blanco para PNG
+    transparentes. Si el navegador no puede leerla (algunas HEIC), se explica cómo cambiarla.
+46. Las miniaturas de la moderación se piden **con sesión** (HttpClient + interceptor) y se
+    muestran con una URL `blob:`, porque las noticias ocultas no son públicas y un `<img>` no
+    manda el token. (decidido por Claude Code; revisar)
+47. **Probar desde el celular**: el ambiente `red` (`environment.red.ts`, `ng serve --configuration
+    red --host 0.0.0.0`) arma la URL de la API con el mismo equipo desde el que se abrió la
+    página, así la IP no queda escrita en el código. El origen se agrega a `CORS_ORIGENES`.
+
+## Fase 3 — Comentarios, calificaciones y reportes (MF03)
+48. Las reglas (largo del comentario, valor de 1 a 5, no calificarse a sí mismo, quién borra,
+    que un reporte no vuelva a PENDIENTE y el texto de los avisos) están en
+    `dominio/servicio/ReglasInteraccion`. Los largos salen de `COMENTARIO_LARGO_MAXIMO` y
+    `REPORTE_LARGO_DESCRIPCION` (1000).
+49. Comentar, calificar y reportar exige la **cuenta activa** y una noticia **publicada** (las
+    ocultas responden 404, igual que en el detalle). (decidido por Claude Code; revisar)
+50. Al autor se le avisa la **primera** vez que alguien califica su noticia; si esa persona cambia
+    su calificación, no se le vuelve a avisar, para no llenarlo de avisos. Tampoco se avisa cuando
+    el autor comenta su propia noticia. (decidido por Claude Code; revisar)
+51. Borrar un comentario es un borrado **físico** (la fila desaparece), a diferencia de las
+    noticias. (decidido por Claude Code; revisar)
+52. El promedio se redondea a un decimal y las noticias sin calificaciones devuelven
+    `promedio: 0` y `cantidadCalificaciones: 0`. `miCalificacion` solo llega con sesión. El
+    promedio y la cantidad de todo un listado salen de una sola consulta agrupada.
+53. Revisar o descartar un reporte queda en el historial del administrador como `MODERACION`.
+    «Ocultar la noticia» desde la pestaña Reportes usa la moderación existente y marca el
+    reporte como REVISADO. (decidido por Claude Code; revisar)
+54. `NoticiaResponseDTO` gana `autorId` (el id numérico, nunca el correo) para que la app sepa
+    si la noticia es propia y no muestre las estrellas activas. (decidido por Claude Code; revisar)
+
+## Fase 5 — Mapa de noticias (MF05_002)
+55. **Leaflet 1.9.4 con teselas de OpenStreetMap** (gratis, sin clave). Su URL, la atribución y los
+    zooms están en `core/constants/mapa.constants.ts`. Se respeta la política de teselas de OSM:
+    atribución siempre visible, zoom máximo 19 y nada de descargas por adelantado ni sin
+    conexión. Para mucho tráfico habría que usar un proveedor de teselas propio o pagado.
+56. Leaflet solo se usa dentro de `MapaService`, que entrega un `MapaDibujado` (agregar y quitar
+    marcadores, centrar, destruir). Las pruebas del componente usan un mapa falso. Leaflet es
+    CommonJS: se declaró en `allowedCommonJsDependencies` de `angular.json`, y su hoja de estilos
+    va en `styles`.
+57. El filtro por tipo se aplica en el navegador sobre las noticias ya cargadas (las mismas
+    `RECIENTES` de la portada), sin pedirlas de nuevo. Las noticias sin coordenadas no salen en
+    el mapa ni en su lista. Sin ciudad con coordenadas, el mapa muestra Cundinamarca.
+    (decidido por Claude Code; revisar)
+58. El enlace de la ventanita navega con el router de Angular (sin recargar la página); los
+    marcadores tienen `title` y se pueden enfocar con el teclado.
+
+## Fase 6 — Pendientes técnicos
+59. Logs **solo por consola** (factor XI), sin archivo: el nivel de la aplicación sale de
+    `NIVEL_LOGS` (INFO) y el de las librerías de `NIVEL_LOGS_GENERAL` (INFO).
+60. En el historial solo quedan los inicios de sesión **correctos**; los fallidos no, para no
+    llenar la tabla con intentos de terceros contra la cuenta de alguien. (decidido por Claude
+    Code; revisar)
+61. springdoc **2.8.17** (la última 2.8, compatible con Spring Boot 3.5). Las 2.9 y 2.10 no se
+    usaron porque no se confirmó su compatibilidad con Boot 3.5. (decidido por Claude Code; revisar)
+62. `npm audit fix` sin `--force` solo pudo arreglar lo que no exige cambiar de versión mayor
+    o mover todo Angular a la vez. Lo demás queda en `PENDIENTES.md`.
+63. Apagado ordenado: `server.shutdown: graceful` con hasta `TIEMPO_APAGADO` (20 s) para
+    terminar las peticiones en curso (factor IX).
+
+## Cambios pedidos por Sebastián (2026-11-09)
+64. **Login con muro de noticias.** El fondo del login es un muro de recortes de periódico (foto,
+    sección y titular de ejemplo) difuminado con un velo azul; al centro, el logo grande y el
+    lema. Las fotos nuevas son CC0 (`frontend/public/imagenes/fondo-login/CREDITOS.md`). Se
+    quitaron la entrada con atardecer y el amanecer: dependían del cielo de noche.
+65. **Se quita «Hoy».** La pantalla de municipio + historias no gustó; al iniciar sesión se va
+    a la portada. La barra inferior del celular queda con 4 destinos.
+66. **Se califica al autor, no la noticia.** En cada noticia el lector elige «Sigue publicando
+    así» o «No me gustó esto» (un voto por lector y noticia, se puede cambiar). La aprobación del
+    autor es el % de votos positivos en **todas** sus noticias; se muestra en las tarjetas, el
+    detalle y el perfil. **Solo se muestra: no suma ni resta puntos ni cambia el nivel.**
+67. V5 cambia `calificacion.valor` (1 a 5) por `calificacion.recomienda` (booleano) en la misma
+    tabla, para no agregar tablas al modelo de diez. Las calificaciones viejas de 4 o 5 estrellas
+    pasan a `TRUE`; las demás a `FALSE`. (decidido por Claude Code; revisar)
+68. API: `PUT /api/noticias/{id}/calificacion` recibe `{ "recomienda": true|false }` y responde
+    `autorAprobacion` (null sin votos), `autorVotos`, `autorVotosPositivos` y `miVoto`.
+    `NoticiaResponseDTO` cambia `promedio`, `cantidadCalificaciones` y `miCalificacion` por
+    `autorAprobacion`, `autorVotos` y `miVoto`; `/api/usuarios/me` agrega `aprobacion` y `votos`.
+69. **Noticias reales incluidas en la aplicación.** 18 noticias de la semana del 2 al 9 de
+    noviembre de 2026 (Fusagasugá, Soacha, Zipaquirá, Chía, Girardot, Facatativá y Silvania) viven
+    en `backend/src/main/resources/datos-iniciales/noticias/` (JSON + fotos). Al arrancar,
+    `CargaNoticiasIniciales` publica las que falten (se reconocen por el título), en todos los
+    ambientes; se apaga con `NOTICIAS_INICIALES=false`. Los textos son resúmenes propios y cada
+    noticia termina con «Fuente: medio. Nota original: enlace» y «Foto: medio» (pedido de Sebastián:
+    citar y enlazar la fuente). Las fotos pasan por el almacén de imágenes (disco o nube).
+70. Si la cuenta de demostración que publica una noticia inicial no existe (por ejemplo, en
+    producción), la publica el primer administrador activo. (decidido por Claude Code; revisar)
+71. V6 agrega Silvania al catálogo de ciudades (una de las noticias es de allí), con los datos de
+    Nominatim; si ya existe, no hace nada.
+72. Las direcciones http(s) del contenido de una noticia se muestran como enlaces que abren en
+    otra pestaña; el resto sigue siendo texto plano, nunca HTML.
+
+### Rediseño «El día en vivo» (2026-11-10, rama feature/dia-en-vivo)
+73. La portada sigue `docs/dia-en-vivo/ESPECIFICACION.md`. El tema de noche es solo de la portada:
+    el modal de la noticia, el detalle y las demás pantallas siguen en claro.
+74. **El celular no se ajusta en este rediseño** (pedido de Sebastián, para no gastar más tiempo).
+    En el celular se ve la misma portada, con las barras de siempre.
+75. «Tu nivel» deja de tener el enlace «Ver mi perfil»: el perfil se abre desde el círculo con las
+    iniciales en la barra superior. (decidido por Claude Code; revisar)
+76. En «Dónde está pasando» los municipios que quedan casi a la misma altura (por ejemplo,
+    Fusagasugá y Silvania) se separan un poco en vertical para que los nombres no se monten; se
+    conserva el orden de norte a sur. El margen del área es 14 % (la especificación decía 12 %)
+    para que los nombres no se corten en los bordes. (decidido por Claude Code; revisar)
+77. Sin noticias, o si falla la carga, debajo del mensaje siguen «Tu nivel» y «Avisos cerca de ti».

@@ -1,0 +1,182 @@
+/**
+ * Portada «El día en vivo». Las horas se manejan como número decimal: 5:40 p. m. = 17.67.
+ * En Colombia el sol sale y se pone cerca de las 6 todo el año, por eso el arco es fijo.
+ */
+export const HORAS_DEL_DIA = {
+  /** Sale el sol: empieza el arco y el momento «amanecer». */
+  amanecer: 6,
+  /** Empieza el momento «día». */
+  dia: 7.5,
+  /** Empieza el momento «atardecer». */
+  atardecer: 16,
+  /** Empieza el momento «noche» y, con él, el tema de noche. */
+  noche: 17.5,
+  /** Se pone el sol: termina el arco. */
+  ocaso: 18,
+} as const;
+
+export const MINUTOS_POR_HORA = 60;
+
+/** Cada cuánto se revisa la hora real para que el reloj, el sol y el tema avancen solos. */
+export const INTERVALO_RELOJ_MS = 15_000;
+
+/** Margen al comparar horas decimales, para que 16.33 y 16.330001 cuenten como la misma. */
+export const TOLERANCIA_HORA = 0.001;
+
+/** Medidas de la línea del sol: x en % del ancho de la franja; y en px desde arriba. */
+export const ARCO = {
+  /** Dónde queda las 6 a. m. */
+  xInicio: 8,
+  /** Ancho del arco: las 6 p. m. quedan en xInicio + ancho. */
+  ancho: 84,
+  /** Punto más alto del arco (el mediodía). */
+  tope: 30,
+  /** Del punto más alto al horizonte. */
+  alto: 170,
+  /** Diámetro del botón redondo del deslizador, en px: su centro queda justo debajo del sol. */
+  botonRango: 24,
+} as const;
+
+/** Horas de guía que se escriben bajo el arco. */
+export const GUIAS_ARCO = [
+  { hora: 6, texto: '6 a. m.' },
+  { hora: 9, texto: '9 a. m.' },
+  { hora: 12, texto: '12 m.' },
+  { hora: 15, texto: '3 p. m.' },
+  { hora: 18, texto: '6 p. m.' },
+] as const;
+
+/** Noticias con marca en el arco: como mucho estas, las más recientes del día. */
+export const MARCAS_MAXIMAS = 8;
+
+/** Dos marcas a menos de este % del ancho se pisan: queda solo la más reciente. */
+export const SEPARACION_MINIMA_MARCAS = 3;
+
+/** Fichas de noticia que el mosaico trata de llenar con las del día antes de pasar a «Días anteriores». */
+export const FICHAS_MINIMAS_MOSAICO = 4;
+
+/** Ficha «Dónde está pasando». */
+export const MAPA_MOSAICO = {
+  /** Municipios que se dibujan como punto: los que tienen más noticias. */
+  municipios: 6,
+  /** Margen del área de los puntos, en %. */
+  margen: 14,
+  /** Posición de un punto cuando no hay con qué compararlo (un solo municipio). */
+  centro: 50,
+  /** Distancia mínima entre dos puntos, en % del alto, para que sus nombres no se monten. */
+  separacion: 13,
+  /** Desde este % del ancho el nombre va a la izquierda del punto. */
+  nombreALaIzquierdaDesde: 60,
+  /** Diámetro del punto, en px, con 1, 2 y 3 o más noticias. */
+  tamanoPunto: [10, 14, 20],
+} as const;
+
+/** «a. m.» y «p. m.» de una hora legible: «4:20 p. m.». */
+export const SUFIJOS_HORA = {
+  manana: 'a. m.',
+  tarde: 'p. m.',
+} as const;
+
+/** Portada de cine: la noticia del momento a pantalla completa. */
+export const TEXTOS_CINE = {
+  leer: 'Leer la noticia',
+  verEnMapa: 'Ver en el mapa',
+} as const;
+
+/** Línea del sol: el arco con las noticias del día y el deslizador. */
+export const TEXTOS_LINEA_SOL = {
+  deslizador: 'Hora del día que quieres ver',
+} as const;
+
+/** Nombre accesible de una marca del arco: «Ir a las 10:30 a. m.: {titular}». */
+export function etiquetaMarca(hora: string, titular: string): string {
+  return `Ir a las ${hora}: ${titular}`;
+}
+
+/** Lo que se anuncia al soltar el deslizador: «10:30 a. m.: {titular}». */
+export function anuncioHora(hora: string, titular: string): string {
+  return `${hora}: ${titular}`;
+}
+
+/** Tarjeta del reloj de la portada de cine. */
+export const TEXTOS_RELOJ = {
+  etiqueta: 'Hora que estás viendo',
+  ahora: 'Ahora',
+  viendo: 'Estás viendo las',
+  ayuda: 'Arrastra el sol, o toca una hora del arco, para volver atrás en el día.',
+  volver: 'Volver a ahora',
+  diaAnterior: 'Día anterior',
+  diaSiguiente: 'Día siguiente',
+} as const;
+
+/** «Este día no tiene noticias en Soacha.», o sin municipio si se ven todos. */
+export function textoDiaSinNoticias(municipio: string | null): string {
+  return municipio ? `Este día no tiene noticias en ${municipio}.` : 'Este día no tiene noticias.';
+}
+
+/** Mosaico: lo demás del día en fichas y, debajo, los días anteriores. */
+export const TEXTOS_MOSAICO = {
+  hoy: 'Lo demás de hoy',
+  reciente: 'Lo más reciente',
+  anteriores: 'Días anteriores',
+} as const;
+
+/** «Lo demás del lunes 9 de noviembre». */
+export function textoDemasDelDia(fecha: string): string {
+  return `Lo demás del ${fecha}`;
+}
+
+/** Ficha «Dónde está pasando»: los municipios como puntos que laten. */
+export const TEXTOS_FICHA_MAPA = {
+  titulo: 'Dónde está pasando',
+  tuMunicipio: 'tu municipio',
+  abrir: 'Abrir el mapa completo',
+  noticias: 'noticias',
+  sinUbicacion: 'Municipios sin ubicación en el mapa',
+} as const;
+
+/** «8 noticias en 4 municipios». */
+export function resumenMapa(noticias: number, municipios: number): string {
+  const deNoticias = `${noticias} ${noticias === 1 ? 'noticia' : 'noticias'}`;
+  return `${deNoticias} en ${municipios} ${municipios === 1 ? 'municipio' : 'municipios'}`;
+}
+
+/** Segundos entre el latido de un punto y el del siguiente, para que no latan todos a la vez. */
+export const DESFASE_LATIDO_S = 0.65;
+
+/** Ficha «Tu nivel»: el anillo con el avance, los puntos y el cupo del día. */
+export const TEXTOS_FICHA_NIVEL = {
+  etiqueta: 'Tu nivel',
+  publicar: 'Publicar una noticia',
+  maximo: 'Estás en el nivel más alto.',
+  hoyTeQuedan: 'Hoy te quedan',
+  publicaciones: 'publicaciones.',
+} as const;
+
+/** «60 de 150 puntos», o solo «200 puntos» en el nivel más alto. */
+export function textoPuntosNivel(puntaje: number, meta: number | null): string {
+  return meta === null ? `${puntaje} puntos` : `${puntaje} de ${meta} puntos`;
+}
+
+/** «Te faltan 90 para el nivel 3.» */
+export function textoTeFaltan(faltan: number, nivel: number): string {
+  return `Te faltan ${faltan} para el nivel ${nivel}.`;
+}
+
+/** «9 de 10»: la parte en negrita de «Hoy te quedan 9 de 10 publicaciones.» */
+export function textoCupoRestante(restantes: number, limite: number): string {
+  return `${restantes} de ${limite}`;
+}
+
+/** Medidas del anillo de «Tu nivel», en unidades de su viewBox (120 × 120). */
+export const ANILLO_NIVEL = {
+  tamano: 168,
+  caja: 120,
+  radio: 52,
+  trazo: 10,
+} as const;
+
+/** Ficha «Avisos cerca de ti». */
+export const TEXTOS_FICHA_AVISOS = {
+  verTodos: 'Ver todos los avisos',
+} as const;

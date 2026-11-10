@@ -1,0 +1,80 @@
+/*
+  Login: el muro de noticias ocupa toda la pantalla (fijo detrás) y encima, centrados,
+  el logo grande de Al Día con su lema en blanco y la tarjeta blanca del formulario.
+*/
+:host {
+  display: block;
+}
+
+.pagina-login {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.contenido {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-l);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--espacio-xl) var(--espacio-m);
+}
+
+.marca {
+  color: var(--color-sobre-marca);
+  text-align: center;
+  animation: aparece 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* El lockup toma el tamaño de letra de aquí: «Al Día» grande junto al isotipo. */
+.logo-grande {
+  font-size: clamp(3rem, 9vw, 5.25rem);
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.45));
+}
+
+.lema {
+  max-width: 30ch;
+  margin: var(--espacio-s) auto 0;
+  color: var(--color-sobre-marca);
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  font-weight: 600;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  text-wrap: balance;
+}
+
+.tarjeta-login {
+  max-width: 26rem;
+  padding: clamp(var(--espacio-l), 5vw, var(--espacio-xl));
+  border-radius: var(--radio-g);
+  background: var(--color-tarjeta);
+  color: var(--color-texto);
+  box-shadow: var(--sombra-3);
+  animation: aparece 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+}
+
+@keyframes aparece {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marca,
+  .tarjeta-login {
+    animation: none;
+  }
+}
+
+/* En el celular, menos aire arriba para que el formulario quepa sin tanto desplazamiento. */
+@media (max-width: 760px) {
+  .contenido {
+    justify-content: flex-start;
+    gap: var(--espacio-m);
+    padding-top: var(--espacio-l);
+  }
+}

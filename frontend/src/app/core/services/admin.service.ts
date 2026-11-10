@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ENDPOINTS, PARAMETROS_NOTICIAS, SUFIJOS } from '../constants/endpoints.constants';
 import { CambiosUsuario, UsuarioAdmin } from '../models/admin.model';
+import { EstadoReporte, Reporte } from '../models/interaccion.model';
 import { EstadoNoticia, Noticia, TipoNoticias } from '../models/noticia.model';
 import { conErrorApi } from './error-http';
 
@@ -13,6 +14,7 @@ export class AdminService {
   private readonly http = inject(HttpClient);
   private readonly urlNoticias = `${environment.apiUrl}${ENDPOINTS.adminNoticias}`;
   private readonly urlUsuarios = `${environment.apiUrl}${ENDPOINTS.adminUsuarios}`;
+  private readonly urlReportes = `${environment.apiUrl}${ENDPOINTS.adminReportes}`;
 
   noticias(estado?: EstadoNoticia, tipo?: TipoNoticias): Observable<Noticia[]> {
     let params = new HttpParams();
@@ -41,5 +43,14 @@ export class AdminService {
 
   actualizarUsuario(id: number, cambios: CambiosUsuario): Observable<UsuarioAdmin> {
     return this.http.put<UsuarioAdmin>(`${this.urlUsuarios}/${id}`, cambios).pipe(conErrorApi());
+  }
+
+  reportes(estado?: EstadoReporte): Observable<Reporte[]> {
+    const params = estado === undefined ? new HttpParams() : new HttpParams().set(PARAMETROS_NOTICIAS.estado, estado);
+    return this.http.get<Reporte[]>(this.urlReportes, { params }).pipe(conErrorApi());
+  }
+
+  cambiarEstadoReporte(id: number, estado: EstadoReporte): Observable<Reporte> {
+    return this.http.put<Reporte>(`${this.urlReportes}/${id}`, { estado }).pipe(conErrorApi());
   }
 }

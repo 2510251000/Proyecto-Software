@@ -30,6 +30,9 @@ export interface Perfil {
   ciudad: Ciudad | null;
   cupo: CupoDiario;
   fechaRegistro: string;
+  /** % de lectores que quieren que siga publicando así; null si nadie ha votado. */
+  aprobacion?: number | null;
+  votos?: number;
 }
 
 /** Cuerpo de PUT /api/usuarios/me. */

@@ -10,7 +10,11 @@ import { RUTAS } from '../../../core/constants/rutas.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
 import { EstadoNoticia, Noticia, TipoNoticias } from '../../../core/models/noticia.model';
 import { AdminService } from '../../../core/services/admin.service';
+import { CategoriaMiniatura } from '../../../core/models/categoria-miniatura.model';
+import { categoriaDeNoticia } from '../../../core/utils/categoria-noticia';
+import { portadaDe } from '../../../core/utils/imagenes';
 import { tiempoRelativo } from '../../../core/utils/noticia';
+import { Miniatura } from '../../../shared/miniatura/miniatura';
 
 const ESTADOS_FILTRO: readonly EstadoNoticia[] = ['PUBLICADA', 'OCULTA'];
 const TIPOS_FILTRO: readonly TipoNoticias[] = ['COMUNITARIAS', 'OFICIALES', 'TODAS'];
@@ -21,7 +25,7 @@ const TIPOS_FILTRO: readonly TipoNoticias[] = ['COMUNITARIAS', 'OFICIALES', 'TOD
  */
 @Component({
   selector: 'app-moderacion-noticias',
-  imports: [RouterLink],
+  imports: [RouterLink, Miniatura],
   templateUrl: './moderacion-noticias.html',
   styleUrl: './moderacion-noticias.css',
 })
@@ -35,6 +39,7 @@ export class ModeracionNoticias implements OnInit {
   protected readonly estados = ESTADOS_FILTRO;
   protected readonly tipos = TIPOS_FILTRO;
   protected readonly rutas = RUTAS;
+  protected readonly portadaDe = portadaDe;
 
   protected readonly estado = signal<EstadoNoticia | null>(null);
   protected readonly tipo = signal<TipoNoticias>('COMUNITARIAS');
@@ -104,5 +109,9 @@ export class ModeracionNoticias implements OnInit {
   private fallo(error: ErrorApi): void {
     this.error.set(error.mensaje);
     this.ocupada.set(null);
+  }
+
+  protected categoriaDe(noticia: Noticia): CategoriaMiniatura {
+    return categoriaDeNoticia(noticia.titulo);
   }
 }

@@ -1,8 +1,13 @@
-<main class="pagina-auth">
-  <app-panel-marca [titular]="titular" />
+<main class="pagina-login">
+  <app-fondo-noticias />
 
-  <div class="panel-formulario">
-    <div class="tarjeta-formulario">
+  <div class="contenido">
+    <div class="marca">
+      <app-logo class="logo-grande" [tamano]="96" [conNombre]="true" />
+      <p class="lema">{{ lema }}</p>
+    </div>
+
+    <div class="tarjeta-formulario tarjeta-login">
       <h1>{{ textos.tituloLogin }}</h1>
 
       @if (aviso) {
