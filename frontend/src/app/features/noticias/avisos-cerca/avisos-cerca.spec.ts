@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { throwError } from 'rxjs';
+import { TEXTOS_FICHA_AVISOS } from '../../../core/constants/dia-en-vivo.constants';
 import { TEXTOS_COLUMNA } from '../../../core/constants/portada.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { Notificacion } from '../../../core/models/notificacion.model';
@@ -12,7 +13,6 @@ function aviso(id: number, tipo: Notificacion['tipo'], leida = false, noticiaId:
   return { id, tipo, mensaje: `Aviso ${id}`, noticiaId, leida, fecha: new Date().toISOString() };
 }
 
-// Estas pruebas vienen de la columna derecha de la portada, donde vivía «Avisos cerca de ti».
 describe('AvisosCerca', () => {
   let fixture: ComponentFixture<AvisosCerca>;
   const raiz = () => fixture.nativeElement as HTMLElement;
@@ -73,6 +73,14 @@ describe('AvisosCerca', () => {
 
   it('tiene su título', async () => {
     await crear();
-    expect(texto('h2')).toBe(TEXTOS_COLUMNA.avisos);
+    expect(texto('h3')).toBe(TEXTOS_COLUMNA.avisos);
+    expect(raiz().querySelector('section')?.getAttribute('aria-labelledby')).toBe(raiz().querySelector('h3')?.id);
+  });
+
+  it('«Ver todos los avisos» lleva a la bandeja, haya o no avisos', async () => {
+    await crear();
+    const enlace = raiz().querySelector('a.ver-todos');
+    expect(enlace?.textContent?.trim()).toBe(TEXTOS_FICHA_AVISOS.verTodos);
+    expect(enlace?.getAttribute('href')).toBe(`/${RUTAS.notificaciones}`);
   });
 });

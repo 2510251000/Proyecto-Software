@@ -26,6 +26,7 @@ import { Marco } from '../../../shared/marco/marco';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { AvisosCerca } from '../avisos-cerca/avisos-cerca';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
+import { FichaMapa } from '../ficha-mapa/ficha-mapa';
 import { HerramientasPortada } from '../herramientas-portada/herramientas-portada';
 import { LineaSol } from '../linea-sol/linea-sol';
 import { ModalNoticia } from '../modal-noticia/modal-noticia';
@@ -46,6 +47,7 @@ import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNot
     AvisosCerca,
     Boton,
     EsqueletoPortada,
+    FichaMapa,
     HerramientasPortada,
     LineaSol,
     Marco,

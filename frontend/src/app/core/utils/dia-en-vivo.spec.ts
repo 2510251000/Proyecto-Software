@@ -7,6 +7,7 @@ import {
 } from '../constants/dia-en-vivo.constants';
 import { Noticia } from '../models/noticia.model';
 import {
+  avanceNivel,
   diaAnterior,
   diaDe,
   diaInicial,
@@ -428,9 +429,32 @@ describe('puntosDelMapa', () => {
       { ciudad: 'C', cantidad: 1 },
       { ciudad: 'D', cantidad: 1 },
     ]);
-    // A (promedio 5, -74) cae en el mismo sitio que B: el centro.
+    // A (promedio 5, -74) cae en el mismo sitio que B: el centro, de oeste a este.
     expect(puntos[0]).toMatchObject({ ciudad: 'A', x: 50, y: 50 });
-    expect(puntos[1]).toMatchObject({ ciudad: 'B', x: 50, y: 50 });
+    expect(puntos[1]).toMatchObject({ ciudad: 'B', x: 50 });
+  });
+
+  it('separa los municipios vecinos para que sus nombres no se monten', () => {
+    // Silvania queda casi a la misma altura que Fusagasugá.
+    const vecinos = [
+      noticia(HOY, '08:00', { ciudad: 'Zipaquirá', latitud: 5.02, longitud: -74.0 }),
+      noticia(HOY, '09:00', { ciudad: 'Fusagasugá', latitud: 4.34, longitud: -74.36 }),
+      noticia(HOY, '10:00', { ciudad: 'Silvania', latitud: 4.4, longitud: -74.39 }),
+      noticia(HOY, '11:00', { ciudad: 'Soacha', latitud: 4.58, longitud: -74.22 }),
+    ];
+    const { puntos } = puntosDelMapa(
+      vecinos,
+      ['Zipaquirá', 'Fusagasugá', 'Silvania', 'Soacha'].map((ciudad) => ({ ciudad, cantidad: 1 })),
+    );
+    const alturas = puntos.map((p) => p.y).sort((a, b) => a - b);
+    for (let i = 1; i < alturas.length; i++) {
+      expect(alturas[i] - alturas[i - 1]).toBeGreaterThanOrEqual(MAPA_MOSAICO.separacion - 0.001);
+    }
+    // Sigue el orden de norte a sur y nadie se sale del margen.
+    const deNorteASur = [...puntos].sort((a, b) => a.y - b.y).map((p) => p.ciudad);
+    expect(deNorteASur).toEqual(['Zipaquirá', 'Soacha', 'Silvania', 'Fusagasugá']);
+    expect(Math.min(...alturas)).toBeGreaterThanOrEqual(MAPA_MOSAICO.margen);
+    expect(Math.max(...alturas)).toBeLessThanOrEqual(100 - MAPA_MOSAICO.margen);
   });
 
   it('con un solo municipio, va en el centro', () => {
@@ -451,5 +475,22 @@ describe('puntosDelMapa', () => {
 
   it('sin municipios no hay puntos', () => {
     expect(puntosDelMapa([], [])).toEqual({ puntos: [], sinCoordenadas: [] });
+  });
+});
+
+describe('avanceNivel', () => {
+  it('es la parte de la meta que ya se tiene', () => {
+    expect(avanceNivel(60, 150)).toBeCloseTo(0.4);
+    expect(avanceNivel(0, 150)).toBe(0);
+  });
+
+  it('no pasa de lleno ni baja de vacío', () => {
+    expect(avanceNivel(200, 150)).toBe(1);
+    expect(avanceNivel(-5, 150)).toBe(0);
+  });
+
+  it('en el nivel más alto, o sin meta, va lleno', () => {
+    expect(avanceNivel(200, null)).toBe(1);
+    expect(avanceNivel(10, 0)).toBe(1);
   });
 });

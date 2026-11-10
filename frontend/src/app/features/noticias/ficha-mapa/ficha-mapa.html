@@ -1,0 +1,76 @@
+<section class="ficha" [attr.aria-labelledby]="idTitulo">
+  <!-- Líneas curvas de adorno, como las de un mapa. -->
+  <svg
+    class="curvas"
+    viewBox="0 0 400 400"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M-20 90C80 40 150 150 250 110S380 30 430 80" />
+    <path d="M-20 190C70 150 160 250 260 200S370 140 430 180" />
+    <path d="M-20 290C90 240 170 340 270 300S380 240 430 280" />
+    <path d="M-20 380C80 340 180 420 280 390S390 330 430 360" />
+  </svg>
+
+  <p class="resumen">{{ resumen() }}</p>
+  <h3 class="titulo" [id]="idTitulo">{{ textos.titulo }}</h3>
+
+  <div class="area">
+    @for (punto of mapa().puntos; track punto.ciudad; let indice = $index) {
+      <button
+        type="button"
+        class="municipio"
+        [class.a-la-izquierda]="punto.nombreALaIzquierda"
+        [class.tuyo]="punto.ciudad === municipioUsuario()"
+        [style.left.%]="punto.nombreALaIzquierda ? null : punto.x"
+        [style.right.%]="punto.nombreALaIzquierda ? 100 - punto.x : null"
+        [style.top.%]="punto.y"
+        [attr.aria-pressed]="punto.ciudad === ciudadActiva()"
+        (click)="elegir(punto.ciudad)"
+      >
+        <span
+          class="punto"
+          aria-hidden="true"
+          [style.width.px]="punto.tamano"
+          [style.height.px]="punto.tamano"
+        >
+          <span class="latido" [style.animation-delay.s]="indice * desfase"></span>
+        </span>
+        <span class="nombre">
+          <strong>{{ punto.ciudad }}</strong> · {{ punto.cantidad
+          }}<span class="solo-lectores-pantalla"> {{ textos.noticias }}</span>
+          @if (punto.ciudad === municipioUsuario()) {
+            · {{ textos.tuMunicipio }}
+          }
+        </span>
+      </button>
+    }
+  </div>
+
+  @if (mapa().sinCoordenadas.length > 0) {
+    <div class="sin-ubicacion" role="group" [attr.aria-label]="textos.sinUbicacion">
+      @for (municipio of mapa().sinCoordenadas; track municipio.ciudad) {
+        <button
+          type="button"
+          class="pildora"
+          [attr.aria-pressed]="municipio.ciudad === ciudadActiva()"
+          (click)="elegir(municipio.ciudad)"
+        >
+          <strong>{{ municipio.ciudad }}</strong> · {{ municipio.cantidad
+          }}<span class="solo-lectores-pantalla"> {{ textos.noticias }}</span>
+          @if (municipio.ciudad === municipioUsuario()) {
+            · {{ textos.tuMunicipio }}
+          }
+        </button>
+      }
+    </div>
+  }
+
+  <a class="abrir" [routerLink]="rutaMapa">
+    {{ textos.abrir }}
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  </a>
+</section>

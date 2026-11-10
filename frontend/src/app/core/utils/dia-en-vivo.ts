@@ -308,6 +308,27 @@ function repartir(valor: number, minimo: number, maximo: number): number {
   return margen + ((100 - 2 * margen) * (valor - minimo)) / (maximo - minimo);
 }
 
+/**
+ * Separa las alturas que quedaron muy juntas (municipios vecinos), para que los nombres no
+ * se monten. Conserva el orden de norte a sur y no se sale del margen.
+ */
+function separarAlturas(alturas: readonly number[]): number[] {
+  const { margen, separacion } = MAPA_MOSAICO;
+  const orden = alturas.map((_, indice) => indice).sort((a, b) => alturas[a] - alturas[b]);
+  const separadas = [...alturas];
+  // Hacia abajo: cada punto queda al menos a `separacion` del anterior.
+  for (let i = 1; i < orden.length; i++) {
+    separadas[orden[i]] = Math.max(separadas[orden[i]], separadas[orden[i - 1]] + separacion);
+  }
+  // Hacia arriba: si el último se salió del margen, se corren todos lo necesario.
+  let tope = 100 - margen;
+  for (let i = orden.length - 1; i >= 0; i--) {
+    separadas[orden[i]] = Math.min(separadas[orden[i]], tope);
+    tope = separadas[orden[i]] - separacion;
+  }
+  return separadas;
+}
+
 function tamanoPunto(cantidad: number): number {
   const tamanos = MAPA_MOSAICO.tamanoPunto;
   return tamanos[Math.min(Math.max(cantidad, 1), tamanos.length) - 1];
@@ -343,18 +364,30 @@ export function puntosDelMapa(noticias: readonly Noticia[], conteo: readonly Con
   const [sur, norte] = [Math.min(...latitudes), Math.max(...latitudes)];
   const [oeste, este] = [Math.min(...longitudes), Math.max(...longitudes)];
 
-  const puntos = ubicados.map(({ ciudad, cantidad, latitud, longitud }) => {
+  // La latitud crece hacia el norte y la pantalla hacia abajo: se invierte.
+  const alturas = separarAlturas(ubicados.map((m) => 100 - repartir(m.latitud, sur, norte)));
+  const puntos = ubicados.map(({ ciudad, cantidad, longitud }, indice) => {
     const x = repartir(longitud, oeste, este);
     return {
       ciudad,
       cantidad,
       x,
-      // La latitud crece hacia el norte y la pantalla hacia abajo: se invierte.
-      y: 100 - repartir(latitud, sur, norte),
+      y: alturas[indice],
       tamano: tamanoPunto(cantidad),
       nombreALaIzquierda: x > MAPA_MOSAICO.nombreALaIzquierdaDesde,
     };
   });
 
   return { puntos, sinCoordenadas };
+}
+
+/**
+ * Qué tanto del anillo de «Tu nivel» va lleno, de 0 a 1: los puntos sobre los que pide el
+ * siguiente nivel. Sin siguiente nivel (el más alto) va lleno.
+ */
+export function avanceNivel(puntaje: number, meta: number | null): number {
+  if (meta === null || meta <= 0) {
+    return 1;
+  }
+  return Math.min(1, Math.max(0, puntaje / meta));
 }

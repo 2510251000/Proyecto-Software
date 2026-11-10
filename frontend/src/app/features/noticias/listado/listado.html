@@ -75,6 +75,14 @@
           (pestana)="elegirPestana($event)"
           (verMas)="verMas()"
         >
+          <app-ficha-mapa
+            fichaMapa
+            [noticias]="noticias()"
+            [conteo]="conteo()"
+            [ciudadActiva]="ciudadActiva()"
+            [municipioUsuario]="perfil()?.ciudad?.nombre ?? null"
+            (ciudad)="elegirCiudad($event)"
+          />
           @if (perfil(); as perfil) {
             <app-tu-nivel fichaNivel [perfil]="perfil" />
           }

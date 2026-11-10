@@ -1,0 +1,196 @@
+:host {
+  display: block;
+  min-width: 0;
+
+  --mapa-suave: var(--color-sobre-marca-suave);
+  --mapa-resalte: rgba(255, 255, 255, 0.12);
+  --mapa-borde: rgba(255, 255, 255, 0.4);
+}
+
+/* Azul de marca con letra blanca (15:1), igual en el tema de día y en el de noche. */
+.ficha {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  min-height: 410px;
+  padding: 26px;
+  overflow: hidden;
+  border-radius: var(--radio-ficha);
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+}
+
+.curvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--color-sobre-marca);
+  stroke-opacity: 0.1;
+  stroke-width: 1.5;
+}
+
+.resumen,
+.titulo,
+.area,
+.sin-ubicacion,
+.abrir {
+  position: relative;
+}
+
+.resumen {
+  margin: 0;
+  color: var(--mapa-suave);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+/* Los puntos van por posición: x e y en % de esta área. */
+.area {
+  flex: 1;
+  min-height: 240px;
+}
+
+.municipio,
+.pildora {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alto-control);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.municipio {
+  position: absolute;
+  gap: 10px;
+  padding: 0 12px 0 0;
+  transform: translateY(-50%);
+}
+
+/* Cerca del borde derecho el nombre va a la izquierda del punto. */
+.a-la-izquierda {
+  flex-direction: row-reverse;
+  padding: 0 0 0 12px;
+}
+
+.municipio:hover .nombre,
+.pildora:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.punto {
+  position: relative;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-sol);
+}
+
+/* Anillo que late alrededor del punto. */
+.latido {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--color-sol);
+  border-radius: 50%;
+  animation: latido 2.6s ease-out infinite;
+}
+
+@keyframes latido {
+  from {
+    opacity: 0.8;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+
+/* El municipio del usuario y el que está filtrando la portada van dentro de una píldora. */
+.tuyo,
+.municipio[aria-pressed='true'],
+.pildora {
+  border-color: var(--mapa-borde);
+  background: var(--mapa-resalte);
+}
+
+.tuyo,
+.municipio[aria-pressed='true'] {
+  padding: 0 14px 0 10px;
+  font-size: 0.9375rem;
+}
+
+.tuyo.a-la-izquierda,
+.a-la-izquierda[aria-pressed='true'] {
+  padding: 0 10px 0 14px;
+}
+
+.tuyo .punto {
+  box-shadow: 0 0 0 3px var(--color-sobre-marca);
+}
+
+.municipio[aria-pressed='true'],
+.pildora[aria-pressed='true'] {
+  border-color: var(--color-sol);
+}
+
+.sin-ubicacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.pildora {
+  padding: 0 14px;
+}
+
+.abrir {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  min-height: var(--alto-control);
+  color: inherit;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.abrir svg {
+  fill: none;
+  stroke: var(--color-sol);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ficha :focus-visible {
+  outline-color: var(--color-sol);
+}
+
+/* Sin movimiento: el anillo queda fijo, al 45 %. */
+@media (prefers-reduced-motion: reduce) {
+  .latido {
+    opacity: 0.45;
+    transform: scale(1.7);
+    animation: none;
+  }
+}

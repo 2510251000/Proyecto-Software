@@ -1,10 +1,12 @@
-<section class="tarjeta-lateral" aria-labelledby="columna-avisos">
-  <h2 id="columna-avisos" class="titulo">
-    {{ textos.avisos }}
+<section class="ficha" aria-labelledby="ficha-avisos">
+  <div class="encabezado">
+    <h3 id="ficha-avisos" class="titulo">{{ textos.avisos }}</h3>
     @if (cantidad() > 0) {
-      <span class="contador">{{ cantidad() }}<span class="solo-lectores-pantalla"> {{ textos.sinLeer }}</span></span>
+      <span class="contador"
+        >{{ cantidad() }}<span class="solo-lectores-pantalla"> {{ textos.sinLeer }}</span></span
+      >
     }
-  </h2>
+  </div>
 
   @for (aviso of visibles(); track aviso.id) {
     <a class="renglon-lateral" [routerLink]="enlace(aviso)">
@@ -12,11 +14,15 @@
       <span>
         <span class="renglon-titulo">{{ aviso.mensaje }}</span>
         @if (cuando(aviso)) {
-          <span class="renglon-dato"><time [attr.datetime]="aviso.fecha">{{ cuando(aviso) }}</time></span>
+          <span class="renglon-dato"
+            ><time [attr.datetime]="aviso.fecha">{{ cuando(aviso) }}</time></span
+          >
         }
       </span>
     </a>
   } @empty {
     <p class="vacio">{{ textos.sinAvisos }}</p>
   }
+
+  <a class="ver-todos" [routerLink]="rutaAvisos">{{ textosFicha.verTodos }}</a>
 </section>

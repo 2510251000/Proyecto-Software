@@ -63,6 +63,8 @@ export const MAPA_MOSAICO = {
   margen: 14,
   /** Posición de un punto cuando no hay con qué compararlo (un solo municipio). */
   centro: 50,
+  /** Distancia mínima entre dos puntos, en % del alto, para que sus nombres no se monten. */
+  separacion: 13,
   /** Desde este % del ancho el nombre va a la izquierda del punto. */
   nombreALaIzquierdaDesde: 60,
   /** Diámetro del punto, en px, con 1, 2 y 3 o más noticias. */
@@ -123,3 +125,58 @@ export const TEXTOS_MOSAICO = {
 export function textoDemasDelDia(fecha: string): string {
   return `Lo demás del ${fecha}`;
 }
+
+/** Ficha «Dónde está pasando»: los municipios como puntos que laten. */
+export const TEXTOS_FICHA_MAPA = {
+  titulo: 'Dónde está pasando',
+  tuMunicipio: 'tu municipio',
+  abrir: 'Abrir el mapa completo',
+  noticias: 'noticias',
+  sinUbicacion: 'Municipios sin ubicación en el mapa',
+} as const;
+
+/** «8 noticias en 4 municipios». */
+export function resumenMapa(noticias: number, municipios: number): string {
+  const deNoticias = `${noticias} ${noticias === 1 ? 'noticia' : 'noticias'}`;
+  return `${deNoticias} en ${municipios} ${municipios === 1 ? 'municipio' : 'municipios'}`;
+}
+
+/** Segundos entre el latido de un punto y el del siguiente, para que no latan todos a la vez. */
+export const DESFASE_LATIDO_S = 0.65;
+
+/** Ficha «Tu nivel»: el anillo con el avance, los puntos y el cupo del día. */
+export const TEXTOS_FICHA_NIVEL = {
+  etiqueta: 'Tu nivel',
+  publicar: 'Publicar una noticia',
+  maximo: 'Estás en el nivel más alto.',
+  hoyTeQuedan: 'Hoy te quedan',
+  publicaciones: 'publicaciones.',
+} as const;
+
+/** «60 de 150 puntos», o solo «200 puntos» en el nivel más alto. */
+export function textoPuntosNivel(puntaje: number, meta: number | null): string {
+  return meta === null ? `${puntaje} puntos` : `${puntaje} de ${meta} puntos`;
+}
+
+/** «Te faltan 90 para el nivel 3.» */
+export function textoTeFaltan(faltan: number, nivel: number): string {
+  return `Te faltan ${faltan} para el nivel ${nivel}.`;
+}
+
+/** «9 de 10»: la parte en negrita de «Hoy te quedan 9 de 10 publicaciones.» */
+export function textoCupoRestante(restantes: number, limite: number): string {
+  return `${restantes} de ${limite}`;
+}
+
+/** Medidas del anillo de «Tu nivel», en unidades de su viewBox (120 × 120). */
+export const ANILLO_NIVEL = {
+  tamano: 168,
+  caja: 120,
+  radio: 52,
+  trazo: 10,
+} as const;
+
+/** Ficha «Avisos cerca de ti». */
+export const TEXTOS_FICHA_AVISOS = {
+  verTodos: 'Ver todos los avisos',
+} as const;
