@@ -46,46 +46,52 @@ describe('CalificacionNoticia', () => {
     return { fixture, raiz: fixture.nativeElement as HTMLElement };
   }
 
-  it('es un grupo de cinco radios con nombre accesible y muestra el promedio', async () => {
-    const { raiz } = await crear({ promedio: 4.25, cantidadCalificaciones: 3, miCalificacion: 4 });
-    const radios = raiz.querySelectorAll<HTMLInputElement>('input[type="radio"]');
-    expect(radios).toHaveLength(5);
-    expect(radios[3].checked).toBe(true);
-    expect(raiz.querySelector('legend')?.textContent).toContain(TEXTOS_CALIFICACION.titulo);
-    expect(raiz.querySelectorAll('.estrella.llena')).toHaveLength(4);
-    expect(raiz.querySelector('.resumen')?.textContent).toContain('4.3 · 3 calificaciones');
-    expect(raiz.textContent).toContain('1 estrella');
+  const botones = (raiz: HTMLElement) => raiz.querySelectorAll<HTMLButtonElement>('button.voto');
+
+  it('pregunta por el autor con dos botones y muestra su aprobación', async () => {
+    const { raiz } = await crear({ autor: 'Laura Méndez', autorAprobacion: 92, autorVotos: 25, miVoto: true });
+    expect(raiz.querySelector('h3')?.textContent).toContain(`${TEXTOS_CALIFICACION.pregunta} Laura Méndez?`);
+    const [sigue, noGusto] = botones(raiz);
+    expect(sigue.textContent).toContain(TEXTOS_CALIFICACION.siguePublicando);
+    expect(noGusto.textContent).toContain(TEXTOS_CALIFICACION.noMeGusto);
+    expect(sigue.getAttribute('aria-pressed')).toBe('true');
+    expect(noGusto.getAttribute('aria-pressed')).toBe('false');
+    expect(raiz.querySelector('.resumen')?.textContent).toContain('92 % de aprobación (25 votos)');
   });
 
-  it('sin calificaciones lo dice', async () => {
-    const { raiz } = await crear();
-    expect(raiz.querySelector('.resumen')?.textContent).toContain(TEXTOS_CALIFICACION.sinCalificaciones);
+  it('sin votos lo dice y usa un nombre genérico si no hay autor', async () => {
+    const { raiz } = await crear({ autor: undefined });
+    expect(raiz.querySelector('h3')?.textContent).toContain(TEXTOS_CALIFICACION.autorGenerico);
+    expect(raiz.querySelector('.resumen')?.textContent).toContain(TEXTOS_CALIFICACION.sinVotos);
   });
 
-  it('al elegir una estrella la guarda y actualiza el promedio', async () => {
+  it('al votar lo guarda y actualiza la aprobación', async () => {
     const { fixture, raiz } = await crear();
-    raiz.querySelectorAll<HTMLInputElement>('input[type="radio"]')[4].dispatchEvent(new Event('change'));
-    expect(calificar).toHaveBeenCalledWith(3, 5);
-    respuesta.next({ promedio: 5, cantidadCalificaciones: 1, miCalificacion: 5 });
+    botones(raiz)[1].click();
+    expect(calificar).toHaveBeenCalledWith(3, false);
+    respuesta.next({ autorAprobacion: 0, autorVotos: 1, autorVotosPositivos: 0, miVoto: false });
     await fixture.whenStable();
-    expect(raiz.querySelector('.resumen')?.textContent).toContain('5.0 · 1 calificación');
+    expect(raiz.querySelector('.resumen')?.textContent).toContain('0 % de aprobación (1 voto)');
+    expect(botones(raiz)[1].getAttribute('aria-pressed')).toBe('true');
     expect(raiz.querySelector('[role="status"]')?.textContent).toContain(TEXTOS_CALIFICACION.gracias);
   });
 
-  it('si falla, vuelve a la calificación anterior y muestra el error', async () => {
-    const { fixture, raiz } = await crear({ miCalificacion: 2 });
-    fixture.componentInstance.calificar(4);
+  it('si falla, vuelve al voto anterior y muestra el error', async () => {
+    const { fixture, raiz } = await crear({ miVoto: true });
+    fixture.componentInstance.votar(false);
+    fixture.componentInstance.votar(true);
+    expect(calificar).toHaveBeenCalledTimes(1);
     respuesta.error({ estado: 500, mensaje: 'Algo falló' });
     await fixture.whenStable();
-    expect(fixture.componentInstance.mia()).toBe(2);
+    expect(fixture.componentInstance.miVoto()).toBe(true);
     expect(raiz.querySelector('[role="alert"]')?.textContent).toContain('Algo falló');
   });
 
-  it('el autor no puede calificar su propia noticia', async () => {
+  it('el autor no se vota a sí mismo', async () => {
     const { fixture, raiz } = await crear({ autorId: YO });
-    expect(raiz.querySelector<HTMLFieldSetElement>('fieldset')?.disabled).toBe(true);
+    expect(botones(raiz)).toHaveLength(0);
     expect(raiz.textContent).toContain(TEXTOS_CALIFICACION.propia);
-    fixture.componentInstance.calificar(5);
+    fixture.componentInstance.votar(true);
     expect(calificar).not.toHaveBeenCalled();
   });
 });
@@ -250,10 +256,10 @@ describe('InteraccionService', () => {
     servicio.borrarComentario(3, 5).subscribe();
     expect(http.expectOne(`${base}/comentarios/5`).request.method).toBe('DELETE');
 
-    servicio.calificar(3, 4).subscribe();
+    servicio.calificar(3, true).subscribe();
     const calificacion = http.expectOne(`${base}/calificacion`);
     expect(calificacion.request.method).toBe('PUT');
-    expect(calificacion.request.body).toEqual({ valor: 4 });
+    expect(calificacion.request.body).toEqual({ recomienda: true });
 
     servicio.reportar(3, { motivo: 'SPAM' }).subscribe();
     expect(http.expectOne(`${base}/reportes`).request.body).toEqual({ motivo: 'SPAM' });

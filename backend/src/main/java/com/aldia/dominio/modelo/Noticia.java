@@ -23,8 +23,8 @@ public class Noticia {
     private final BigDecimal longitud;
     /** Fotos en orden; la primera es la portada. Vacía si la noticia no tiene fotos. */
     private final List<ImagenNoticia> imagenes;
-    /** Promedio y cantidad de calificaciones (VACIO si nadie la ha calificado). */
-    private ResumenCalificaciones calificaciones = ResumenCalificaciones.VACIO;
+    /** Votos de los lectores al autor en todas sus noticias (SIN_VOTOS si nadie ha votado). */
+    private ReputacionAutor reputacionAutor = ReputacionAutor.SIN_VOTOS;
 
     public Noticia(Long id, String titulo, String resumen, String contenido,
                    LocalDateTime fechaPublicacion, boolean oficial, Estado estado, String ciudad) {
@@ -66,14 +66,14 @@ public class Noticia {
     public Noticia conImagenes(List<ImagenNoticia> nuevas) {
         Noticia copia = new Noticia(id, titulo, resumen, contenido, fechaPublicacion, oficial, estado, ciudad, ciudadId,
                 autorId, autorNombre, autorNivel, latitud, longitud, nuevas);
-        copia.calificaciones = calificaciones;
+        copia.reputacionAutor = reputacionAutor;
         return copia;
     }
 
-    /** La misma noticia con este resumen de calificaciones. */
-    public Noticia conCalificaciones(ResumenCalificaciones resumenNuevo) {
+    /** La misma noticia con esta reputación de su autor. */
+    public Noticia conReputacionAutor(ReputacionAutor nueva) {
         Noticia copia = conImagenes(imagenes);
-        copia.calificaciones = resumenNuevo == null ? ResumenCalificaciones.VACIO : resumenNuevo;
+        copia.reputacionAutor = nueva == null ? ReputacionAutor.SIN_VOTOS : nueva;
         return copia;
     }
 
@@ -137,8 +137,8 @@ public class Noticia {
         return imagenes;
     }
 
-    public ResumenCalificaciones getCalificaciones() {
-        return calificaciones;
+    public ReputacionAutor getReputacionAutor() {
+        return reputacionAutor;
     }
 
     public enum Estado {

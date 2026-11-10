@@ -243,3 +243,22 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     o mover todo Angular a la vez. Lo demás queda en `PENDIENTES.md`.
 63. Apagado ordenado: `server.shutdown: graceful` con hasta `TIEMPO_APAGADO` (20 s) para
     terminar las peticiones en curso (factor IX).
+
+## Cambios pedidos por Sebastián (2026-11-09)
+64. **Login con muro de noticias.** El fondo del login es un muro de recortes de periódico (foto,
+    sección y titular de ejemplo) difuminado con un velo azul; al centro, el logo grande y el
+    lema. Las fotos nuevas son CC0 (`frontend/public/imagenes/fondo-login/CREDITOS.md`). Se
+    quitaron la entrada con atardecer y el amanecer: dependían del cielo de noche.
+65. **Se quita «Hoy».** La pantalla de municipio + historias no gustó; al iniciar sesión se va
+    a la portada. La barra inferior del celular queda con 4 destinos.
+66. **Se califica al autor, no la noticia.** En cada noticia el lector elige «Sigue publicando
+    así» o «No me gustó esto» (un voto por lector y noticia, se puede cambiar). La aprobación del
+    autor es el % de votos positivos en **todas** sus noticias; se muestra en las tarjetas, el
+    detalle y el perfil. **Solo se muestra: no suma ni resta puntos ni cambia el nivel.**
+67. V5 cambia `calificacion.valor` (1 a 5) por `calificacion.recomienda` (booleano) en la misma
+    tabla, para no agregar tablas al modelo de diez. Las calificaciones viejas de 4 o 5 estrellas
+    pasan a `TRUE`; las demás a `FALSE`. (decidido por Claude Code; revisar)
+68. API: `PUT /api/noticias/{id}/calificacion` recibe `{ "recomienda": true|false }` y responde
+    `autorAprobacion` (null sin votos), `autorVotos`, `autorVotosPositivos` y `miVoto`.
+    `NoticiaResponseDTO` cambia `promedio`, `cantidadCalificaciones` y `miCalificacion` por
+    `autorAprobacion`, `autorVotos` y `miVoto`; `/api/usuarios/me` agrega `aprobacion` y `votos`.

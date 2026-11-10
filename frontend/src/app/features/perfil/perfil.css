@@ -47,6 +47,10 @@
   font-size: 0.9rem;
 }
 
+.aprobacion {
+  margin: var(--espacio-m) 0 0;
+}
+
 .cuenta-movil {
   display: none;
 }

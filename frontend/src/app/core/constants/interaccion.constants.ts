@@ -4,21 +4,28 @@ import { EstadoReporte, MotivoReporte } from '../models/interaccion.model';
 export const LARGO_MAXIMO_COMENTARIO = 1000;
 export const LARGO_MAXIMO_DESCRIPCION_REPORTE = 1000;
 
-/** Valores posibles de una calificación. */
-export const ESTRELLAS: readonly number[] = [1, 2, 3, 4, 5];
-
+/** Votar al autor desde su noticia: «sigue publicando así» o «no me gustó esto». */
 export const TEXTOS_CALIFICACION = {
-  titulo: 'Califica esta noticia',
-  estrella: 'estrella',
-  estrellas: 'estrellas',
-  promedio: 'Promedio',
-  sinCalificaciones: 'Todavía nadie la ha calificado.',
-  calificacion: 'calificación',
-  calificaciones: 'calificaciones',
-  tuCalificacion: 'Tu calificación',
-  propia: 'No puedes calificar tu propia noticia.',
-  gracias: 'Gracias, guardamos tu calificación.',
+  pregunta: '¿Qué te parece lo que publica',
+  autorGenerico: 'este autor',
+  siguePublicando: 'Sigue publicando así',
+  noMeGusto: 'No me gustó esto',
+  aprobacion: 'de aprobación',
+  voto: 'voto',
+  votos: 'votos',
+  sinVotos: 'Todavía nadie ha votado por este autor.',
+  propia: 'Es tu noticia: los lectores votan por ti aquí.',
+  gracias: 'Gracias, guardamos tu voto. Puedes cambiarlo cuando quieras.',
 } as const;
+
+/** «92 % de aprobación (25 votos)», o null si todavía no hay votos. */
+export function textoAprobacion(aprobacion: number | null | undefined, votos: number | undefined): string | null {
+  if (aprobacion === null || aprobacion === undefined || !votos) {
+    return null;
+  }
+  const palabra = votos === 1 ? TEXTOS_CALIFICACION.voto : TEXTOS_CALIFICACION.votos;
+  return `${aprobacion} % ${TEXTOS_CALIFICACION.aprobacion} (${votos} ${palabra})`;
+}
 
 export const TEXTOS_COMENTARIOS = {
   titulo: 'Comentarios',

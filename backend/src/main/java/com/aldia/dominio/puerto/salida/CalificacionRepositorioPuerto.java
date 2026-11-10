@@ -1,24 +1,25 @@
 package com.aldia.dominio.puerto.salida;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import com.aldia.dominio.modelo.ResumenCalificaciones;
+import com.aldia.dominio.modelo.ReputacionAutor;
 
 public interface CalificacionRepositorioPuerto {
 
-    Optional<Integer> buscar(Long usuarioId, Long noticiaId);
+    Optional<Boolean> buscar(Long usuarioId, Long noticiaId);
 
-    /** Crea la calificación o, si el usuario ya había calificado, cambia su valor. */
-    void guardar(Long usuarioId, Long noticiaId, int valor, LocalDateTime fecha);
+    /** Crea el voto o, si el usuario ya había votado en esa noticia, lo cambia. */
+    void guardar(Long usuarioId, Long noticiaId, boolean recomienda, LocalDateTime fecha);
 
-    ResumenCalificaciones resumen(Long noticiaId);
+    /** Votos de todas las noticias del autor. */
+    ReputacionAutor reputacion(Long autorId);
 
-    /** Resumen de varias noticias a la vez; las que no tienen calificaciones no aparecen. */
-    Map<Long, ResumenCalificaciones> resumenes(List<Long> noticiaIds);
+    /** Reputación de varios autores a la vez; los que no tienen votos no aparecen. */
+    Map<Long, ReputacionAutor> reputaciones(Collection<Long> autorIds);
 
-    /** El valor que el usuario le dio a cada noticia que calificó. */
-    Map<Long, Integer> delUsuario(Long usuarioId, List<Long> noticiaIds);
+    /** El voto del usuario en cada noticia donde votó. */
+    Map<Long, Boolean> delUsuario(Long usuarioId, Collection<Long> noticiaIds);
 }

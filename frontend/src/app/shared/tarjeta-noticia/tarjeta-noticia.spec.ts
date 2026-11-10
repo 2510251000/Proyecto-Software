@@ -96,14 +96,15 @@ describe('TarjetaNoticia', () => {
     expect(buscar('.nombre')?.textContent?.trim()).toBe(ETIQUETAS_NOTICIA.autorOficial);
   });
 
-  it('la grande lleva el municipio, los minutos de lectura y, si la han calificado, el promedio', async () => {
+  it('la grande lleva el municipio, los minutos de lectura y, si hay votos, la aprobación del autor', async () => {
     await mostrar(NOTICIA, 'grande');
     expect(buscar('.municipio')?.textContent?.trim()).toBe('Fusagasugá');
     expect(buscar('.datos')?.textContent).toContain(`1 ${ETIQUETAS_NOTICIA.minutos} ${ETIQUETAS_NOTICIA.deLectura}`);
     expect(buscar('.calificacion')).toBeNull();
 
-    await mostrar({ ...NOTICIA, promedio: 4.25, cantidadCalificaciones: 12 }, 'grande');
-    const calificacion = buscar('.calificacion')?.textContent?.replace(/\s+/g, ' ').trim();
-    expect(calificacion).toBe(`4,3 ${ETIQUETAS_NOTICIA.deCinco}, (12 ${ETIQUETAS_NOTICIA.calificaciones})`);
+    await mostrar({ ...NOTICIA, autorAprobacion: 92, autorVotos: 12 }, 'grande');
+    const calificacion = buscar('.calificacion');
+    expect(calificacion?.textContent?.replace(/\s+/g, ' ').trim()).toBe('92 % de aprobación (12 votos)');
+    expect(calificacion?.getAttribute('title')).toBe(ETIQUETAS_NOTICIA.aprobacionAutor);
   });
 });

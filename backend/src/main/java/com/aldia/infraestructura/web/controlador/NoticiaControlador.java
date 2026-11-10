@@ -84,17 +84,17 @@ public class NoticiaControlador {
             @RequestParam(required = false) FiltroNoticias.Orden orden,
             Authentication autenticacion) {
         List<Noticia> noticias = listarNoticiasCasoDeUso.listarPublicadas(new FiltroNoticias(tipo, ciudadId, texto, orden));
-        Map<Long, Integer> mias = calificarNoticiaCasoDeUso.misCalificaciones(correoDe(autenticacion),
+        Map<Long, Boolean> mios = calificarNoticiaCasoDeUso.misVotos(correoDe(autenticacion),
                 noticias.stream().map(Noticia::getId).toList());
-        return ResponseEntity.ok(noticias.stream().map(n -> NoticiaResponseDTO.desde(n, mias.get(n.getId()))).toList());
+        return ResponseEntity.ok(noticias.stream().map(n -> NoticiaResponseDTO.desde(n, mios.get(n.getId()))).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Ver una noticia publicada (404 si no existe, está oculta o eliminada)")
     public ResponseEntity<NoticiaResponseDTO> obtener(@PathVariable Long id, Authentication autenticacion) {
         Noticia noticia = obtenerNoticiaCasoDeUso.obtenerPublicada(id);
-        Integer mia = calificarNoticiaCasoDeUso.misCalificaciones(correoDe(autenticacion), List.of(id)).get(id);
-        return ResponseEntity.ok(NoticiaResponseDTO.desde(noticia, mia));
+        Boolean mio = calificarNoticiaCasoDeUso.misVotos(correoDe(autenticacion), List.of(id)).get(id);
+        return ResponseEntity.ok(NoticiaResponseDTO.desde(noticia, mio));
     }
 
     /** Correo de la sesión, o null si la petición llegó sin token. */

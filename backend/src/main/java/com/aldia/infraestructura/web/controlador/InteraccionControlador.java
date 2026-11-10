@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
-/** Comentarios, calificaciones y reportes de una noticia (HU MF03_001 a MF03_003). */
+/** Comentarios, votos al autor y reportes de una noticia (HU MF03_001 a MF03_003). */
 @RestController
 @RequestMapping("/api/noticias/{noticiaId}")
 public class InteraccionControlador {
@@ -77,12 +77,13 @@ public class InteraccionControlador {
 
     @PutMapping("/calificacion")
     @SecurityRequirement(name = OpenApiConfiguracion.ESQUEMA_JWT)
-    @Operation(summary = "Calificar de 1 a 5 (una por usuario; si ya calificó, se cambia). No sobre la noticia propia")
+    @Operation(summary = "Votar al autor: recomienda true (sigue publicando así) o false (no me gustó). "
+            + "Un voto por usuario y noticia; si ya votó, se cambia. No sobre la noticia propia")
     public ResponseEntity<CalificacionDTO> calificar(@PathVariable Long noticiaId,
                                                      @Valid @RequestBody CalificarDTO solicitud,
                                                      Authentication autenticacion) {
         return ResponseEntity.ok(CalificacionDTO.desde(
-                calificaciones.calificar(autenticacion.getName(), noticiaId, solicitud.valor())));
+                calificaciones.calificar(autenticacion.getName(), noticiaId, solicitud.recomienda())));
     }
 
     @PostMapping("/reportes")

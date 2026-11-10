@@ -30,11 +30,12 @@ export interface Noticia {
   longitud?: number | null;
   /** Fotos en orden; vacía o ausente si la noticia no tiene. */
   imagenes?: ImagenNoticia[];
-  /** Promedio de 1 a 5 (0 si nadie ha calificado) y cuántas calificaciones tiene. */
-  promedio?: number;
-  cantidadCalificaciones?: number;
-  /** Lo que le dio el usuario de la sesión; null si no ha calificado. */
-  miCalificacion?: number | null;
+  /** % de lectores que quieren que el autor siga publicando así (en todas sus noticias); null sin votos. */
+  autorAprobacion?: number | null;
+  /** Cuántos votos tiene el autor en todas sus noticias. */
+  autorVotos?: number;
+  /** Lo que votó el usuario de la sesión en esta noticia; null si no ha votado. */
+  miVoto?: boolean | null;
 }
 
 /** Cuerpo de POST /api/noticias. */

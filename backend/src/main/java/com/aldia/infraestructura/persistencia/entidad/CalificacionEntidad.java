@@ -17,7 +17,8 @@ public class CalificacionEntidad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private short valor;
+    /** true: «sigue publicando así»; false: «no me gustó esto». */
+    private boolean recomienda;
 
     private LocalDateTime fecha;
 
@@ -39,12 +40,12 @@ public class CalificacionEntidad {
         return id;
     }
 
-    public short getValor() {
-        return valor;
+    public boolean isRecomienda() {
+        return recomienda;
     }
 
-    public void setValor(short valor) {
-        this.valor = valor;
+    public void setRecomienda(boolean recomienda) {
+        this.recomienda = recomienda;
     }
 
     public LocalDateTime getFecha() {

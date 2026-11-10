@@ -42,6 +42,10 @@
           }
         </p>
         <p class="texto-suave regla">{{ textos.regla }}</p>
+        <p class="aprobacion">
+          <strong>{{ textos.aprobacion }}:</strong>
+          {{ aprobacion() ?? textos.sinVotos }}
+        </p>
       </section>
 
       <form class="seccion-papel" [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>

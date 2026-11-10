@@ -86,6 +86,8 @@ export const TEXTOS_PERFIL = {
   publicadas: 'publicadas',
   limiteDiario: 'por día',
   sinLimite: 'Sin límite diario',
+  aprobacion: 'Lo que opinan los lectores',
+  sinVotos: 'Todavía nadie ha votado por lo que publicas.',
   regla:
     'Cada noticia que publicas suma puntos. Si un administrador oculta o borra una de tus noticias, pierdes puntos. Los niveles altos publican más noticias al día y sus noticias se recomiendan más.',
   guardar: 'Guardar cambios',
@@ -106,7 +108,7 @@ export const ETIQUETAS_NOTIFICACION: Readonly<Record<TipoNotificacion, string>> 
   ASCENSO_NIVEL: 'Tu nivel',
   MODERACION: 'Moderación',
   COMENTARIO: 'Comentario',
-  CALIFICACION: 'Calificación',
+  CALIFICACION: 'Voto a tu noticia',
 };
 
 export const TEXTOS_ADMIN = {

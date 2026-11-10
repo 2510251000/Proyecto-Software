@@ -22,10 +22,7 @@ export const ETIQUETAS_NOTICIA = {
   /** Nombre que se muestra si la API no trae el autor. */
   autorOficial: 'Administración municipal',
   autorComunidad: 'Vecino de la comunidad',
-  calificacion: 'calificación',
-  calificaciones: 'calificaciones',
-  deCinco: 'de 5',
-  promedio: 'Calificación promedio',
+  aprobacionAutor: 'Lectores que quieren que el autor siga publicando así'
 } as const;
 
 /** Textos de la vista de una noticia: la vista rápida de la portada y su página propia. */

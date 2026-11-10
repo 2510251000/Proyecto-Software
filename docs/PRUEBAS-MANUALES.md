@@ -26,6 +26,8 @@ Marca cada casilla en **computador (PC)** y en **celular (📱)**. Para el celul
 
 ## Fase 1 — Entrada con atardecer y «Hoy»
 
+> Ya no aplica desde el 2026-11-09: ver «Cambios del 2026-11-09» al final.
+
 | # | PC | 📱 | Cuenta | Pasos | Resultado esperado |
 |---|---|---|---|---|---|
 | 1.1 | ☐ | ☐ | — | Abre una ventana nueva del navegador y entra a `/login`. | Corre la entrada de unos 5 s: cielo azul que se vuelve naranja y morado, el sol sale y se oculta tras tres barras blancas, «Al Día» y el lema en blanco, salen estrellas y aparece la tarjeta del login. El texto nunca queda encima del sol. |
@@ -100,3 +102,13 @@ Marca cada casilla en **computador (PC)** y en **celular (📱)**. Para el celul
 | 6.5 | Importa `backend/postman/AlDia.postman_collection.json` en Postman. Corre «Iniciar sesión (usuario)» y «Iniciar sesión (administrador)», luego las demás. | Los tokens se guardan solos; las peticiones de «Administración» usan el token del admin. |
 | 6.6 | Detén el backend con Ctrl+C mientras publicas una noticia con fotos. | La petición en curso termina antes de que se apague (apagado ordenado). |
 | 6.7 | Haz push de la rama a GitHub cuando la apruebes y abre el PR. | El análisis de SonarQube corre; al llegar a `pre` también corre en el push. |
+
+## Cambios del 2026-11-09 — Login con noticias y calificar al autor
+
+| # | PC | 📱 | Cuenta | Pasos | Resultado esperado |
+|---|---|---|---|---|---|
+| 7.1 | ☐ | ☐ | — | Entra a `/login`. | De fondo, un muro de recortes de periódico difuminado (se leen secciones y titulares); al centro, el logo grande «Al Día», el lema y la tarjeta del login. |
+| 7.2 | ☐ | ☐ | `vecina@aldia.com` | Inicia sesión bien. | Se abre la portada directamente. No existe «Hoy» en el menú ni en la barra inferior. |
+| 7.3 | ☐ | ☐ | `lector@aldia.com` | Abre una noticia de otra persona y toca «Sigue publicando así»; luego «No me gustó esto». | El botón elegido queda marcado; la aprobación del autor se actualiza (por ejemplo «100 % de aprobación (1 voto)» y luego «0 %…»); cambiar no suma otro voto. |
+| 7.4 | ☐ | ☐ | autor de esa noticia | Abre tu propia noticia y tus avisos. | No hay botones: dice que es tu noticia. Tienes el aviso del primer voto («… quiere que sigas publicando así…»). |
+| 7.5 | ☐ | ☐ | autor de esa noticia | Abre «Mi perfil» y la portada. | En el perfil, «Lo que opinan los lectores: N % de aprobación (M votos)». En las tarjetas grandes de tus noticias, la misma aprobación con una mano arriba. Tus puntos no cambiaron. |

@@ -177,5 +177,14 @@ Cada fase va en su rama; cada rama sale de la anterior. Nada está subido: Sebas
   6. Celular (390 px): sin desplazamiento horizontal.
 - Capturas en `docs/capturas/`.
 
+## Cambios del 2026-11-09 (rama feature/login-noticias)
+- **Login**: muro de noticias difuminado de fondo, logo grande y lema al centro, tarjeta debajo.
+  Sin entrada animada ni amanecer. Al iniciar sesión se abre la portada.
+- **«Hoy» se quitó** (ruta, menú lateral y barra inferior). Lo de la Fase 1 sobre «Hoy» y la
+  entrada con atardecer ya no aplica.
+- **Calificar al autor**: reemplaza las estrellas de la Fase 3. Dos botones en el detalle
+  («Sigue publicando así» / «No me gustó esto») y la aprobación del autor en las tarjetas y el
+  perfil. Migración V5. Detalle en `DECISIONES.md` (64 a 68).
+
 ## Bitácora
 - Ver `git log --oneline origin/dev..feature/completar-app`.

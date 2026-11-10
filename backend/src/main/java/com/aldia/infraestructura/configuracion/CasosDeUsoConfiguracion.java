@@ -129,9 +129,11 @@ public class CasosDeUsoConfiguracion {
     @Bean
     public PerfilServicio perfilServicio(UsuarioRepositorioPuerto usuarios, NivelRepositorioPuerto niveles,
                                          NoticiaRepositorioPuerto noticias, CiudadRepositorioPuerto ciudades,
+                                         CalificacionRepositorioPuerto calificaciones,
                                          ReglaLimiteDiario reglaLimiteDiario, CalculadoraNivel calculadoraNivel,
                                          Clock reloj) {
-        return new PerfilServicio(usuarios, niveles, noticias, ciudades, reglaLimiteDiario, calculadoraNivel, reloj);
+        return new PerfilServicio(usuarios, niveles, noticias, ciudades, calificaciones, reglaLimiteDiario,
+                calculadoraNivel, reloj);
     }
 
     @Bean

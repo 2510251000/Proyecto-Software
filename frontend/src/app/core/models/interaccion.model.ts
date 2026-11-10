@@ -8,11 +8,13 @@ export interface Comentario {
   autorNivel: number;
 }
 
-/** Respuesta de PUT /api/noticias/{id}/calificacion. */
+/** Respuesta de PUT /api/noticias/{id}/calificacion: la reputación nueva del autor y el voto propio. */
 export interface ResultadoCalificacion {
-  promedio: number;
-  cantidadCalificaciones: number;
-  miCalificacion: number;
+  /** null si el autor todavía no tiene votos. */
+  autorAprobacion: number | null;
+  autorVotos: number;
+  autorVotosPositivos: number;
+  miVoto: boolean;
 }
 
 export type MotivoReporte = 'NOTICIA_FALSA' | 'CONTENIDO_OFENSIVO' | 'SPAM' | 'OTRO';

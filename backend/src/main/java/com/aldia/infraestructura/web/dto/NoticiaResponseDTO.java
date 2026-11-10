@@ -22,16 +22,17 @@ public record NoticiaResponseDTO(
         BigDecimal latitud,
         BigDecimal longitud,
         List<ImagenResponseDTO> imagenes,
-        double promedio,
-        long cantidadCalificaciones,
-        /** Lo que le dio el usuario de la sesión; null sin sesión o si no ha calificado. */
-        Integer miCalificacion
+        /** % de votos «sigue publicando así» que tiene el autor en todas sus noticias; null sin votos. */
+        Integer autorAprobacion,
+        long autorVotos,
+        /** Lo que votó el usuario de la sesión en esta noticia; null sin sesión o si no ha votado. */
+        Boolean miVoto
 ) {
     public static NoticiaResponseDTO desde(Noticia noticia) {
         return desde(noticia, null);
     }
 
-    public static NoticiaResponseDTO desde(Noticia noticia, Integer miCalificacion) {
+    public static NoticiaResponseDTO desde(Noticia noticia, Boolean miVoto) {
         return new NoticiaResponseDTO(
                 noticia.getId(),
                 noticia.getTitulo(),
@@ -48,9 +49,9 @@ public record NoticiaResponseDTO(
                 noticia.getLatitud(),
                 noticia.getLongitud(),
                 noticia.getImagenes().stream().map(i -> ImagenResponseDTO.desde(noticia.getId(), i)).toList(),
-                noticia.getCalificaciones().promedio(),
-                noticia.getCalificaciones().cantidad(),
-                miCalificacion
+                noticia.getReputacionAutor().aprobacion(),
+                noticia.getReputacionAutor().votos(),
+                miVoto
         );
     }
 }

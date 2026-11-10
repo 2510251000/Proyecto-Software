@@ -122,6 +122,8 @@
 
 .calificacion svg {
   fill: var(--color-sol);
+  stroke: var(--color-marca);
+  stroke-width: 1.2;
 }
 
 @media (max-width: 47.99rem) {

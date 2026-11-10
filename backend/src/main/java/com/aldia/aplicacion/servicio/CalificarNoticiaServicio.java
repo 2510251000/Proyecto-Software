@@ -20,7 +20,10 @@ import com.aldia.dominio.puerto.salida.NotificacionRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.UsuarioRepositorioPuerto;
 import com.aldia.dominio.servicio.ReglasInteraccion;
 
-/** Calificaciones de 1 a 5 (HU MF03_002). Una por usuario y noticia; si cambia de opinión, se actualiza. */
+/**
+ * Calificar al autor desde su noticia (HU MF03_002): «sigue publicando así» o «no me gustó esto».
+ * Un voto por usuario y noticia; si cambia de opinión, se actualiza. Solo se muestra: no cambia puntos.
+ */
 public class CalificarNoticiaServicio implements CalificarNoticiaCasoDeUso {
 
     private final CalificacionRepositorioPuerto calificaciones;
@@ -48,28 +51,29 @@ public class CalificarNoticiaServicio implements CalificarNoticiaCasoDeUso {
     }
 
     @Override
-    public CalificacionPropia calificar(String correo, Long noticiaId, Integer valor) {
+    public CalificacionPropia calificar(String correo, Long noticiaId, Boolean recomienda) {
         return transaccion.ejecutar(() -> {
             Usuario quien = ComentariosServicio.usuarioActivo(usuarios, correo);
             Noticia noticia = noticias.buscarPublicadaPorId(noticiaId).orElseThrow(NoticiaNoEncontradaExcepcion::new);
-            reglas.verificarCalificacion(quien, noticia, valor);
+            reglas.verificarCalificacion(quien, noticia, recomienda);
 
             LocalDateTime ahora = LocalDateTime.now(reloj);
-            Optional<Integer> anterior = calificaciones.buscar(quien.getId(), noticiaId);
-            calificaciones.guardar(quien.getId(), noticiaId, valor, ahora);
+            Optional<Boolean> anterior = calificaciones.buscar(quien.getId(), noticiaId);
+            calificaciones.guardar(quien.getId(), noticiaId, recomienda, ahora);
             historial.registrar(quien.getId(), AccionHistorial.CALIFICACION,
-                    "Calificó con " + valor + " la noticia " + noticiaId, ahora);
+                    (Boolean.TRUE.equals(recomienda) ? "Recomendó" : "No recomendó") + " al autor de la noticia "
+                            + noticiaId, ahora);
             // Solo se avisa la primera vez: cambiar de opinión no vuelve a notificar al autor.
             if (anterior.isEmpty()) {
-                reglas.avisoCalificacion(noticia, quien, valor, ahora)
+                reglas.avisoCalificacion(noticia, quien, recomienda, ahora)
                         .ifPresent(aviso -> notificaciones.guardarTodas(List.of(aviso)));
             }
-            return new CalificacionPropia(calificaciones.resumen(noticiaId), valor);
+            return new CalificacionPropia(calificaciones.reputacion(noticia.getAutorId()), recomienda);
         });
     }
 
     @Override
-    public Map<Long, Integer> misCalificaciones(String correo, List<Long> noticiaIds) {
+    public Map<Long, Boolean> misVotos(String correo, List<Long> noticiaIds) {
         if (correo == null || noticiaIds.isEmpty()) {
             return Map.of();
         }

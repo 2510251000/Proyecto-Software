@@ -473,21 +473,23 @@ class ApiIntegracionTest {
         leer(conToken(delete(base + "/comentarios/" + comentarioId), admin), 204);
         assertThat(leer(get(base + "/comentarios"), 200)).isEmpty();
 
-        // Calificación: una por usuario; el autor no puede calificarse.
-        JsonNode calificacion = leer(conToken(conJson(put(base + "/calificacion"), Map.of("valor", 4)), lector), 200);
-        assertThat(calificacion.get("promedio").asDouble()).isEqualTo(4.0);
-        assertThat(calificacion.get("cantidadCalificaciones").asLong()).isEqualTo(1);
-        calificacion = leer(conToken(conJson(put(base + "/calificacion"), Map.of("valor", 2)), lector), 200);
-        assertThat(calificacion.get("promedio").asDouble()).isEqualTo(2.0);
-        assertThat(calificacion.get("cantidadCalificaciones").asLong()).isEqualTo(1);
-        leer(conToken(conJson(put(base + "/calificacion"), Map.of("valor", 6)), lector), 400);
-        leer(conToken(conJson(put(base + "/calificacion"), Map.of("valor", 5)), autor), 403);
+        // Voto al autor: uno por usuario y noticia; el autor no puede votarse.
+        JsonNode calificacion = leer(conToken(conJson(put(base + "/calificacion"), Map.of("recomienda", true)), lector), 200);
+        assertThat(calificacion.get("autorAprobacion").asInt()).isEqualTo(100);
+        assertThat(calificacion.get("autorVotos").asLong()).isEqualTo(1);
+        assertThat(calificacion.get("miVoto").asBoolean()).isTrue();
+        calificacion = leer(conToken(conJson(put(base + "/calificacion"), Map.of("recomienda", false)), lector), 200);
+        assertThat(calificacion.get("autorAprobacion").asInt()).isZero();
+        assertThat(calificacion.get("autorVotos").asLong()).isEqualTo(1);
+        leer(conToken(conJson(put(base + "/calificacion"), Map.of()), lector), 400);
+        leer(conToken(conJson(put(base + "/calificacion"), Map.of("recomienda", true)), autor), 403);
         assertThat(noLeidas(autor)).isEqualTo(avisosAntes + 2);
 
         JsonNode vista = leer(conToken(get(base), lector), 200);
-        assertThat(vista.get("miCalificacion").asInt()).isEqualTo(2);
-        assertThat(leer(get(base), 200).get("miCalificacion").isNull()).isTrue();
-        assertThat(leer(get(base), 200).get("promedio").asDouble()).isEqualTo(2.0);
+        assertThat(vista.get("miVoto").asBoolean()).isFalse();
+        assertThat(leer(get(base), 200).get("miVoto").isNull()).isTrue();
+        assertThat(leer(get(base), 200).get("autorAprobacion").asInt()).isZero();
+        assertThat(leer(conToken(get("/api/usuarios/me"), autor), 200).get("votos").asLong()).isEqualTo(1);
 
         // Reportes: uno por usuario y noticia; el administrador los revisa.
         JsonNode reporte = leer(conToken(conJson(post(base + "/reportes"),
