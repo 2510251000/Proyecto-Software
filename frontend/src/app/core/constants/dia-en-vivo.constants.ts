@@ -30,7 +30,18 @@ export const ARCO = {
   tope: 30,
   /** Del punto más alto al horizonte. */
   alto: 170,
+  /** Diámetro del botón redondo del deslizador, en px: su centro queda justo debajo del sol. */
+  botonRango: 24,
 } as const;
+
+/** Horas de guía que se escriben bajo el arco. */
+export const GUIAS_ARCO = [
+  { hora: 6, texto: '6 a. m.' },
+  { hora: 9, texto: '9 a. m.' },
+  { hora: 12, texto: '12 m.' },
+  { hora: 15, texto: '3 p. m.' },
+  { hora: 18, texto: '6 p. m.' },
+] as const;
 
 /** Noticias con marca en el arco: como mucho estas, las más recientes del día. */
 export const MARCAS_MAXIMAS = 8;
@@ -63,3 +74,32 @@ export const TEXTOS_CINE = {
   leer: 'Leer la noticia',
   verEnMapa: 'Ver en el mapa',
 } as const;
+
+/** Línea del sol: el arco con las noticias del día y el deslizador. */
+export const TEXTOS_LINEA_SOL = {
+  deslizador: 'Hora del día que quieres ver',
+} as const;
+
+/** Nombre accesible de una marca del arco: «Ir a las 10:30 a. m.: {titular}». */
+export function etiquetaMarca(hora: string, titular: string): string {
+  return `Ir a las ${hora}: ${titular}`;
+}
+
+/** Lo que se anuncia al soltar el deslizador: «10:30 a. m.: {titular}». */
+export function anuncioHora(hora: string, titular: string): string {
+  return `${hora}: ${titular}`;
+}
+
+/** Tarjeta del reloj de la portada de cine. */
+export const TEXTOS_RELOJ = {
+  etiqueta: 'Hora que estás viendo',
+  ahora: 'Ahora',
+  viendo: 'Estás viendo las',
+  ayuda: 'Arrastra el sol, o toca una hora del arco, para volver atrás en el día.',
+  volver: 'Volver a ahora',
+} as const;
+
+/** «Este día no tiene noticias en Soacha.», o sin municipio si se ven todos. */
+export function textoDiaSinNoticias(municipio: string | null): string {
+  return municipio ? `Este día no tiene noticias en ${municipio}.` : 'Este día no tiene noticias.';
+}

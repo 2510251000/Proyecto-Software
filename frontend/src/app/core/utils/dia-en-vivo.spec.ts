@@ -15,6 +15,7 @@ import {
   momentoDe,
   noticiaDeLaHora,
   noticiasDelDia,
+  partesDeHora,
   posicionEnArco,
   puntosDelMapa,
   temaDe,
@@ -149,6 +150,11 @@ describe('horaLegible', () => {
 
   it('redondea al minuto', () => {
     expect(horaLegible(17.667)).toBe('5:40 p. m.');
+  });
+
+  it('para el reloj grande da el número y el sufijo por separado', () => {
+    expect(partesDeHora(17.667)).toEqual({ reloj: '5:40', sufijo: 'p. m.' });
+    expect(partesDeHora(6)).toEqual({ reloj: '6:00', sufijo: 'a. m.' });
   });
 });
 

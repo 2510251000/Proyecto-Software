@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, linkedSignal, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TEXTOS_CINE } from '../../../core/constants/dia-en-vivo.constants';
 import { ETIQUETAS_NOTICIA } from '../../../core/constants/portada.constants';
@@ -31,8 +31,25 @@ export class PortadaCine {
   protected readonly etiquetas = ETIQUETAS_NOTICIA;
   protected readonly rutaMapa = ['/', RUTAS.mapa];
 
-  protected readonly categoria = computed(() => categoriaDeNoticia(this.noticia().titulo));
-  protected readonly foto = computed(() => portadaDe(this.noticia()));
+  /**
+   * Las fotos de fondo: la de la noticia anterior y, encima, la de la actual, que aparece
+   * poco a poco. Así al cambiar de noticia una foto se funde con la otra.
+   */
+  protected readonly fotos = linkedSignal<Noticia, Noticia[]>({
+    source: this.noticia,
+    computation: (actual, previo) => {
+      const anterior = previo?.value.at(-1);
+      return anterior && anterior.id !== actual.id ? [anterior, actual] : [actual];
+    },
+  });
+
+  protected categoriaDe(noticia: Noticia): ReturnType<typeof categoriaDeNoticia> {
+    return categoriaDeNoticia(noticia.titulo);
+  }
+
+  protected fotoDe(noticia: Noticia): ReturnType<typeof portadaDe> {
+    return portadaDe(noticia);
+  }
 
   /** «Oficial», «Comunidad · Nivel 2» o solo «Comunidad» si la API no trae el nivel. */
   protected readonly etiqueta = computed(() => {

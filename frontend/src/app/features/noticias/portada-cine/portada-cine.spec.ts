@@ -115,6 +115,29 @@ describe('PortadaCine', () => {
     expect(foto?.getAttribute('fetchpriority')).toBe('high');
   });
 
+  it('al cambiar de noticia la foto nueva se funde sobre la anterior', async () => {
+    await mostrar();
+    expect(raiz().querySelectorAll('.capas app-miniatura')).toHaveLength(1);
+
+    await mostrar({ id: 8, titulo: 'Abren las inscripciones para las escuelas deportivas' });
+    const fotos = [...raiz().querySelectorAll('.capas app-miniatura img')];
+    expect(fotos.map((f) => f.getAttribute('src'))).toEqual([
+      expect.stringContaining('bici'),
+      expect.stringContaining('deporte'),
+    ]);
+
+    // Un tercer cambio deja solo las dos últimas.
+    await mostrar({ id: 9, titulo: 'Cortes de agua programados' });
+    expect(raiz().querySelectorAll('.capas app-miniatura')).toHaveLength(2);
+    expect(raiz().querySelector('.capas app-miniatura:last-of-type img')?.getAttribute('src')).toContain('agua');
+  });
+
+  it('si la misma noticia se actualiza, no duplica la foto', async () => {
+    await mostrar();
+    await mostrar({ resumen: 'Otro resumen' });
+    expect(raiz().querySelectorAll('.capas app-miniatura')).toHaveLength(1);
+  });
+
   it('los íconos son decorativos', async () => {
     await mostrar({ latitud: 4.34, longitud: -74.36 });
     const iconos = [...raiz().querySelectorAll('.contenido svg')];

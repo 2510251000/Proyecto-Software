@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { anuncioHora, TEXTOS_RELOJ } from '../../../core/constants/dia-en-vivo.constants';
 import { MENSAJES_ERROR_HTTP, TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
 import { ETIQUETAS_PESTANA, TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
 import { ETIQUETAS_NOTICIA, TEXTOS_BIENVENIDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
@@ -314,6 +315,122 @@ describe('Listado', () => {
 
     it('sin «Última hora» no aparece la etiqueta roja', () => {
       expect(buscar('.etiqueta-urgente')).toBeNull();
+    });
+  });
+
+  describe('el día en vivo', () => {
+    // Tres noticias del mismo día, a las 9:00, las 12:00 y las 15:00 de Colombia.
+    const DEL_DIA: Noticia[] = ['09:00', '12:00', '15:00'].map((hora, i) => ({
+      id: i + 1,
+      titulo: `Noticia de las ${hora}`,
+      resumen: 'Resumen',
+      contenido: 'Contenido',
+      fechaPublicacion: `2026-09-21T${hora}:00-05:00`,
+      oficial: true,
+      ciudad: i === 0 ? 'Soacha' : 'Fusagasugá',
+    }));
+
+    const titular = () => cine()?.querySelector('h1')?.textContent?.trim();
+    const marcas = () => [...raiz().querySelectorAll<HTMLButtonElement>('app-linea-sol button.marca')];
+    const rango = () => buscar<HTMLInputElement>('app-linea-sol input[type="range"]') as HTMLInputElement;
+    const etiquetaReloj = () => buscar('app-reloj-dia .etiqueta')?.textContent?.trim();
+    const volver = () => buscar<HTMLButtonElement>('app-reloj-dia .volver');
+
+    async function arrastrar(minutos: number): Promise<void> {
+      rango().value = String(minutos);
+      rango().dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+    }
+
+    beforeEach(async () => {
+      respuesta.next(DEL_DIA);
+      await fixture.whenStable();
+    });
+
+    it('un día pasado se abre en su última noticia, con su marca activa y la fecha en el reloj', () => {
+      expect(titular()).toBe('Noticia de las 15:00');
+      expect(marcas()).toHaveLength(3);
+      expect(marcas().map((m) => m.classList.contains('activa'))).toEqual([false, false, true]);
+      expect(buscar('app-reloj-dia .hora')?.textContent).toContain('3:00');
+      expect(buscar('app-reloj-dia .fecha')?.textContent).toContain('21 de septiembre');
+      expect(etiquetaReloj()).toBe(TEXTOS_RELOJ.viendo);
+      expect(volver()).toBeNull();
+      expect(rango().max).toBe('1080');
+    });
+
+    it('al tocar una marca la portada pasa a esa noticia y la otra vuelve a la lista', async () => {
+      marcas()[0].click();
+      await fixture.whenStable();
+      expect(titular()).toBe('Noticia de las 09:00');
+      expect(marcas()[0].classList).toContain('activa');
+      expect(buscar('app-reloj-dia .hora')?.textContent).toContain('9:00');
+      expect(buscar('.pagina')?.textContent).toContain('Noticia de las 15:00');
+      expect(buscar('.pagina')?.textContent).not.toContain('Noticia de las 09:00');
+    });
+
+    it('al arrastrar el sol sale la última noticia publicada a esa hora o antes', async () => {
+      await arrastrar(13 * 60);
+      expect(titular()).toBe('Noticia de las 12:00');
+      expect(buscar('app-reloj-dia .hora')?.textContent).toContain('1:00');
+
+      await arrastrar(8 * 60);
+      // Antes de la primera noticia del día se muestra la primera.
+      expect(titular()).toBe('Noticia de las 09:00');
+    });
+
+    it('«Volver a ahora» aparece al moverse y deja todo como estaba', async () => {
+      await arrastrar(10 * 60);
+      expect(volver()).not.toBeNull();
+
+      volver()?.click();
+      await fixture.whenStable();
+      expect(titular()).toBe('Noticia de las 15:00');
+      expect(volver()).toBeNull();
+    });
+
+    it('al soltar el deslizador se anuncia la hora y el titular', async () => {
+      await arrastrar(10 * 60);
+      rango().dispatchEvent(new Event('change'));
+      await fixture.whenStable();
+      expect(buscar('app-linea-sol [aria-live]')?.textContent?.trim()).toBe(
+        anuncioHora('10:00 a. m.', 'Noticia de las 09:00'),
+      );
+    });
+
+    it('al cambiar de municipio el arco muestra solo sus noticias y se deja de viajar', async () => {
+      await arrastrar(10 * 60);
+      const selector = buscar<HTMLSelectElement>('#municipio-portada') as HTMLSelectElement;
+      selector.value = 'Soacha';
+      selector.dispatchEvent(new Event('change'));
+      await fixture.whenStable();
+      expect(marcas()).toHaveLength(1);
+      expect(titular()).toBe('Noticia de las 09:00');
+      expect(volver()).toBeNull();
+      expect(buscar('app-reloj-dia .fecha')?.textContent).toContain('Soacha');
+    });
+
+    it('las pestañas no cambian ni la portada de cine ni el arco', async () => {
+      raiz().querySelectorAll<HTMLButtonElement>('.pestana')[3].click();
+      await fixture.whenStable();
+      expect(titular()).toBe('Noticia de las 15:00');
+      expect(marcas()).toHaveLength(3);
+    });
+  });
+
+  describe('con noticias de hoy', () => {
+    const hace = (minutos: number) => new Date(Date.now() - minutos * 60_000).toISOString();
+    const DE_HOY: Noticia[] = [
+      { ...NOTICIAS[0], id: 11, titulo: 'La más nueva', fechaPublicacion: hace(1) },
+      { ...NOTICIAS[0], id: 12, titulo: 'La de antes', fechaPublicacion: hace(2) },
+    ];
+
+    it('el reloj dice «Ahora» y la portada es la última noticia publicada', async () => {
+      respuesta.next(DE_HOY);
+      await fixture.whenStable();
+      // Cerca de la medianoche las dos pueden caer en días distintos: se revisa la más nueva.
+      expect(cine()?.querySelector('h1')?.textContent).toContain('La más nueva');
+      expect(buscar('app-reloj-dia .etiqueta')?.textContent?.trim()).toBe(TEXTOS_RELOJ.ahora);
+      expect(buscar('app-reloj-dia .volver')).toBeNull();
     });
   });
 

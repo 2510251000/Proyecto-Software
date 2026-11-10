@@ -35,6 +35,12 @@ export interface MarcaArco extends PuntoArco {
   hora: number;
 }
 
+/** Una hora lista para el reloj grande: el número y, aparte, «a. m.» o «p. m.». */
+export interface HoraPartida {
+  reloj: string;
+  sufijo: string;
+}
+
 /** Un municipio con cuántas noticias tiene (lo que ya calcula la portada). */
 export interface ConteoMunicipio {
   ciudad: string;
@@ -142,14 +148,22 @@ export function posicionEnArco(hora: number): PuntoArco {
   };
 }
 
-/** «4:20 p. m.», «12:00 p. m.», «12:05 a. m.». */
-export function horaLegible(hora: number): string {
+/** La hora en formato de 12 horas, partida para el reloj grande: «4:20» y «p. m.». */
+export function partesDeHora(hora: number): HoraPartida {
   const total = Math.round(hora * MINUTOS_POR_HORA);
   const horas = Math.floor(total / MINUTOS_POR_HORA) % (HORAS_MEDIO_DIA * 2);
   const minutos = total % MINUTOS_POR_HORA;
   const enReloj = ((horas + HORAS_MEDIO_DIA - 1) % HORAS_MEDIO_DIA) + 1;
-  const sufijo = horas < HORAS_MEDIO_DIA ? SUFIJOS_HORA.manana : SUFIJOS_HORA.tarde;
-  return `${enReloj}:${String(minutos).padStart(2, '0')} ${sufijo}`;
+  return {
+    reloj: `${enReloj}:${String(minutos).padStart(2, '0')}`,
+    sufijo: horas < HORAS_MEDIO_DIA ? SUFIJOS_HORA.manana : SUFIJOS_HORA.tarde,
+  };
+}
+
+/** «4:20 p. m.», «12:00 p. m.», «12:05 a. m.». */
+export function horaLegible(hora: number): string {
+  const { reloj, sufijo } = partesDeHora(hora);
+  return `${reloj} ${sufijo}`;
 }
 
 /** «Lunes 9 de noviembre» a partir de «2026-11-09». Cadena vacía si el día no es válido. */

@@ -1,7 +1,15 @@
 <header class="cine">
   <!-- La foto es de fondo: lo que dice la noticia ya está en el titular. -->
   <div class="capas" aria-hidden="true">
-    <app-miniatura class="foto" [categoria]="categoria()" [foto]="foto()" [decorativa]="true" [prioridad]="true" />
+    @for (fondo of fotos(); track fondo.id) {
+      <app-miniatura
+        class="foto"
+        [categoria]="categoriaDe(fondo)"
+        [foto]="fotoDe(fondo)"
+        [decorativa]="true"
+        [prioridad]="true"
+      />
+    }
     <div class="velo velo-lateral"></div>
     <div class="velo velo-superior"></div>
   </div>

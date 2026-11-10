@@ -11,7 +11,26 @@
 
   <main>
     @if (noticiaPortada(); as noticia) {
-      <app-portada-cine [noticia]="noticia" (abrir)="abrirNoticia($event)" />
+      <app-portada-cine [noticia]="noticia" (abrir)="abrirNoticia($event)">
+        <app-reloj-dia
+          [hora]="hora()"
+          [dia]="dia()"
+          [municipio]="ciudadActiva()"
+          [enVivo]="enVivo()"
+          [deViaje]="deViaje()"
+          [sinNoticias]="diaSinNoticias()"
+          (volver)="volverAAhora()"
+        />
+        <app-linea-sol
+          cineFranja
+          [hora]="hora()"
+          [marcas]="marcas()"
+          [idActiva]="noticia.id"
+          [maximo]="horaMaxima()"
+          [titular]="noticia.titulo"
+          (elegida)="elegirHora($event)"
+        />
+      </app-portada-cine>
     }
 
     <app-barra-portada

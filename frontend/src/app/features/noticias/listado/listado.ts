@@ -3,7 +3,17 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { NOTICIAS_DESTACADAS, NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
-import { diaDe, diaInicial, horaDecimal, horaInicial, noticiaDeLaHora } from '../../../core/utils/dia-en-vivo';
+import { HORAS_DEL_DIA, TOLERANCIA_HORA } from '../../../core/constants/dia-en-vivo.constants';
+import {
+  diaDe,
+  diaInicial,
+  horaDecimal,
+  horaEnArco,
+  horaInicial,
+  marcasDelDia,
+  noticiaDeLaHora,
+  noticiasDelDia,
+} from '../../../core/utils/dia-en-vivo';
 import { Boton } from '../../../shared/boton/boton';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { Marco } from '../../../shared/marco/marco';
@@ -11,7 +21,9 @@ import { BarraPortada } from '../barra-portada/barra-portada';
 import { Bienvenida } from '../bienvenida/bienvenida';
 import { ColumnaDerecha } from '../columna-derecha/columna-derecha';
 import { HerramientasPortada } from '../herramientas-portada/herramientas-portada';
+import { LineaSol } from '../linea-sol/linea-sol';
 import { PortadaCine } from '../portada-cine/portada-cine';
+import { RelojDia } from '../reloj-dia/reloj-dia';
 import { PerfilService } from '../../../core/services/perfil.service';
 import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
@@ -27,7 +39,9 @@ import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNot
     Bienvenida,
     ColumnaDerecha,
     HerramientasPortada,
+    LineaSol,
     PortadaCine,
+    RelojDia,
     TarjetaNoticia,
     EsqueletoPortada,
     ModalNoticia,
@@ -70,9 +84,22 @@ export class Listado implements OnInit {
   // El día en vivo: qué día y qué hora se están mirando, y la noticia que les toca.
   private readonly ahora = signal(Date.now());
   private readonly hoy = computed(() => diaDe(this.ahora()) ?? '');
-  private readonly dia = computed(() => diaInicial(this.delMunicipio(), this.hoy()));
-  private readonly hora = computed(() =>
-    horaInicial(this.delMunicipio(), this.dia(), this.hoy(), horaDecimal(this.ahora()) ?? 0),
+  private readonly horaActual = computed(() => horaDecimal(this.ahora()) ?? 0);
+  protected readonly dia = computed(() => diaInicial(this.delMunicipio(), this.hoy()));
+  /** La hora que eligió el usuario al arrastrar el sol o tocar una marca; null si no se ha movido. */
+  private readonly horaElegida = signal<number | null>(null);
+  protected readonly hora = computed(
+    () => this.horaElegida() ?? horaInicial(this.delMunicipio(), this.dia(), this.hoy(), this.horaActual()),
+  );
+  /** «De viaje»: el usuario se fue a otra hora y puede volver con «Volver a ahora». */
+  protected readonly deViaje = computed(() => this.horaElegida() !== null);
+  /** Lo que se ve es el momento actual: hoy y sin haberse movido. */
+  protected readonly enVivo = computed(() => !this.deViaje() && this.dia() === this.hoy());
+  protected readonly marcas = computed(() => marcasDelDia(this.delMunicipio(), this.dia()));
+  protected readonly diaSinNoticias = computed(() => noticiasDelDia(this.delMunicipio(), this.dia()).length === 0);
+  /** Hasta dónde llega el deslizador: la hora actual hoy; la puesta del sol en un día pasado. */
+  protected readonly horaMaxima = computed(() =>
+    this.dia() === this.hoy() ? horaEnArco(this.horaActual()) : HORAS_DEL_DIA.ocaso,
   );
   /** La noticia de la portada de cine. Las pestañas no la cambian: solo ordenan lo de abajo. */
   protected readonly noticiaPortada = computed(() =>
@@ -118,7 +145,18 @@ export class Listado implements OnInit {
   protected buscar(texto: string): void {
     this.textoBuscado.set(texto);
     this.visibles.set(NOTICIAS_POR_TANDA);
+    this.volverAAhora();
     this.cargar();
+  }
+
+  /** Arrastrar el sol hasta el final de hoy es lo mismo que volver a ahora. */
+  protected elegirHora(hora: number): void {
+    const esAhora = this.dia() === this.hoy() && hora >= this.horaMaxima() - TOLERANCIA_HORA;
+    this.horaElegida.set(esAhora ? null : hora);
+  }
+
+  protected volverAAhora(): void {
+    this.horaElegida.set(null);
   }
 
   protected elegirPestana(pestana: PestanaPortada): void {
@@ -133,6 +171,7 @@ export class Listado implements OnInit {
   protected elegirCiudad(ciudad: string | null): void {
     this.filtro.set(ciudad === null ? FILTRO_INICIAL : { tipo: 'ciudad', ciudad });
     this.visibles.set(NOTICIAS_POR_TANDA);
+    this.volverAAhora();
   }
 
   protected verMas(): void {

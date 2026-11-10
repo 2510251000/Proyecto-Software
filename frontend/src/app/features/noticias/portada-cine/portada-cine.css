@@ -36,10 +36,18 @@
   inset: 0;
 }
 
-/* Acercamiento muy lento, de ida y vuelta. */
+/* Cada foto aparece fundiéndose sobre la anterior y hace un acercamiento muy lento, de ida y vuelta. */
 .foto {
   background: none;
-  animation: paneo 26s ease-in-out infinite alternate;
+  animation:
+    aparecer 0.9s ease,
+    paneo 26s ease-in-out infinite alternate;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
 }
 
 @keyframes paneo {
@@ -81,7 +89,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 32px 48px;
-  padding: 40px clamp(16px, 4.5vw, 64px) 48px;
+  padding: 40px clamp(16px, 4.5vw, 64px) 0;
 }
 
 .texto {
