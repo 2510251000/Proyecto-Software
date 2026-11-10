@@ -5,7 +5,7 @@ import { ETIQUETAS_NOTICIA } from '../../../core/constants/portada.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { Noticia } from '../../../core/models/noticia.model';
 import { categoriaDeNoticia } from '../../../core/utils/categoria-noticia';
-import { horaDecimal, horaLegible } from '../../../core/utils/dia-en-vivo';
+import { horaDecimal, horaLegible, Momento } from '../../../core/utils/dia-en-vivo';
 import { portadaDe } from '../../../core/utils/imagenes';
 import { esUltimaHora, minutosDeLectura, nombreAutor, tieneUbicacion } from '../../../core/utils/noticia';
 import { iniciales } from '../../../core/utils/texto';
@@ -24,12 +24,15 @@ import { Miniatura } from '../../../shared/miniatura/miniatura';
 })
 export class PortadaCine {
   readonly noticia = input.required<Noticia>();
+  /** Momento del día que se está viendo: tiñe la foto con la luz de esa hora. */
+  readonly momento = input<Momento>('dia');
   /** Clic en «Leer la noticia»: quien la usa decide cómo mostrarla. */
   readonly abrir = output<Noticia>();
 
   protected readonly textos = TEXTOS_CINE;
   protected readonly etiquetas = ETIQUETAS_NOTICIA;
   protected readonly rutaMapa = ['/', RUTAS.mapa];
+  protected readonly momentos: readonly Momento[] = ['amanecer', 'dia', 'atardecer', 'noche'];
 
   /**
    * Las fotos de fondo: la de la noticia anterior y, encima, la de la actual, que aparece

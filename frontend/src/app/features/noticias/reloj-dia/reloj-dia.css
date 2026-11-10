@@ -46,16 +46,66 @@
   white-space: nowrap;
 }
 
+/* De las 10 a las 12 la hora tiene un dígito más: se achica para que quepa en la tarjeta. */
+.larga {
+  font-size: clamp(60px, 6vw, 86px);
+}
+
 .sufijo {
   margin-left: 8px;
   font-size: 28px;
   letter-spacing: 0;
 }
 
+/* La fecha con un botón a cada lado para pasar al día anterior o al siguiente. */
+.dia {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-right: -10px;
+}
+
 .fecha {
   color: #e8edf6;
   font-size: 0.9375rem;
   font-weight: 600;
+}
+
+.cambiar-dia {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--alto-control);
+  height: var(--alto-control);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.cambiar-dia:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Desactivado: más tenue, pero todavía legible sobre la tarjeta (4.6:1). */
+.cambiar-dia:disabled {
+  color: #7f8eac;
+  cursor: default;
+}
+
+.cambiar-dia svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cambiar-dia:focus-visible {
+  outline-color: var(--color-sol);
 }
 
 .ayuda {

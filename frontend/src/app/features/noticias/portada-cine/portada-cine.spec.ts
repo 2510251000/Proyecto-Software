@@ -138,6 +138,19 @@ describe('PortadaCine', () => {
     expect(raiz().querySelectorAll('.capas app-miniatura')).toHaveLength(1);
   });
 
+  it('tiñe la foto con la luz del momento: una capa por momento y solo una visible', async () => {
+    await mostrar();
+    const visibles = () => [...raiz().querySelectorAll('.tinte.visible')].map((capa) => capa.className);
+    expect(raiz().querySelectorAll('.capas .tinte')).toHaveLength(4);
+    expect(visibles()).toEqual([expect.stringContaining('tinte-dia')]);
+
+    for (const momento of ['amanecer', 'atardecer', 'noche']) {
+      fixture.componentRef.setInput('momento', momento);
+      await fixture.whenStable();
+      expect(visibles()).toEqual([expect.stringContaining(`tinte-${momento}`)]);
+    }
+  });
+
   it('los íconos son decorativos', async () => {
     await mostrar({ latitud: 4.34, longitud: -74.36 });
     const iconos = [...raiz().querySelectorAll('.contenido svg')];

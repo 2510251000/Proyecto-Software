@@ -24,8 +24,14 @@ export class RelojDia {
   readonly deViaje = input(false);
   /** true si el día que se ve no tiene noticias (por el municipio elegido). */
   readonly sinNoticias = input(false);
+  /** false cuando no hay noticias más viejas que las del día que se ve. */
+  readonly hayAnterior = input(false);
+  /** false cuando el día que se ve ya es hoy. */
+  readonly haySiguiente = input(false);
 
   readonly volver = output<void>();
+  readonly anterior = output<void>();
+  readonly siguiente = output<void>();
 
   protected readonly textos = TEXTOS_RELOJ;
   protected readonly partes = computed(() => partesDeHora(this.hora()));

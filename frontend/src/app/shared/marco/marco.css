@@ -6,9 +6,12 @@
   --barra-resalte-suave: rgba(255, 255, 255, 0.08);
 }
 
+/* El fondo y la letra salen de las variables: en la portada de noche cambian solos. */
 .marco {
   min-height: 100vh;
   min-height: 100dvh;
+  background: var(--color-pagina);
+  color: var(--color-texto);
 }
 
 /*

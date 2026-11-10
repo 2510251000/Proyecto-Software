@@ -6,9 +6,33 @@
     {{ enVivo() ? textos.ahora : textos.viendo }}
   </p>
 
-  <p class="hora">{{ partes().reloj }}<span class="sufijo">{{ partes().sufijo }}</span></p>
+  <p class="hora" [class.larga]="partes().reloj.length > 4">{{ partes().reloj }}<span class="sufijo">{{ partes().sufijo }}</span></p>
 
-  <p class="fecha">{{ fecha() }}</p>
+  <div class="dia">
+    <button
+      type="button"
+      class="cambiar-dia"
+      [attr.aria-label]="textos.diaAnterior"
+      [disabled]="!hayAnterior()"
+      (click)="anterior.emit()"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+        <path d="M15 6l-6 6 6 6" />
+      </svg>
+    </button>
+    <p class="fecha">{{ fecha() }}</p>
+    <button
+      type="button"
+      class="cambiar-dia"
+      [attr.aria-label]="textos.diaSiguiente"
+      [disabled]="!haySiguiente()"
+      (click)="siguiente.emit()"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+        <path d="M9 6l6 6-6 6" />
+      </svg>
+    </button>
+  </div>
 
   @if (sinNoticias()) {
     <p class="ayuda">{{ aviso() }}</p>

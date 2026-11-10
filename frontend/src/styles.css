@@ -42,6 +42,7 @@
   --color-cielo-atardecer: #8f3f27;
   --color-cielo-crepusculo: #4f2140;
   --color-cielo-anochecer: #1f1b3d;
+  --color-cielo-noche: #081226;
   --color-sol-poniente: #e4572e; /* solo relleno: el sol cuando se oculta */
 
   /*
@@ -123,6 +124,98 @@
   --color-realce: #f0a028;
   --color-boton: #f0a028;
   --color-boton-texto: #0e2551;
+}
+
+/*
+  El cambio de tema se anima 0,7 s. Para eso el navegador tiene que saber que estas variables
+  son colores (@property): así puede pasar de un color a otro poco a poco, y todo lo que las
+  usa cambia a la vez. Si un navegador no lo entiende, el tema cambia de golpe.
+*/
+@property --color-pagina {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f7f9fc;
+}
+
+@property --color-tarjeta {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --color-superficie {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f7f9fc;
+}
+
+@property --color-superficie-2 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #edf1f7;
+}
+
+@property --color-linea {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #e3e7ef;
+}
+
+@property --color-borde {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #7a869c;
+}
+
+@property --color-texto {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #111827;
+}
+
+@property --color-texto-suave {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #5c6880;
+}
+
+@property --color-realce {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0e2551;
+}
+
+@property --color-boton {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0e2551;
+}
+
+@property --color-boton-texto {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+[data-tema] {
+  transition:
+    --color-pagina 0.7s ease,
+    --color-tarjeta 0.7s ease,
+    --color-superficie 0.7s ease,
+    --color-superficie-2 0.7s ease,
+    --color-linea 0.7s ease,
+    --color-borde 0.7s ease,
+    --color-texto 0.7s ease,
+    --color-texto-suave 0.7s ease,
+    --color-realce 0.7s ease,
+    --color-boton 0.7s ease,
+    --color-boton-texto 0.7s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tema] {
+    transition: none;
+  }
 }
 
 *,

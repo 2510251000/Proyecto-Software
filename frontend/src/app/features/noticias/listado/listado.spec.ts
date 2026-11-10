@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { anuncioHora, TEXTOS_RELOJ } from '../../../core/constants/dia-en-vivo.constants';
+import { anuncioHora, INTERVALO_RELOJ_MS, TEXTOS_RELOJ } from '../../../core/constants/dia-en-vivo.constants';
 import { MENSAJES_ERROR_HTTP, TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
 import { ETIQUETAS_PESTANA, TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
 import { ETIQUETAS_NOTICIA, TEXTOS_BIENVENIDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
@@ -409,6 +409,84 @@ describe('Listado', () => {
       expect(buscar('app-reloj-dia .fecha')?.textContent).toContain('Soacha');
     });
 
+    it('antes de las 5:30 p. m. el tema es de día; al llevar el sol más allá, de noche', async () => {
+      const marco = () => buscar('app-marco')?.getAttribute('data-tema');
+      const tinte = () => cine()?.querySelector('.tinte.visible')?.className;
+      expect(marco()).toBe('dia');
+      expect(tinte()).toContain('tinte-dia');
+
+      await arrastrar(16 * 60 + 30);
+      expect(marco()).toBe('dia');
+      expect(tinte()).toContain('tinte-atardecer');
+
+      await arrastrar(17 * 60 + 30);
+      expect(marco()).toBe('noche');
+      expect(tinte()).toContain('tinte-noche');
+
+      await arrastrar(7 * 60);
+      expect(marco()).toBe('dia');
+      expect(tinte()).toContain('tinte-amanecer');
+    });
+
+    it('la vista rápida de la noticia se queda en tema de día', async () => {
+      await arrastrar(17 * 60 + 45);
+      expect(buscar('app-modal-noticia')?.getAttribute('data-tema')).toBe('dia');
+      expect(buscar('app-marco app-modal-noticia')).toBeNull();
+    });
+
+    describe('con noticias de varios días', () => {
+      const VARIOS: Noticia[] = [
+        ...DEL_DIA,
+        { ...DEL_DIA[0], id: 20, titulo: 'La del 19 por la mañana', fechaPublicacion: '2026-09-19T08:00:00-05:00' },
+        { ...DEL_DIA[0], id: 21, titulo: 'La del 19 por la tarde', fechaPublicacion: '2026-09-19T14:30:00-05:00' },
+      ];
+      const fecha = () => buscar('app-reloj-dia .fecha')?.textContent;
+      const cambiarDia = () => [...raiz().querySelectorAll<HTMLButtonElement>('app-reloj-dia .cambiar-dia')];
+
+      beforeEach(async () => {
+        respuesta.next(VARIOS);
+        await fixture.whenStable();
+      });
+
+      it('«Día anterior» lleva al día con noticias más cercano y lo abre en su última noticia', async () => {
+        expect(fecha()).toContain('21 de septiembre');
+        cambiarDia()[0].click();
+        await fixture.whenStable();
+        expect(fecha()).toContain('19 de septiembre');
+        expect(titular()).toBe('La del 19 por la tarde');
+        expect(marcas()).toHaveLength(2);
+        expect(buscar('app-reloj-dia .hora')?.textContent).toContain('2:30');
+        // No hay noticias más viejas: «Día anterior» queda desactivado.
+        expect(cambiarDia()[0].disabled).toBe(true);
+        expect(cambiarDia()[1].disabled).toBe(false);
+      });
+
+      it('«Día siguiente» vuelve hacia hoy y «Volver a ahora» deshace el cambio de día', async () => {
+        cambiarDia()[0].click();
+        await fixture.whenStable();
+        expect(volver()).not.toBeNull();
+
+        cambiarDia()[1].click();
+        await fixture.whenStable();
+        expect(fecha()).toContain('21 de septiembre');
+
+        cambiarDia()[0].click();
+        await fixture.whenStable();
+        volver()?.click();
+        await fixture.whenStable();
+        expect(fecha()).toContain('21 de septiembre');
+        expect(titular()).toBe('Noticia de las 15:00');
+        expect(volver()).toBeNull();
+      });
+
+      it('al cambiar de día se deja la hora que se había elegido', async () => {
+        await arrastrar(10 * 60);
+        cambiarDia()[0].click();
+        await fixture.whenStable();
+        expect(titular()).toBe('La del 19 por la tarde');
+      });
+    });
+
     it('las pestañas no cambian ni la portada de cine ni el arco', async () => {
       raiz().querySelectorAll<HTMLButtonElement>('.pestana')[3].click();
       await fixture.whenStable();
@@ -431,6 +509,37 @@ describe('Listado', () => {
       expect(cine()?.querySelector('h1')?.textContent).toContain('La más nueva');
       expect(buscar('app-reloj-dia .etiqueta')?.textContent?.trim()).toBe(TEXTOS_RELOJ.ahora);
       expect(buscar('app-reloj-dia .volver')).toBeNull();
+    });
+  });
+
+  describe('reloj en vivo', () => {
+    afterEach(() => vi.useRealTimers());
+
+    it('la hora avanza sola y, al llegar las 5:30 p. m., la portada pasa a tema de noche', async () => {
+      // Solo se simulan el reloj del sistema y el intervalo: lo demás sigue en tiempo real.
+      vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
+      vi.setSystemTime(new Date('2026-11-09T17:29:30-05:00'));
+      const enVivo = TestBed.createComponent(Listado);
+      await enVivo.whenStable();
+      respuesta.next([{ ...NOTICIAS[0], id: 30, fechaPublicacion: '2026-11-09T17:00:00-05:00' }]);
+      await enVivo.whenStable();
+      const pagina = enVivo.nativeElement as HTMLElement;
+      const tema = () => pagina.querySelector('app-marco')?.getAttribute('data-tema');
+      const hora = () => pagina.querySelector('app-reloj-dia .hora')?.textContent;
+
+      expect(pagina.querySelector('app-reloj-dia .etiqueta')?.textContent?.trim()).toBe(TEXTOS_RELOJ.ahora);
+      expect(hora()).toContain('5:29');
+      expect(tema()).toBe('dia');
+      // El deslizador llega hasta la hora actual.
+      expect(pagina.querySelector<HTMLInputElement>('app-linea-sol input')?.max).toBe(String(17 * 60 + 29));
+
+      vi.advanceTimersByTime(INTERVALO_RELOJ_MS * 3);
+      await enVivo.whenStable();
+      expect(hora()).toContain('5:30');
+      expect(tema()).toBe('noche');
+
+      enVivo.destroy();
+      expect(vi.getTimerCount()).toBe(0);
     });
   });
 

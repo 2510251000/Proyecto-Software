@@ -17,6 +17,9 @@ export const HORAS_DEL_DIA = {
 
 export const MINUTOS_POR_HORA = 60;
 
+/** Cada cuánto se revisa la hora real para que el reloj, el sol y el tema avancen solos. */
+export const INTERVALO_RELOJ_MS = 15_000;
+
 /** Margen al comparar horas decimales, para que 16.33 y 16.330001 cuenten como la misma. */
 export const TOLERANCIA_HORA = 0.001;
 
@@ -97,6 +100,8 @@ export const TEXTOS_RELOJ = {
   viendo: 'Estás viendo las',
   ayuda: 'Arrastra el sol, o toca una hora del arco, para volver atrás en el día.',
   volver: 'Volver a ahora',
+  diaAnterior: 'Día anterior',
+  diaSiguiente: 'Día siguiente',
 } as const;
 
 /** «Este día no tiene noticias en Soacha.», o sin municipio si se ven todos. */

@@ -1,4 +1,4 @@
-<app-marco [sobreFoto]="noticiaPortada() !== null">
+<app-marco [sobreFoto]="noticiaPortada() !== null" [attr.data-tema]="tema()">
   <app-herramientas-portada
     marcoHerramientas
     [ciudades]="conteo()"
@@ -11,7 +11,7 @@
 
   <main>
     @if (noticiaPortada(); as noticia) {
-      <app-portada-cine [noticia]="noticia" (abrir)="abrirNoticia($event)">
+      <app-portada-cine [noticia]="noticia" [momento]="momento()" (abrir)="abrirNoticia($event)">
         <app-reloj-dia
           [hora]="hora()"
           [dia]="dia()"
@@ -19,7 +19,11 @@
           [enVivo]="enVivo()"
           [deViaje]="deViaje()"
           [sinNoticias]="diaSinNoticias()"
+          [hayAnterior]="diaPrevio() !== null"
+          [haySiguiente]="diaPosterior() !== null"
           (volver)="volverAAhora()"
+          (anterior)="irAlDia(diaPrevio())"
+          (siguiente)="irAlDia(diaPosterior())"
         />
         <app-linea-sol
           cineFranja
@@ -111,4 +115,5 @@
   </main>
 </app-marco>
 
-<app-modal-noticia [noticia]="noticiaAbierta()" (cerrada)="noticiaAbierta.set(null)" />
+<!-- La vista rápida de la noticia se queda en claro aunque la portada esté de noche. -->
+<app-modal-noticia data-tema="dia" [noticia]="noticiaAbierta()" (cerrada)="noticiaAbierta.set(null)" />

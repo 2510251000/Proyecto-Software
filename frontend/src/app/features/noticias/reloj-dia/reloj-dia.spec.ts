@@ -29,6 +29,15 @@ describe('RelojDia', () => {
     expect(texto('.hora')).toBe('6:30a. m.');
   });
 
+  it('una hora de dos dígitos va en letra más pequeña para que quepa', async () => {
+    await mostrar();
+    expect(raiz().querySelector('.hora')?.classList).not.toContain('larga');
+
+    await mostrar({ hora: 10.65 });
+    expect(texto('.hora')).toBe('10:39a. m.');
+    expect(raiz().querySelector('.hora')?.classList).toContain('larga');
+  });
+
   it('en vivo dice «Ahora» y no ofrece volver', async () => {
     await mostrar();
     expect(texto('.etiqueta')).toBe(TEXTOS_RELOJ.ahora);
@@ -77,11 +86,42 @@ describe('RelojDia', () => {
     expect(texto('.ayuda')).toBe(textoDiaSinNoticias(null));
   });
 
+  describe('cambio de día', () => {
+    const botones = () => [...raiz().querySelectorAll<HTMLButtonElement>('.cambiar-dia')];
+
+    it('tiene «Día anterior» y «Día siguiente» a los lados de la fecha', async () => {
+      await mostrar({ hayAnterior: true, haySiguiente: true });
+      expect(botones().map((b) => b.getAttribute('aria-label'))).toEqual([
+        TEXTOS_RELOJ.diaAnterior,
+        TEXTOS_RELOJ.diaSiguiente,
+      ]);
+      expect(botones().map((b) => b.disabled)).toEqual([false, false]);
+    });
+
+    it('avisa a cuál día ir', async () => {
+      await mostrar({ hayAnterior: true, haySiguiente: true });
+      const pedidos: string[] = [];
+      fixture.componentInstance.anterior.subscribe(() => pedidos.push('anterior'));
+      fixture.componentInstance.siguiente.subscribe(() => pedidos.push('siguiente'));
+      botones()[0].click();
+      botones()[1].click();
+      expect(pedidos).toEqual(['anterior', 'siguiente']);
+    });
+
+    it('en hoy se desactiva «Día siguiente»; sin noticias más viejas, «Día anterior»', async () => {
+      await mostrar({ hayAnterior: true, haySiguiente: false });
+      expect(botones().map((b) => b.disabled)).toEqual([false, true]);
+
+      await mostrar({ hayAnterior: false, haySiguiente: true });
+      expect(botones().map((b) => b.disabled)).toEqual([true, false]);
+    });
+  });
+
   it('es una región con nombre y sus íconos son decorativos', async () => {
     await mostrar({ deViaje: true });
     expect(raiz().querySelector('aside')?.getAttribute('aria-label')).toBe(TEXTOS_RELOJ.etiqueta);
     const iconos = [...raiz().querySelectorAll('svg')];
-    expect(iconos).toHaveLength(2);
+    expect(iconos).toHaveLength(4);
     expect(iconos.every((icono) => icono.getAttribute('aria-hidden') === 'true')).toBe(true);
   });
 });

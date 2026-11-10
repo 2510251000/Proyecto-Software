@@ -82,6 +82,53 @@
   );
 }
 
+/* Tinte del momento: la luz de esa hora sobre la foto. Cambia fundiéndose en 0,9 s. */
+.tinte {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.tinte.visible {
+  opacity: 1;
+}
+
+.tinte-amanecer {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-cielo-amanecer) 34%, transparent) 0%,
+    color-mix(in srgb, var(--color-cielo-amanecer) 12%, transparent) 50%,
+    color-mix(in srgb, var(--color-sol) 44%, transparent) 100%
+  );
+}
+
+.tinte-dia {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-cielo-dia) 30%, transparent) 0%,
+    color-mix(in srgb, var(--color-cielo-dia) 4%, transparent) 55%,
+    color-mix(in srgb, var(--color-marca-oscuro) 36%, transparent) 100%
+  );
+}
+
+.tinte-atardecer {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-cielo-crepusculo) 52%, transparent) 0%,
+    color-mix(in srgb, var(--color-cielo-atardecer) 30%, transparent) 55%,
+    color-mix(in srgb, var(--color-sol-poniente) 52%, transparent) 100%
+  );
+}
+
+.tinte-noche {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-cielo-noche) 72%, transparent) 0%,
+    color-mix(in srgb, var(--color-cielo-anochecer) 42%, transparent) 46%,
+    color-mix(in srgb, var(--color-cielo-atardecer) 46%, transparent) 78%,
+    color-mix(in srgb, var(--color-sol-poniente) 60%, transparent) 100%
+  );
+}
+
 .contenido {
   position: relative;
   display: flex;
@@ -251,5 +298,9 @@
 @media (prefers-reduced-motion: reduce) {
   .foto {
     animation: none;
+  }
+
+  .tinte {
+    transition: none;
   }
 }

@@ -1,18 +1,22 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { NOTICIAS_DESTACADAS, NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
-import { HORAS_DEL_DIA, TOLERANCIA_HORA } from '../../../core/constants/dia-en-vivo.constants';
+import { HORAS_DEL_DIA, INTERVALO_RELOJ_MS, TOLERANCIA_HORA } from '../../../core/constants/dia-en-vivo.constants';
 import {
+  diaAnterior,
   diaDe,
   diaInicial,
+  diaSiguiente,
   horaDecimal,
   horaEnArco,
   horaInicial,
   marcasDelDia,
+  momentoDe,
   noticiaDeLaHora,
   noticiasDelDia,
+  temaDe,
 } from '../../../core/utils/dia-en-vivo';
 import { Boton } from '../../../shared/boton/boton';
 import { AlmacenNoticias } from '../almacen-noticias';
@@ -85,16 +89,25 @@ export class Listado implements OnInit {
   private readonly ahora = signal(Date.now());
   private readonly hoy = computed(() => diaDe(this.ahora()) ?? '');
   private readonly horaActual = computed(() => horaDecimal(this.ahora()) ?? 0);
-  protected readonly dia = computed(() => diaInicial(this.delMunicipio(), this.hoy()));
+  /** El día que eligió el usuario con «Día anterior» o «Día siguiente»; null si no ha cambiado de día. */
+  private readonly diaElegido = signal<string | null>(null);
+  protected readonly dia = computed(() => this.diaElegido() ?? diaInicial(this.delMunicipio(), this.hoy()));
+  protected readonly diaPrevio = computed(() => diaAnterior(this.delMunicipio(), this.dia()));
+  protected readonly diaPosterior = computed(() => diaSiguiente(this.delMunicipio(), this.dia(), this.hoy()));
   /** La hora que eligió el usuario al arrastrar el sol o tocar una marca; null si no se ha movido. */
   private readonly horaElegida = signal<number | null>(null);
   protected readonly hora = computed(
     () => this.horaElegida() ?? horaInicial(this.delMunicipio(), this.dia(), this.hoy(), this.horaActual()),
   );
-  /** «De viaje»: el usuario se fue a otra hora y puede volver con «Volver a ahora». */
-  protected readonly deViaje = computed(() => this.horaElegida() !== null);
-  /** Lo que se ve es el momento actual: hoy y sin haberse movido. */
-  protected readonly enVivo = computed(() => !this.deViaje() && this.dia() === this.hoy());
+  /** Lo que se ve es el momento actual: hoy y sin haber movido el sol. */
+  protected readonly enVivo = computed(() => this.horaElegida() === null && this.dia() === this.hoy());
+  /** «De viaje»: el usuario se fue a otra hora o a otro día y puede volver con «Volver a ahora». */
+  protected readonly deViaje = computed(
+    () => !this.enVivo() && (this.horaElegida() !== null || this.diaElegido() !== null),
+  );
+  /** La luz de la hora que se ve: tiñe la foto y, desde las 5:30 p. m., pone el tema de noche. */
+  protected readonly momento = computed(() => momentoDe(this.hora()));
+  protected readonly tema = computed(() => temaDe(this.momento()));
   protected readonly marcas = computed(() => marcasDelDia(this.delMunicipio(), this.dia()));
   protected readonly diaSinNoticias = computed(() => noticiasDelDia(this.delMunicipio(), this.dia()).length === 0);
   /** Hasta dónde llega el deslizador: la hora actual hoy; la puesta del sol en un día pasado. */
@@ -134,6 +147,12 @@ export class Listado implements OnInit {
       .sort((a, b) => a.ciudad.localeCompare(b.ciudad));
   });
 
+  constructor() {
+    // Reloj en vivo: la hora real avanza sola y el sol, el momento, el tema y la noticia la siguen.
+    const reloj = setInterval(() => this.ahora.set(Date.now()), INTERVALO_RELOJ_MS);
+    inject(DestroyRef).onDestroy(() => clearInterval(reloj));
+  }
+
   ngOnInit(): void {
     this.cargar();
   }
@@ -157,6 +176,15 @@ export class Listado implements OnInit {
 
   protected volverAAhora(): void {
     this.horaElegida.set(null);
+    this.diaElegido.set(null);
+  }
+
+  /** Pasa a otro día: se abre en la hora que le toca (ahora si es hoy; su última noticia si no). */
+  protected irAlDia(dia: string | null): void {
+    if (dia !== null) {
+      this.diaElegido.set(dia);
+      this.horaElegida.set(null);
+    }
   }
 
   protected elegirPestana(pestana: PestanaPortada): void {

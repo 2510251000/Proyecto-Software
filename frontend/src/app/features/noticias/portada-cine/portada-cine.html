@@ -12,6 +12,10 @@
     }
     <div class="velo velo-lateral"></div>
     <div class="velo velo-superior"></div>
+    <!-- Una capa por momento del día; solo se ve la del momento actual. -->
+    @for (opcion of momentos; track opcion) {
+      <div class="velo tinte" [class]="'tinte-' + opcion" [class.visible]="opcion === momento()"></div>
+    }
   </div>
 
   <div class="contenido">
