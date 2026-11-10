@@ -50,12 +50,13 @@
   }
 }
 
+/* Acercamiento corto: estirar más la foto la vuelve borrosa en pantallas grandes. */
 @keyframes paneo {
   from {
-    transform: scale(1.02);
+    transform: scale(1);
   }
   to {
-    transform: scale(1.09);
+    transform: scale(1.04);
   }
 }
 
