@@ -1,7 +1,9 @@
 # ============================================================================
 #  Al Día — pruebas y análisis de calidad en SonarQube Cloud
-#  1. Corre las pruebas del backend (Maven + JaCoCo) y del frontend (Vitest).
-#  2. Envía el código y la cobertura a SonarQube Cloud con sonar-project.properties.
+#  Dos jobs en paralelo, cada uno con su proyecto y su Quality Gate:
+#    · Backend  → backend/sonar-project.properties  (Maven + JaCoCo)
+#    · Frontend → frontend/sonar-project.properties (Vitest + lcov)
+#  Si el Quality Gate de uno no pasa, su job queda en rojo.
 #  Necesita el secreto SONAR_TOKEN en Settings → Secrets and variables → Actions.
 # ============================================================================
 name: Calidad (SonarQube Cloud)
@@ -13,8 +15,8 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  sonar:
-    name: Pruebas y análisis
+  backend:
+    name: Backend — pruebas y análisis
     runs-on: ubuntu-latest
     steps:
       - name: Descargar el código
@@ -30,6 +32,29 @@ jobs:
           java-version: '17'
           cache: maven
 
+      - name: Pruebas y cobertura
+        working-directory: backend
+        # copy-dependencies deja los .jar en target/dependency para sonar.java.libraries.
+        run: bash mvnw -B verify dependency:copy-dependencies -DincludeScope=compile
+
+      - name: Análisis en SonarQube Cloud
+        uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          projectBaseDir: backend
+          # Espera el Quality Gate: si no pasa, el job falla.
+          args: -Dsonar.qualitygate.wait=true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  frontend:
+    name: Frontend — pruebas y análisis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Node.js
         uses: actions/setup-node@v4
         with:
@@ -37,20 +62,18 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Backend — pruebas y cobertura
-        working-directory: backend
-        # copy-dependencies deja los .jar en target/dependency para sonar.java.libraries.
-        run: bash mvnw -B verify dependency:copy-dependencies -DincludeScope=compile
-
-      - name: Frontend — dependencias
+      - name: Dependencias
         working-directory: frontend
         run: npm ci
 
-      - name: Frontend — pruebas y cobertura
+      - name: Pruebas y cobertura
         working-directory: frontend
         run: npm run test:cobertura
 
       - name: Análisis en SonarQube Cloud
         uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          projectBaseDir: frontend
+          args: -Dsonar.qualitygate.wait=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

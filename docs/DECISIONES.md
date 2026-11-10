@@ -78,8 +78,12 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     pantallas con sesión.
 25. **SonarQube Cloud** (gratis porque el repositorio es público) en lugar de un SonarQube
     local: el análisis corre solo en GitHub Actions y todo el equipo ve el mismo informe. Backend
-    y frontend van en un solo proyecto de Sonar con el escáner genérico
-    (`sonar-project.properties`). La cobertura sale de JaCoCo (backend) y de
+    y frontend van en **proyectos separados**, cada uno con su Quality Gate y su
+    `sonar-project.properties` dentro de su carpeta, en dos jobs paralelos que esperan el
+    resultado del gate (`sonar.qualitygate.wait`). El backend conserva la clave original
+    (`2510251000_Proyecto-Software`) para no perder su historial. Al principio iban en un solo
+    proyecto; se separaron para que la cobertura y los problemas de un lado no tapen los del
+    otro. La cobertura sale de JaCoCo (backend) y de
     `@vitest/coverage-v8` en formato lcov (frontend). Quedan fuera de la cobertura el arranque, la
     configuración, los DTO y las entidades JPA, que no tienen lógica propia.
 
