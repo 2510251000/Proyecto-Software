@@ -1,10 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { anuncioHora, INTERVALO_RELOJ_MS, TEXTOS_RELOJ } from '../../../core/constants/dia-en-vivo.constants';
+import {
+  anuncioHora,
+  INTERVALO_RELOJ_MS,
+  TEXTOS_MOSAICO,
+  TEXTOS_RELOJ,
+} from '../../../core/constants/dia-en-vivo.constants';
 import { MENSAJES_ERROR_HTTP, TEXTOS_COMUNES } from '../../../core/constants/mensajes.constants';
 import { ETIQUETAS_PESTANA, TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
-import { ETIQUETAS_NOTICIA, TEXTOS_BIENVENIDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
+import { ETIQUETAS_NOTICIA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { RUTAS } from '../../../core/constants/rutas.constants';
 import { ErrorApi } from '../../../core/models/error-api.model';
 import { Noticia } from '../../../core/models/noticia.model';
@@ -44,11 +49,15 @@ describe('Listado', () => {
 
   const raiz = () => fixture.nativeElement as HTMLElement;
   const buscar = <T extends Element>(selector: string) => raiz().querySelector<T>(selector);
-  const destacadas = () => [...raiz().querySelectorAll('[aria-labelledby="titulo-destacadas"] app-tarjeta-noticia')];
+  /** Las fichas de arriba del mosaico (sin contar «Días anteriores»). */
+  const fichas = () => [...raiz().querySelectorAll('app-mosaico .fila app-ficha-noticia')];
+  const anteriores = () => [...raiz().querySelectorAll('app-mosaico .anteriores app-ficha-noticia')];
+  const titulos = (lista: Element[]) => lista.map((ficha) => ficha.querySelector('h3')?.textContent?.trim());
+  const tituloMosaico = () => buscar('app-mosaico .titulo')?.textContent?.trim();
   const cine = () => buscar<HTMLElement>('app-portada-cine');
   /** Los enlaces que abren una noticia: «Leer la noticia» de la portada de cine y las tarjetas. */
   const enlaces = () => [
-    ...raiz().querySelectorAll<HTMLAnchorElement>('app-portada-cine a.leer, app-tarjeta-noticia a'),
+    ...raiz().querySelectorAll<HTMLAnchorElement>('app-portada-cine a.leer, app-ficha-noticia a'),
   ];
 
   beforeEach(async () => {
@@ -79,7 +88,7 @@ describe('Listado', () => {
   it('muestra el estado de carga mientras espera', () => {
     expect(buscar('[role="status"]')?.textContent).toContain(TEXTOS_COMUNES.cargando);
     expect(buscar('app-esqueleto-portada')).not.toBeNull();
-    expect(buscar('app-tarjeta-noticia')).toBeNull();
+    expect(buscar('app-mosaico')).toBeNull();
   });
 
   it('mientras carga no hay portada de cine y la barra superior es sólida', () => {
@@ -87,16 +96,16 @@ describe('Listado', () => {
     expect(buscar('header.barra-superior')?.classList).not.toContain('sobre-foto');
   });
 
-  it('la noticia del día más reciente va en la portada de cine y la siguiente, en grande', async () => {
+  it('la noticia del día más reciente va en la portada de cine y la siguiente, en la ficha de foto grande', async () => {
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
     expect(cine()?.querySelector('h1')?.textContent).toContain('Primera noticia');
     expect(buscar('header.barra-superior')?.classList).toContain('sobre-foto');
-    const grandes = destacadas();
-    expect(buscar('#titulo-destacadas')?.textContent).toContain(TEXTOS_PORTADA.destacadas);
-    expect(grandes).toHaveLength(1);
-    expect(grandes[0].textContent).toContain('Segunda noticia');
-    expect(buscar('#titulo-region')).toBeNull();
+    expect(titulos(fichas())).toEqual(['Segunda noticia']);
+    expect(fichas()[0].querySelector('a')?.classList).toContain('foto-grande');
+    // La otra noticia es de un día anterior: el día mostrado no tiene más.
+    expect(tituloMosaico()).toBe(TEXTOS_MOSAICO.reciente);
+    expect(anteriores()).toHaveLength(0);
     expect(raiz().textContent).toContain('Soacha');
     expect(buscar('[role="status"]')).toBeNull();
   });
@@ -134,7 +143,7 @@ describe('Listado', () => {
       await fixture.whenStable();
     });
 
-    it('«Leer la noticia» y las tarjetas son enlaces a la página de su noticia', () => {
+    it('«Leer la noticia» y las fichas son enlaces a la página de su noticia', () => {
       expect(enlaces().map((a) => a.getAttribute('href'))).toEqual(['/noticias/1', '/noticias/2']);
     });
 
@@ -145,7 +154,7 @@ describe('Listado', () => {
       expect(dialogo().textContent).toContain('Contenido uno');
     });
 
-    it('al hacer clic en una tarjeta se abre con esa noticia, sin pedir nada al backend', async () => {
+    it('al hacer clic en una ficha se abre con esa noticia, sin pedir nada al backend', async () => {
       expect(dialogo().hasAttribute('open')).toBe(false);
       enlaces()[1].click();
       await fixture.whenStable();
@@ -189,13 +198,13 @@ describe('Listado', () => {
     entrada.dispatchEvent(new Event('input'));
     buscar<HTMLFormElement>('form[role="search"]')?.dispatchEvent(new Event('submit'));
     await fixture.whenStable();
-    expect(buscar('.activa-busqueda')?.textContent).toContain('feria');
+    expect(buscar('.busqueda-activa')?.textContent).toContain('feria');
 
     buscar<HTMLButtonElement>('.quitar')?.click();
     await fixture.whenStable();
     expect(listar).toHaveBeenLastCalledWith({ orden: 'RECOMENDADAS', texto: undefined });
     expect(entrada.value).toBe('');
-    expect(buscar('.activa-busqueda')).toBeNull();
+    expect(buscar('.busqueda-activa')).toBeNull();
   });
 
   it('el filtro «Comunidad» deja solo lo que cuentan los vecinos', async () => {
@@ -206,9 +215,8 @@ describe('Listado', () => {
     );
     comunidad?.click();
     await fixture.whenStable();
-    expect(destacadas()).toHaveLength(1);
-    expect(destacadas()[0].textContent).toContain('Segunda noticia');
-    expect(buscar('.pagina')?.textContent).not.toContain('Primera noticia');
+    expect(titulos(fichas())).toEqual(['Segunda noticia']);
+    expect(buscar('app-mosaico')?.textContent).not.toContain('Primera noticia');
     // Las pestañas solo ordenan lo de abajo: la portada de cine no cambia.
     expect(cine()?.textContent).toContain('Primera noticia');
   });
@@ -232,7 +240,6 @@ describe('Listado', () => {
       ciudad: CIUDADES[i % CIUDADES.length],
     }));
 
-    const compactas = () => [...raiz().querySelectorAll('.compactas app-tarjeta-noticia')];
     const selector = () => buscar<HTMLSelectElement>('#municipio-portada') as HTMLSelectElement;
     async function elegirMunicipio(valor: string): Promise<void> {
       selector().value = valor;
@@ -245,34 +252,45 @@ describe('Listado', () => {
       await fixture.whenStable();
     });
 
-    it('«Más de tu región» muestra 6 compactas y «Ver más» agrega 6', async () => {
-      expect(buscar('#titulo-region')?.textContent).toContain(TEXTOS_PORTADA.masDeTuRegion);
-      expect(compactas()).toHaveLength(6);
+    it('arriba van cuatro fichas; «Días anteriores» muestra 6 y «Ver más noticias» agrega 6', async () => {
+      // Cada noticia es de un día distinto: la primera va en la portada de cine y las cuatro
+      // siguientes llenan las fichas de arriba para que el mosaico no quede con huecos.
+      expect(fichas()).toHaveLength(4);
+      expect(fichas().map((f) => f.querySelector('a')?.className)).toEqual([
+        expect.stringContaining('foto-grande'),
+        expect.stringContaining('color'),
+        expect.stringContaining('con-foto'),
+        expect.stringContaining('con-foto'),
+      ]);
+      expect(buscar('app-mosaico .subtitulo')?.textContent).toContain(TEXTOS_MOSAICO.anteriores);
+      expect(anteriores()).toHaveLength(6);
+      expect(anteriores().every((f) => f.querySelector('a')?.classList.contains('horizontal'))).toBe(true);
       [...raiz().querySelectorAll<HTMLButtonElement>('button')]
         .find((boton) => boton.textContent?.includes(TEXTOS_PORTADA.verMas))
         ?.click();
       await fixture.whenStable();
-      expect(compactas()).toHaveLength(12);
+      expect(anteriores()).toHaveLength(12);
     });
 
-    it('respeta el orden de la API y no repite abajo ni la de la portada de cine ni las destacadas', () => {
+    it('respeta el orden de la API y no repite ninguna noticia', () => {
       expect(cine()?.querySelector('h1')?.textContent).toContain('Noticia 1');
-      expect(destacadas().map((t) => t.querySelector('h3')?.textContent?.trim())).toEqual(['Noticia 2', 'Noticia 3']);
-      expect(compactas()[0].textContent).toContain('Noticia 4');
-      expect(raiz().querySelectorAll('.pagina a[href="/noticias/1"]')).toHaveLength(0);
-      expect(raiz().querySelectorAll('.pagina a[href="/noticias/2"]')).toHaveLength(1);
+      expect(titulos(fichas())).toEqual(['Noticia 2', 'Noticia 3', 'Noticia 4', 'Noticia 5']);
+      expect(titulos(anteriores())[0]).toBe('Noticia 6');
+      expect(raiz().querySelectorAll('app-mosaico a[href="/noticias/1"]')).toHaveLength(0);
+      expect(raiz().querySelectorAll('app-mosaico a[href="/noticias/2"]')).toHaveLength(1);
+      expect(raiz().querySelectorAll('app-mosaico a[href="/noticias/6"]')).toHaveLength(1);
     });
 
     it('«Recientes» ordena por fecha sin pedir nada nuevo al backend', async () => {
       // Se invierte el orden de la API: la más nueva (Noticia 1) llega al final.
       respuesta.next([...MUCHAS].reverse());
       await fixture.whenStable();
-      expect(destacadas()[0].textContent).toContain('Noticia 30');
+      expect(titulos(fichas())[0]).toBe('Noticia 30');
       raiz().querySelectorAll<HTMLButtonElement>('.pestana')[1].click();
       await fixture.whenStable();
       // La más nueva (Noticia 1) está en la portada de cine; abajo sigue la segunda más nueva.
       expect(cine()?.querySelector('h1')?.textContent).toContain('Noticia 1');
-      expect(destacadas()[0].textContent).toContain('Noticia 2');
+      expect(titulos(fichas())[0]).toBe('Noticia 2');
       expect(listar).toHaveBeenCalledTimes(1);
     });
 
@@ -290,9 +308,8 @@ describe('Listado', () => {
     it('al elegir un municipio solo quedan sus noticias, y «Todos» las devuelve', async () => {
       await elegirMunicipio('Soacha');
       expect(selector().value).toBe('Soacha');
-      expect(buscar('#titular-portada')?.textContent).toContain('Soacha');
       expect(cine()?.querySelector('.municipio')?.textContent).toContain('Soacha');
-      const datos = [...raiz().querySelectorAll('app-tarjeta-noticia .datos')];
+      const datos = [...fichas(), ...anteriores()];
       expect(datos.length).toBeGreaterThan(0);
       for (const dato of datos) {
         expect(dato.textContent).toContain('Soacha');
@@ -300,7 +317,7 @@ describe('Listado', () => {
 
       await elegirMunicipio('');
       expect(raiz().textContent).toContain('Zipaquirá');
-      expect(buscar('#titular-portada')?.textContent).toContain(TEXTOS_BIENVENIDA.tuMunicipio);
+      expect(buscar('app-reloj-dia .fecha')?.textContent).not.toContain('Soacha');
     });
 
     it('la pestaña activa es una sola y lo anuncia con aria-current', async () => {
@@ -314,7 +331,7 @@ describe('Listado', () => {
     });
 
     it('sin «Última hora» no aparece la etiqueta roja', () => {
-      expect(buscar('.etiqueta-urgente')).toBeNull();
+      expect(buscar('.urgente')).toBeNull();
     });
   });
 
@@ -364,8 +381,10 @@ describe('Listado', () => {
       expect(titular()).toBe('Noticia de las 09:00');
       expect(marcas()[0].classList).toContain('activa');
       expect(buscar('app-reloj-dia .hora')?.textContent).toContain('9:00');
-      expect(buscar('.pagina')?.textContent).toContain('Noticia de las 15:00');
-      expect(buscar('.pagina')?.textContent).not.toContain('Noticia de las 09:00');
+      expect(titulos(fichas())).toEqual(['Noticia de las 12:00', 'Noticia de las 15:00']);
+      // Las dos son del día mostrado: llevan su hora y el título habla de ese día.
+      expect(fichas()[0].querySelector('time')?.textContent?.trim()).toBe('12:00 p. m.');
+      expect(tituloMosaico()).toBe('Lo demás del lunes 21 de septiembre');
     });
 
     it('al arrastrar el sol sale la última noticia publicada a esa hora o antes', async () => {
@@ -507,6 +526,7 @@ describe('Listado', () => {
       await fixture.whenStable();
       // Cerca de la medianoche las dos pueden caer en días distintos: se revisa la más nueva.
       expect(cine()?.querySelector('h1')?.textContent).toContain('La más nueva');
+      expect(tituloMosaico()).toBe(TEXTOS_MOSAICO.hoy);
       expect(buscar('app-reloj-dia .etiqueta')?.textContent?.trim()).toBe(TEXTOS_RELOJ.ahora);
       expect(buscar('app-reloj-dia .volver')).toBeNull();
     });
@@ -553,7 +573,10 @@ describe('Listado', () => {
     await fixture.whenStable();
     raiz().querySelectorAll<HTMLButtonElement>('.pestana')[2].click();
     await fixture.whenStable();
-    expect(destacadas()).toHaveLength(0);
+    expect(fichas()).toHaveLength(0);
+    expect(buscar('app-mosaico .aviso')?.textContent).toContain(TEXTOS_PORTADA.sinFiltro);
+    // Las pestañas siguen ahí para poder volver.
+    expect(raiz().querySelectorAll('app-mosaico .pestana')).toHaveLength(4);
     expect(raiz().textContent).toContain(TEXTOS_PORTADA.sinFiltro);
   });
 

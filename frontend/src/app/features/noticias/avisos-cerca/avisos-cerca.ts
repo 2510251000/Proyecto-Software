@@ -2,11 +2,11 @@ import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
-import { AVISOS_EN_COLUMNA, TEXTOS_COLUMNA } from '../../../../core/constants/portada.constants';
-import { RUTAS } from '../../../../core/constants/rutas.constants';
-import { Notificacion } from '../../../../core/models/notificacion.model';
-import { NotificacionService } from '../../../../core/services/notificacion.service';
-import { tiempoRelativo } from '../../../../core/utils/noticia';
+import { AVISOS_EN_COLUMNA, TEXTOS_COLUMNA } from '../../../core/constants/portada.constants';
+import { RUTAS } from '../../../core/constants/rutas.constants';
+import { Notificacion } from '../../../core/models/notificacion.model';
+import { NotificacionService } from '../../../core/services/notificacion.service';
+import { tiempoRelativo } from '../../../core/utils/noticia';
 
 /**
  * «Avisos cerca de ti»: las notificaciones de cercanía sin leer (hasta dos) con cuántas hay.

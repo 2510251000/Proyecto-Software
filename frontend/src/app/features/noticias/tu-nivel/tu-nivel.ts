@@ -5,9 +5,9 @@ import {
   textoBarraNivel,
   textoFaltanPuntos,
   textoLimiteDiario,
-} from '../../../../core/constants/portada.constants';
-import { RUTAS } from '../../../../core/constants/rutas.constants';
-import { Perfil } from '../../../../core/models/perfil.model';
+} from '../../../core/constants/portada.constants';
+import { RUTAS } from '../../../core/constants/rutas.constants';
+import { Perfil } from '../../../core/models/perfil.model';
 
 /** «Tu nivel»: nivel, puntos con la barra ámbar, cuánto falta, el límite diario y Mi perfil. */
 @Component({

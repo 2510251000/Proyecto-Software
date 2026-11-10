@@ -2,71 +2,35 @@
   display: block;
 }
 
-/*
-  Contenido: ancho máximo 1180px, 28px de margen y 28px entre columnas. La columna derecha
-  (280px) baja al final cuando no cabe al lado (tableta) y no se muestra en el celular.
-*/
+/* Debajo de la portada de cine: 1312px como máximo, con el mismo margen lateral de la barra. */
 .cuerpo {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 28px;
-  max-width: 1180px;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 1312px;
   margin-inline: auto;
-  padding: 28px;
+  padding: 30px clamp(16px, 4.5vw, 64px) 72px;
 }
 
-.pagina {
+.busqueda-activa {
   display: flex;
-  flex: 999 1 420px;
-  flex-direction: column;
-  gap: 18px;
-  min-width: 0;
-  container-type: inline-size;
-}
-
-.derecha {
-  flex: 1 1 280px;
-  min-width: 0;
-}
-
-.seccion {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-/* «Nuevas y recomendadas», «Más de tu región»: etiqueta pequeña en mayúsculas. */
-.etiqueta-seccion {
-  margin: 8px 0 0;
-  color: var(--color-texto-suave);
-  font-family: var(--fuente-texto);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* Tarjetas compactas: dos columnas; una si el feed mide menos de 640px (tableta y celular). */
-.compactas {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-s);
   margin: 0;
-  padding: 0;
-  list-style: none;
+  color: var(--color-texto-suave);
 }
 
-@container (max-width: 640px) {
-  .compactas {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-.ver-mas {
-  display: flex;
-  justify-content: center;
-  padding-top: 8px;
+.quitar {
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-s);
+  border: 0;
+  background: none;
+  color: var(--color-realce);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .estado {
@@ -76,7 +40,7 @@
   gap: var(--espacio-s);
   padding: var(--espacio-xl) var(--espacio-l);
   border: 1px solid var(--color-linea);
-  border-radius: var(--radio-m);
+  border-radius: var(--radio-ficha);
   background: var(--color-tarjeta);
   color: var(--color-texto-suave);
   text-align: center;
@@ -99,19 +63,7 @@
 
 @media (max-width: 47.99rem) {
   .cuerpo {
-    padding: 14px 16px 24px;
-  }
-
-  .pagina {
-    gap: 14px;
-  }
-
-  /* En el celular «Tu nivel» está en Perfil y los avisos en la barra inferior. */
-  .derecha {
-    display: none;
-  }
-
-  .seccion {
-    gap: 14px;
+    padding-top: 20px;
+    padding-bottom: 24px;
   }
 }

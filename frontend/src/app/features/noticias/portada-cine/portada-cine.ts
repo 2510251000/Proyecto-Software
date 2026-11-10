@@ -7,7 +7,13 @@ import { Noticia } from '../../../core/models/noticia.model';
 import { categoriaDeNoticia } from '../../../core/utils/categoria-noticia';
 import { horaDecimal, horaLegible, Momento } from '../../../core/utils/dia-en-vivo';
 import { portadaDe } from '../../../core/utils/imagenes';
-import { esUltimaHora, minutosDeLectura, nombreAutor, tieneUbicacion } from '../../../core/utils/noticia';
+import {
+  esUltimaHora,
+  etiquetaOrigen,
+  minutosDeLectura,
+  nombreAutor,
+  tieneUbicacion,
+} from '../../../core/utils/noticia';
 import { iniciales } from '../../../core/utils/texto';
 import { EnlaceNoticia } from '../../../shared/enlace-noticia/enlace-noticia';
 import { Miniatura } from '../../../shared/miniatura/miniatura';
@@ -54,16 +60,7 @@ export class PortadaCine {
     return portadaDe(noticia);
   }
 
-  /** «Oficial», «Comunidad · Nivel 2» o solo «Comunidad» si la API no trae el nivel. */
-  protected readonly etiqueta = computed(() => {
-    const { oficial, autorNivel } = this.noticia();
-    if (oficial) {
-      return ETIQUETAS_NOTICIA.oficial;
-    }
-    return autorNivel
-      ? `${ETIQUETAS_NOTICIA.comunidad} · ${ETIQUETAS_NOTICIA.etiquetaNivel} ${autorNivel}`
-      : ETIQUETAS_NOTICIA.comunidad;
-  });
+  protected readonly etiqueta = computed(() => etiquetaOrigen(this.noticia()));
 
   protected readonly ultimaHora = computed(() => esUltimaHora(this.noticia()));
 

@@ -1,5 +1,6 @@
 import {
   ARCO,
+  FICHAS_MINIMAS_MOSAICO,
   HORAS_DEL_DIA,
   MAPA_MOSAICO,
   MARCAS_MAXIMAS,
@@ -268,6 +269,30 @@ export function marcasDelDia(noticias: readonly Noticia[], dia: string): MarcaAr
     }
   }
   return marcas.reverse();
+}
+
+/** Las noticias del mosaico: las fichas de arriba y las de «Días anteriores». */
+export interface RepartoMosaico {
+  delDia: Noticia[];
+  anteriores: Noticia[];
+  /** true si entre las fichas de arriba hay al menos una noticia del día mostrado. */
+  conNoticiasDelDia: boolean;
+}
+
+/**
+ * Reparte las noticias del mosaico, respetando el orden en que llegan. Arriba van las del día
+ * mostrado; si son menos de cuatro, se completa con las siguientes de la lista para que el
+ * mosaico no quede con huecos. El resto va a «Días anteriores».
+ */
+export function repartirMosaico(noticias: readonly Noticia[], dia: string): RepartoMosaico {
+  const delDia = noticias.filter((noticia) => diaDe(noticia.fechaPublicacion) === dia);
+  const otras = noticias.filter((noticia) => diaDe(noticia.fechaPublicacion) !== dia);
+  const faltan = Math.max(0, FICHAS_MINIMAS_MOSAICO - delDia.length);
+  return {
+    delDia: [...delDia, ...otras.slice(0, faltan)],
+    anteriores: otras.slice(faltan),
+    conNoticiasDelDia: delDia.length > 0,
+  };
 }
 
 function promedio(valores: readonly number[]): number {

@@ -254,12 +254,17 @@ p {
   margin: 0 0 var(--espacio-m);
 }
 
+/* El realce es el azul de marca de día y el ámbar en la portada de noche. */
 a {
-  color: var(--color-marca);
+  color: var(--color-realce);
 }
 
 a:hover {
   color: var(--color-marca-oscuro);
+}
+
+[data-tema='noche'] a:hover {
+  color: var(--color-realce);
 }
 
 :focus-visible {

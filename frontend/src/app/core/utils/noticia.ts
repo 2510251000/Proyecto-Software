@@ -52,3 +52,13 @@ export function nombreAutor(noticia: Noticia): string {
 export function tieneUbicacion(noticia: Noticia): boolean {
   return typeof noticia.latitud === 'number' && typeof noticia.longitud === 'number';
 }
+
+/** «Oficial», «Comunidad · Nivel 2» o solo «Comunidad» si la API no trae el nivel del autor. */
+export function etiquetaOrigen(noticia: Noticia): string {
+  if (noticia.oficial) {
+    return ETIQUETAS_NOTICIA.oficial;
+  }
+  return noticia.autorNivel
+    ? `${ETIQUETAS_NOTICIA.comunidad} · ${ETIQUETAS_NOTICIA.etiquetaNivel} ${noticia.autorNivel}`
+    : ETIQUETAS_NOTICIA.comunidad;
+}

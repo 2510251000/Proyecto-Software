@@ -1,4 +1,10 @@
-import { ARCO, HORAS_DEL_DIA, MAPA_MOSAICO, MARCAS_MAXIMAS } from '../constants/dia-en-vivo.constants';
+import {
+  ARCO,
+  FICHAS_MINIMAS_MOSAICO,
+  HORAS_DEL_DIA,
+  MAPA_MOSAICO,
+  MARCAS_MAXIMAS,
+} from '../constants/dia-en-vivo.constants';
 import { Noticia } from '../models/noticia.model';
 import {
   diaAnterior,
@@ -18,6 +24,7 @@ import {
   partesDeHora,
   posicionEnArco,
   puntosDelMapa,
+  repartirMosaico,
   temaDe,
 } from './dia-en-vivo';
 
@@ -306,6 +313,53 @@ describe('marcasDelDia', () => {
 
   it('un día sin noticias no tiene marcas', () => {
     expect(marcasDelDia([], HOY)).toEqual([]);
+  });
+});
+
+describe('repartirMosaico', () => {
+  const hoy = (hora: string) => noticia(HOY, hora);
+  const ayer = (hora: string) => noticia(AYER, hora);
+
+  it('arriba van las del día mostrado y el resto queda en «Días anteriores», en el orden que llegan', () => {
+    const lista = [ayer('10:00'), hoy('09:00'), hoy('15:00'), ayer('08:00'), hoy('07:00'), hoy('12:00')];
+    const reparto = repartirMosaico(lista, HOY);
+    expect(titulos(reparto.delDia)).toEqual([
+      'Noticia de las 09:00',
+      'Noticia de las 15:00',
+      'Noticia de las 07:00',
+      'Noticia de las 12:00',
+    ]);
+    expect(titulos(reparto.anteriores)).toEqual(['Noticia de las 10:00', 'Noticia de las 08:00']);
+    expect(reparto.conNoticiasDelDia).toBe(true);
+  });
+
+  it('si las del día son menos de cuatro, completa con las siguientes de la lista', () => {
+    const lista = [hoy('09:00'), ayer('20:00'), ayer('18:00'), ayer('16:00'), ayer('14:00'), ayer('12:00')];
+    const reparto = repartirMosaico(lista, HOY);
+    expect(reparto.delDia).toHaveLength(FICHAS_MINIMAS_MOSAICO);
+    expect(titulos(reparto.delDia)).toEqual([
+      'Noticia de las 09:00',
+      'Noticia de las 20:00',
+      'Noticia de las 18:00',
+      'Noticia de las 16:00',
+    ]);
+    expect(titulos(reparto.anteriores)).toEqual(['Noticia de las 14:00', 'Noticia de las 12:00']);
+  });
+
+  it('si el día no tiene más noticias, lo dice y llena las fichas con las más recientes', () => {
+    const reparto = repartirMosaico([ayer('20:00'), ayer('18:00')], HOY);
+    expect(reparto.conNoticiasDelDia).toBe(false);
+    expect(reparto.delDia).toHaveLength(2);
+    expect(reparto.anteriores).toEqual([]);
+  });
+
+  it('con más de cuatro del día, todas van arriba', () => {
+    const lista = ['07', '08', '09', '10', '11', '12'].map((hora) => hoy(`${hora}:00`));
+    expect(repartirMosaico(lista, HOY).delDia).toHaveLength(6);
+  });
+
+  it('sin noticias no hay nada que repartir', () => {
+    expect(repartirMosaico([], HOY)).toEqual({ delDia: [], anteriores: [], conNoticiasDelDia: false });
   });
 });
 

@@ -52,6 +52,9 @@ export const MARCAS_MAXIMAS = 8;
 /** Dos marcas a menos de este % del ancho se pisan: queda solo la más reciente. */
 export const SEPARACION_MINIMA_MARCAS = 3;
 
+/** Fichas de noticia que el mosaico trata de llenar con las del día antes de pasar a «Días anteriores». */
+export const FICHAS_MINIMAS_MOSAICO = 4;
+
 /** Ficha «Dónde está pasando». */
 export const MAPA_MOSAICO = {
   /** Municipios que se dibujan como punto: los que tienen más noticias. */
@@ -107,4 +110,16 @@ export const TEXTOS_RELOJ = {
 /** «Este día no tiene noticias en Soacha.», o sin municipio si se ven todos. */
 export function textoDiaSinNoticias(municipio: string | null): string {
   return municipio ? `Este día no tiene noticias en ${municipio}.` : 'Este día no tiene noticias.';
+}
+
+/** Mosaico: lo demás del día en fichas y, debajo, los días anteriores. */
+export const TEXTOS_MOSAICO = {
+  hoy: 'Lo demás de hoy',
+  reciente: 'Lo más reciente',
+  anteriores: 'Días anteriores',
+} as const;
+
+/** «Lo demás del lunes 9 de noviembre». */
+export function textoDemasDelDia(fecha: string): string {
+  return `Lo demás del ${fecha}`;
 }

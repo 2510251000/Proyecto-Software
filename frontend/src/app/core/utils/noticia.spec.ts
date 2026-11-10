@@ -1,6 +1,13 @@
 import { Noticia } from '../models/noticia.model';
 import { ETIQUETAS_NOTICIA } from '../constants/portada.constants';
-import { esUltimaHora, minutosDeLectura, nombreAutor, tiempoRelativo, tieneUbicacion } from './noticia';
+import {
+  esUltimaHora,
+  etiquetaOrigen,
+  minutosDeLectura,
+  nombreAutor,
+  tiempoRelativo,
+  tieneUbicacion,
+} from './noticia';
 
 const AHORA = new Date('2026-09-25T12:00:00').getTime();
 const HORA = 3_600_000;
@@ -85,5 +92,15 @@ describe('tieneUbicacion', () => {
     expect(tieneUbicacion(noticia({ latitud: 4.34, longitud: -74.36 }))).toBe(true);
     expect(tieneUbicacion(noticia({ latitud: 4.34, longitud: null }))).toBe(false);
     expect(tieneUbicacion(noticia({}))).toBe(false);
+  });
+});
+
+describe('etiquetaOrigen', () => {
+  it('dice si es oficial o de la comunidad, con el nivel del autor si lo hay', () => {
+    expect(etiquetaOrigen(noticia({ oficial: true, autorNivel: 3 }))).toBe(ETIQUETAS_NOTICIA.oficial);
+    expect(etiquetaOrigen(noticia({ oficial: false, autorNivel: 2 }))).toBe(
+      `${ETIQUETAS_NOTICIA.comunidad} · ${ETIQUETAS_NOTICIA.etiquetaNivel} 2`,
+    );
+    expect(etiquetaOrigen(noticia({ oficial: false }))).toBe(ETIQUETAS_NOTICIA.comunidad);
   });
 });

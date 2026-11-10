@@ -1,9 +1,11 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
-import { NOTICIAS_DESTACADAS, NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
-import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
 import { HORAS_DEL_DIA, INTERVALO_RELOJ_MS, TOLERANCIA_HORA } from '../../../core/constants/dia-en-vivo.constants';
+import { TEXTOS_BUSQUEDA } from '../../../core/constants/pantallas.constants';
+import { NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
+import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
+import { PerfilService } from '../../../core/services/perfil.service';
 import {
   diaAnterior,
   diaDe,
@@ -16,39 +18,42 @@ import {
   momentoDe,
   noticiaDeLaHora,
   noticiasDelDia,
+  repartirMosaico,
   temaDe,
 } from '../../../core/utils/dia-en-vivo';
 import { Boton } from '../../../shared/boton/boton';
-import { AlmacenNoticias } from '../almacen-noticias';
 import { Marco } from '../../../shared/marco/marco';
-import { BarraPortada } from '../barra-portada/barra-portada';
-import { Bienvenida } from '../bienvenida/bienvenida';
-import { ColumnaDerecha } from '../columna-derecha/columna-derecha';
+import { AlmacenNoticias } from '../almacen-noticias';
+import { AvisosCerca } from '../avisos-cerca/avisos-cerca';
+import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
 import { HerramientasPortada } from '../herramientas-portada/herramientas-portada';
 import { LineaSol } from '../linea-sol/linea-sol';
+import { ModalNoticia } from '../modal-noticia/modal-noticia';
+import { Mosaico } from '../mosaico/mosaico';
 import { PortadaCine } from '../portada-cine/portada-cine';
 import { RelojDia } from '../reloj-dia/reloj-dia';
-import { PerfilService } from '../../../core/services/perfil.service';
-import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
-import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
-import { ModalNoticia } from '../modal-noticia/modal-noticia';
+import { TuNivel } from '../tu-nivel/tu-nivel';
 import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNoticias } from './filtro-portada';
 
+/**
+ * La portada «El día en vivo». Aquí se coordina todo: qué día y qué hora se están mirando, y
+ * de ahí salen el momento, el tema, la noticia de la portada de cine, las marcas del arco y
+ * las fichas del mosaico. Las piezas solo reciben datos y avisan lo que hace el usuario.
+ */
 @Component({
   selector: 'app-listado',
   imports: [
+    AvisosCerca,
     Boton,
-    Marco,
-    BarraPortada,
-    Bienvenida,
-    ColumnaDerecha,
+    EsqueletoPortada,
     HerramientasPortada,
     LineaSol,
+    Marco,
+    ModalNoticia,
+    Mosaico,
     PortadaCine,
     RelojDia,
-    TarjetaNoticia,
-    EsqueletoPortada,
-    ModalNoticia,
+    TuNivel,
   ],
   templateUrl: './listado.html',
   styleUrl: './listado.css',
@@ -60,7 +65,7 @@ export class Listado implements OnInit {
   protected readonly cargando = this.almacen.cargando;
   protected readonly error = this.almacen.error;
   protected readonly noticias = this.almacen.noticias;
-  /** Perfil de la sesión para la bienvenida y «Tu nivel»; null si no carga. */
+  /** Perfil de la sesión para «Tu nivel»; null si no carga. */
   protected readonly perfil = toSignal(
     inject(PerfilService)
       .obtener()
@@ -70,19 +75,19 @@ export class Listado implements OnInit {
   /** Noticia que se está viendo en la vista rápida; null si está cerrada. */
   protected readonly noticiaAbierta = signal<Noticia | null>(null);
   protected readonly textosPortada = TEXTOS_PORTADA;
+  protected readonly textosBusqueda = TEXTOS_BUSQUEDA;
 
-  /** Palabra buscada (la búsqueda la hace el backend) y pestaña elegida en la barra. */
+  /** Palabra buscada (la búsqueda la hace el backend) y pestaña elegida en el mosaico. */
   protected readonly textoBuscado = signal('');
   protected readonly pestana = signal<PestanaPortada>('RECOMENDADAS');
 
   // Todo lo que muestra la portada sale de la misma lista, sin peticiones nuevas.
-  // Cada noticia aparece una sola vez: las destacadas no se repiten abajo.
   protected readonly filtro = signal<FiltroPortada>(FILTRO_INICIAL);
   protected readonly ciudadActiva = computed(() => {
     const filtro = this.filtro();
     return filtro.tipo === 'ciudad' ? filtro.ciudad : null;
   });
-  /** Las noticias del municipio elegido (o todas). De aquí salen la portada de cine y el feed. */
+  /** Las noticias del municipio elegido (o todas). De aquí salen la portada de cine, el arco y el mosaico. */
   private readonly delMunicipio = computed(() => filtrarNoticias(this.noticias(), this.filtro()));
 
   // El día en vivo: qué día y qué hora se están mirando, y la noticia que les toca.
@@ -92,6 +97,7 @@ export class Listado implements OnInit {
   /** El día que eligió el usuario con «Día anterior» o «Día siguiente»; null si no ha cambiado de día. */
   private readonly diaElegido = signal<string | null>(null);
   protected readonly dia = computed(() => this.diaElegido() ?? diaInicial(this.delMunicipio(), this.hoy()));
+  protected readonly esHoy = computed(() => this.dia() === this.hoy());
   protected readonly diaPrevio = computed(() => diaAnterior(this.delMunicipio(), this.dia()));
   protected readonly diaPosterior = computed(() => diaSiguiente(this.delMunicipio(), this.dia(), this.hoy()));
   /** La hora que eligió el usuario al arrastrar el sol o tocar una marca; null si no se ha movido. */
@@ -100,7 +106,7 @@ export class Listado implements OnInit {
     () => this.horaElegida() ?? horaInicial(this.delMunicipio(), this.dia(), this.hoy(), this.horaActual()),
   );
   /** Lo que se ve es el momento actual: hoy y sin haber movido el sol. */
-  protected readonly enVivo = computed(() => this.horaElegida() === null && this.dia() === this.hoy());
+  protected readonly enVivo = computed(() => this.horaElegida() === null && this.esHoy());
   /** «De viaje»: el usuario se fue a otra hora o a otro día y puede volver con «Volver a ahora». */
   protected readonly deViaje = computed(
     () => !this.enVivo() && (this.horaElegida() !== null || this.diaElegido() !== null),
@@ -111,30 +117,29 @@ export class Listado implements OnInit {
   protected readonly marcas = computed(() => marcasDelDia(this.delMunicipio(), this.dia()));
   protected readonly diaSinNoticias = computed(() => noticiasDelDia(this.delMunicipio(), this.dia()).length === 0);
   /** Hasta dónde llega el deslizador: la hora actual hoy; la puesta del sol en un día pasado. */
-  protected readonly horaMaxima = computed(() =>
-    this.dia() === this.hoy() ? horaEnArco(this.horaActual()) : HORAS_DEL_DIA.ocaso,
-  );
-  /** La noticia de la portada de cine. Las pestañas no la cambian: solo ordenan lo de abajo. */
+  protected readonly horaMaxima = computed(() => (this.esHoy() ? horaEnArco(this.horaActual()) : HORAS_DEL_DIA.ocaso));
+  /** La noticia de la portada de cine. Las pestañas no la cambian: solo ordenan el mosaico. */
   protected readonly noticiaPortada = computed(() =>
     this.cargando() || this.error() ? null : noticiaDeLaHora(this.delMunicipio(), this.dia(), this.hora()),
   );
 
+  // El mosaico: lo de la pestaña elegida, sin la noticia que ya está en la portada de cine.
   private readonly deLaPestana = computed(() => aplicarPestana(this.delMunicipio(), this.pestana()));
   /** true si el municipio y la pestaña elegidos no dejan ninguna noticia. */
   protected readonly sinNoticiasDelFiltro = computed(() => this.deLaPestana().length === 0);
-  /** Lo de abajo: todo menos la noticia que ya está en la portada de cine. */
-  private readonly filtradas = computed(() => {
+  private readonly reparto = computed(() => {
     const enPortada = this.noticiaPortada();
-    return this.deLaPestana().filter((noticia) => noticia.id !== enPortada?.id);
+    return repartirMosaico(
+      this.deLaPestana().filter((noticia) => noticia.id !== enPortada?.id),
+      this.dia(),
+    );
   });
-  /** Las dos primeras van como publicación grande en «Nuevas y recomendadas». */
-  protected readonly destacadas = computed(() => this.filtradas().slice(0, NOTICIAS_DESTACADAS));
-  private readonly resto = computed(() => this.filtradas().slice(NOTICIAS_DESTACADAS));
-
-  /** El resto va en tarjetas compactas en «Más de tu región», por tandas. */
+  protected readonly delDia = computed(() => this.reparto().delDia);
+  protected readonly conNoticiasDelDia = computed(() => this.reparto().conNoticiasDelDia);
+  /** «Días anteriores» se muestra por tandas, con «Ver más noticias». */
   protected readonly visibles = signal(NOTICIAS_POR_TANDA);
-  protected readonly masDeTuRegion = computed(() => this.resto().slice(0, this.visibles()));
-  protected readonly hayMas = computed(() => this.resto().length > this.visibles());
+  protected readonly anteriores = computed(() => this.reparto().anteriores.slice(0, this.visibles()));
+  protected readonly hayMas = computed(() => this.reparto().anteriores.length > this.visibles());
 
   /** Municipios en orden alfabético, con cuántas noticias tiene cada uno. */
   protected readonly conteo = computed<ConteoCiudad[]>(() => {
@@ -170,7 +175,7 @@ export class Listado implements OnInit {
 
   /** Arrastrar el sol hasta el final de hoy es lo mismo que volver a ahora. */
   protected elegirHora(hora: number): void {
-    const esAhora = this.dia() === this.hoy() && hora >= this.horaMaxima() - TOLERANCIA_HORA;
+    const esAhora = this.esHoy() && hora >= this.horaMaxima() - TOLERANCIA_HORA;
     this.horaElegida.set(esAhora ? null : hora);
   }
 
@@ -184,6 +189,7 @@ export class Listado implements OnInit {
     if (dia !== null) {
       this.diaElegido.set(dia);
       this.horaElegida.set(null);
+      this.visibles.set(NOTICIAS_POR_TANDA);
     }
   }
 
