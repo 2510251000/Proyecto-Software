@@ -1,4 +1,4 @@
-import { HORAS_ULTIMA_HORA, PALABRAS_POR_MINUTO } from '../constants/portada.constants';
+import { ETIQUETAS_NOTICIA, HORAS_ULTIMA_HORA, PALABRAS_POR_MINUTO } from '../constants/portada.constants';
 import { IDIOMA } from '../constants/regional.constants';
 import { Noticia } from '../models/noticia.model';
 
@@ -37,4 +37,18 @@ export function esUltimaHora(noticia: Noticia, ahora = Date.now()): boolean {
     return false;
   }
   return ahora - publicada < HORAS_ULTIMA_HORA * MINUTOS_POR_HORA * MS_POR_MINUTO;
+}
+
+/** El nombre visible del autor; si la API no lo trae, uno genérico según sea oficial o de la comunidad. */
+export function nombreAutor(noticia: Noticia): string {
+  const nombre = noticia.autor?.trim();
+  if (nombre) {
+    return nombre;
+  }
+  return noticia.oficial ? ETIQUETAS_NOTICIA.autorOficial : ETIQUETAS_NOTICIA.autorComunidad;
+}
+
+/** true si la noticia tiene un punto en el mapa. */
+export function tieneUbicacion(noticia: Noticia): boolean {
+  return typeof noticia.latitud === 'number' && typeof noticia.longitud === 'number';
 }

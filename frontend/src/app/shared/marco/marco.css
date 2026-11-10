@@ -48,6 +48,26 @@
   margin-left: auto;
 }
 
+/*
+  Sobre la foto de la portada: transparente y pegada arriba. Al bajar toma el fondo azul.
+  La foto sube por detrás de ella (ver portada-cine).
+*/
+.sobre-foto {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  background: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.sobre-foto.solida {
+  background: var(--color-marca-oscuro);
+}
+
+.herramientas:empty {
+  display: none;
+}
+
 /* Relleno ámbar con letra azul: 6.96:1. */
 .publicar {
   display: inline-flex;
@@ -88,8 +108,30 @@
   final para no quedar tapado.
 */
 @media (max-width: 63.99rem) {
+  /* De la barra superior solo queda lo que agregó la pantalla, debajo de la barra del logo. */
   .barra-superior {
+    position: static;
+    display: block;
+    padding: 0;
+    background: none;
+    color: inherit;
+  }
+
+  .marca,
+  app-navegacion,
+  .publicar,
+  app-menu-cuenta {
     display: none;
+  }
+
+  .acciones {
+    display: block;
+    margin: 0;
+  }
+
+  /* Aquí lo que queda va sobre la página clara: el foco vuelve a su color normal. */
+  .barra-superior :focus-visible {
+    outline-color: var(--color-texto);
   }
 
   .solo-celular {
@@ -98,5 +140,11 @@
 
   .contenido {
     padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sobre-foto {
+    transition: none;
   }
 }

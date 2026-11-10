@@ -1,5 +1,6 @@
 import { Noticia } from '../models/noticia.model';
-import { esUltimaHora, minutosDeLectura, tiempoRelativo } from './noticia';
+import { ETIQUETAS_NOTICIA } from '../constants/portada.constants';
+import { esUltimaHora, minutosDeLectura, nombreAutor, tiempoRelativo, tieneUbicacion } from './noticia';
 
 const AHORA = new Date('2026-09-25T12:00:00').getTime();
 const HORA = 3_600_000;
@@ -65,5 +66,24 @@ describe('esUltimaHora', () => {
   it('no lo es si viene de la comunidad o la fecha no es válida', () => {
     expect(esUltimaHora(noticia({ oficial: false }), AHORA)).toBe(false);
     expect(esUltimaHora(noticia({ fechaPublicacion: 'no-es-fecha' }), AHORA)).toBe(false);
+  });
+});
+
+describe('nombreAutor', () => {
+  it('usa el nombre que trae la API', () => {
+    expect(nombreAutor(noticia({ autor: '  Laura Vecina ' }))).toBe('Laura Vecina');
+  });
+
+  it('sin nombre, uno genérico según sea oficial o de la comunidad', () => {
+    expect(nombreAutor(noticia({ oficial: true }))).toBe(ETIQUETAS_NOTICIA.autorOficial);
+    expect(nombreAutor(noticia({ oficial: false, autor: '  ' }))).toBe(ETIQUETAS_NOTICIA.autorComunidad);
+  });
+});
+
+describe('tieneUbicacion', () => {
+  it('pide latitud y longitud', () => {
+    expect(tieneUbicacion(noticia({ latitud: 4.34, longitud: -74.36 }))).toBe(true);
+    expect(tieneUbicacion(noticia({ latitud: 4.34, longitud: null }))).toBe(false);
+    expect(tieneUbicacion(noticia({}))).toBe(false);
   });
 });

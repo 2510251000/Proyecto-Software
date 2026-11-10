@@ -3,12 +3,15 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { NOTICIAS_DESTACADAS, NOTICIAS_POR_TANDA, TEXTOS_PORTADA } from '../../../core/constants/portada.constants';
 import { Noticia, PestanaPortada } from '../../../core/models/noticia.model';
+import { diaDe, diaInicial, horaDecimal, horaInicial, noticiaDeLaHora } from '../../../core/utils/dia-en-vivo';
 import { Boton } from '../../../shared/boton/boton';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { Marco } from '../../../shared/marco/marco';
 import { BarraPortada } from '../barra-portada/barra-portada';
 import { Bienvenida } from '../bienvenida/bienvenida';
 import { ColumnaDerecha } from '../columna-derecha/columna-derecha';
+import { HerramientasPortada } from '../herramientas-portada/herramientas-portada';
+import { PortadaCine } from '../portada-cine/portada-cine';
 import { PerfilService } from '../../../core/services/perfil.service';
 import { TarjetaNoticia } from '../../../shared/tarjeta-noticia/tarjeta-noticia';
 import { EsqueletoPortada } from '../esqueleto-portada/esqueleto-portada';
@@ -23,6 +26,8 @@ import { aplicarPestana, ConteoCiudad, FILTRO_INICIAL, FiltroPortada, filtrarNot
     BarraPortada,
     Bienvenida,
     ColumnaDerecha,
+    HerramientasPortada,
+    PortadaCine,
     TarjetaNoticia,
     EsqueletoPortada,
     ModalNoticia,
@@ -59,9 +64,29 @@ export class Listado implements OnInit {
     const filtro = this.filtro();
     return filtro.tipo === 'ciudad' ? filtro.ciudad : null;
   });
-  private readonly filtradas = computed(() =>
-    aplicarPestana(filtrarNoticias(this.noticias(), this.filtro()), this.pestana()),
+  /** Las noticias del municipio elegido (o todas). De aquí salen la portada de cine y el feed. */
+  private readonly delMunicipio = computed(() => filtrarNoticias(this.noticias(), this.filtro()));
+
+  // El día en vivo: qué día y qué hora se están mirando, y la noticia que les toca.
+  private readonly ahora = signal(Date.now());
+  private readonly hoy = computed(() => diaDe(this.ahora()) ?? '');
+  private readonly dia = computed(() => diaInicial(this.delMunicipio(), this.hoy()));
+  private readonly hora = computed(() =>
+    horaInicial(this.delMunicipio(), this.dia(), this.hoy(), horaDecimal(this.ahora()) ?? 0),
   );
+  /** La noticia de la portada de cine. Las pestañas no la cambian: solo ordenan lo de abajo. */
+  protected readonly noticiaPortada = computed(() =>
+    this.cargando() || this.error() ? null : noticiaDeLaHora(this.delMunicipio(), this.dia(), this.hora()),
+  );
+
+  private readonly deLaPestana = computed(() => aplicarPestana(this.delMunicipio(), this.pestana()));
+  /** true si el municipio y la pestaña elegidos no dejan ninguna noticia. */
+  protected readonly sinNoticiasDelFiltro = computed(() => this.deLaPestana().length === 0);
+  /** Lo de abajo: todo menos la noticia que ya está en la portada de cine. */
+  private readonly filtradas = computed(() => {
+    const enPortada = this.noticiaPortada();
+    return this.deLaPestana().filter((noticia) => noticia.id !== enPortada?.id);
+  });
   /** Las dos primeras van como publicación grande en «Nuevas y recomendadas». */
   protected readonly destacadas = computed(() => this.filtradas().slice(0, NOTICIAS_DESTACADAS));
   private readonly resto = computed(() => this.filtradas().slice(NOTICIAS_DESTACADAS));

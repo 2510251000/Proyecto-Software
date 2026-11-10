@@ -57,3 +57,9 @@ export const SUFIJOS_HORA = {
   manana: 'a. m.',
   tarde: 'p. m.',
 } as const;
+
+/** Portada de cine: la noticia del momento a pantalla completa. */
+export const TEXTOS_CINE = {
+  leer: 'Leer la noticia',
+  verEnMapa: 'Ver en el mapa',
+} as const;

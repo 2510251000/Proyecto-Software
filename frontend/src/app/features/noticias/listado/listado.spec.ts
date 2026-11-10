@@ -44,7 +44,11 @@ describe('Listado', () => {
   const raiz = () => fixture.nativeElement as HTMLElement;
   const buscar = <T extends Element>(selector: string) => raiz().querySelector<T>(selector);
   const destacadas = () => [...raiz().querySelectorAll('[aria-labelledby="titulo-destacadas"] app-tarjeta-noticia')];
-  const enlaces = () => [...raiz().querySelectorAll<HTMLAnchorElement>('app-tarjeta-noticia a')];
+  const cine = () => buscar<HTMLElement>('app-portada-cine');
+  /** Los enlaces que abren una noticia: «Leer la noticia» de la portada de cine y las tarjetas. */
+  const enlaces = () => [
+    ...raiz().querySelectorAll<HTMLAnchorElement>('app-portada-cine a.leer, app-tarjeta-noticia a'),
+  ];
 
   beforeEach(async () => {
     respuesta = new Subject<Noticia[]>();
@@ -77,14 +81,20 @@ describe('Listado', () => {
     expect(buscar('app-tarjeta-noticia')).toBeNull();
   });
 
-  it('las dos primeras van en grande en «Nuevas y recomendadas»', async () => {
+  it('mientras carga no hay portada de cine y la barra superior es sólida', () => {
+    expect(cine()).toBeNull();
+    expect(buscar('header.barra-superior')?.classList).not.toContain('sobre-foto');
+  });
+
+  it('la noticia del día más reciente va en la portada de cine y la siguiente, en grande', async () => {
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
+    expect(cine()?.querySelector('h1')?.textContent).toContain('Primera noticia');
+    expect(buscar('header.barra-superior')?.classList).toContain('sobre-foto');
     const grandes = destacadas();
     expect(buscar('#titulo-destacadas')?.textContent).toContain(TEXTOS_PORTADA.destacadas);
-    expect(grandes).toHaveLength(2);
-    expect(grandes[0].textContent).toContain('Primera noticia');
-    expect(grandes[1].textContent).toContain('Segunda noticia');
+    expect(grandes).toHaveLength(1);
+    expect(grandes[0].textContent).toContain('Segunda noticia');
     expect(buscar('#titulo-region')).toBeNull();
     expect(raiz().textContent).toContain('Soacha');
     expect(buscar('[role="status"]')).toBeNull();
@@ -94,6 +104,7 @@ describe('Listado', () => {
     respuesta.next([]);
     await fixture.whenStable();
     expect(raiz().textContent).toContain('Todavía no hay noticias publicadas.');
+    expect(cine()).toBeNull();
   });
 
   it('muestra el error y permite reintentar', async () => {
@@ -110,7 +121,7 @@ describe('Listado', () => {
 
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
-    expect(destacadas()[0].textContent).toContain('Primera noticia');
+    expect(cine()?.textContent).toContain('Primera noticia');
   });
 
   describe('vista rápida de una noticia', () => {
@@ -122,8 +133,15 @@ describe('Listado', () => {
       await fixture.whenStable();
     });
 
-    it('las tarjetas son enlaces a la página de su noticia', () => {
+    it('«Leer la noticia» y las tarjetas son enlaces a la página de su noticia', () => {
       expect(enlaces().map((a) => a.getAttribute('href'))).toEqual(['/noticias/1', '/noticias/2']);
+    });
+
+    it('«Leer la noticia» de la portada de cine abre la vista rápida de esa noticia', async () => {
+      enlaces()[0].click();
+      await fixture.whenStable();
+      expect(dialogo().hasAttribute('open')).toBe(true);
+      expect(dialogo().textContent).toContain('Contenido uno');
     });
 
     it('al hacer clic en una tarjeta se abre con esa noticia, sin pedir nada al backend', async () => {
@@ -159,6 +177,26 @@ describe('Listado', () => {
     expect(listar).toHaveBeenLastCalledWith({ orden: 'RECOMENDADAS', texto: 'feria' });
   });
 
+  it('la búsqueda y el municipio van en la barra superior', () => {
+    expect(buscar('header.barra-superior #busqueda-noticias')).not.toBeNull();
+    expect(buscar('header.barra-superior #municipio-portada')).not.toBeNull();
+  });
+
+  it('«Quitar búsqueda» vuelve a pedir todas las noticias y vacía el campo', async () => {
+    const entrada = buscar<HTMLInputElement>('#busqueda-noticias') as HTMLInputElement;
+    entrada.value = 'feria';
+    entrada.dispatchEvent(new Event('input'));
+    buscar<HTMLFormElement>('form[role="search"]')?.dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+    expect(buscar('.activa-busqueda')?.textContent).toContain('feria');
+
+    buscar<HTMLButtonElement>('.quitar')?.click();
+    await fixture.whenStable();
+    expect(listar).toHaveBeenLastCalledWith({ orden: 'RECOMENDADAS', texto: undefined });
+    expect(entrada.value).toBe('');
+    expect(buscar('.activa-busqueda')).toBeNull();
+  });
+
   it('el filtro «Comunidad» deja solo lo que cuentan los vecinos', async () => {
     respuesta.next(NOTICIAS);
     await fixture.whenStable();
@@ -169,7 +207,9 @@ describe('Listado', () => {
     await fixture.whenStable();
     expect(destacadas()).toHaveLength(1);
     expect(destacadas()[0].textContent).toContain('Segunda noticia');
-    expect(buscar('main')?.textContent).not.toContain('Primera noticia');
+    expect(buscar('.pagina')?.textContent).not.toContain('Primera noticia');
+    // Las pestañas solo ordenan lo de abajo: la portada de cine no cambia.
+    expect(cine()?.textContent).toContain('Primera noticia');
   });
 
   it('cierra la sesión y vuelve al login', () => {
@@ -214,10 +254,12 @@ describe('Listado', () => {
       expect(compactas()).toHaveLength(12);
     });
 
-    it('respeta el orden de la API y no repite las destacadas abajo', () => {
-      expect(destacadas().map((t) => t.querySelector('h3')?.textContent?.trim())).toEqual(['Noticia 1', 'Noticia 2']);
-      expect(compactas()[0].textContent).toContain('Noticia 3');
-      expect(raiz().querySelectorAll('main a[href="/noticias/1"]')).toHaveLength(1);
+    it('respeta el orden de la API y no repite abajo ni la de la portada de cine ni las destacadas', () => {
+      expect(cine()?.querySelector('h1')?.textContent).toContain('Noticia 1');
+      expect(destacadas().map((t) => t.querySelector('h3')?.textContent?.trim())).toEqual(['Noticia 2', 'Noticia 3']);
+      expect(compactas()[0].textContent).toContain('Noticia 4');
+      expect(raiz().querySelectorAll('.pagina a[href="/noticias/1"]')).toHaveLength(0);
+      expect(raiz().querySelectorAll('.pagina a[href="/noticias/2"]')).toHaveLength(1);
     });
 
     it('«Recientes» ordena por fecha sin pedir nada nuevo al backend', async () => {
@@ -227,7 +269,9 @@ describe('Listado', () => {
       expect(destacadas()[0].textContent).toContain('Noticia 30');
       raiz().querySelectorAll<HTMLButtonElement>('.pestana')[1].click();
       await fixture.whenStable();
-      expect(destacadas()[0].textContent).toContain('Noticia 1');
+      // La más nueva (Noticia 1) está en la portada de cine; abajo sigue la segunda más nueva.
+      expect(cine()?.querySelector('h1')?.textContent).toContain('Noticia 1');
+      expect(destacadas()[0].textContent).toContain('Noticia 2');
       expect(listar).toHaveBeenCalledTimes(1);
     });
 
@@ -245,7 +289,8 @@ describe('Listado', () => {
     it('al elegir un municipio solo quedan sus noticias, y «Todos» las devuelve', async () => {
       await elegirMunicipio('Soacha');
       expect(selector().value).toBe('Soacha');
-      expect(buscar('h1')?.textContent).toContain('Soacha');
+      expect(buscar('#titular-portada')?.textContent).toContain('Soacha');
+      expect(cine()?.querySelector('.municipio')?.textContent).toContain('Soacha');
       const datos = [...raiz().querySelectorAll('app-tarjeta-noticia .datos')];
       expect(datos.length).toBeGreaterThan(0);
       for (const dato of datos) {
@@ -254,7 +299,7 @@ describe('Listado', () => {
 
       await elegirMunicipio('');
       expect(raiz().textContent).toContain('Zipaquirá');
-      expect(buscar('h1')?.textContent).toContain(TEXTOS_BIENVENIDA.tuMunicipio);
+      expect(buscar('#titular-portada')?.textContent).toContain(TEXTOS_BIENVENIDA.tuMunicipio);
     });
 
     it('la pestaña activa es una sola y lo anuncia con aria-current', async () => {
@@ -295,7 +340,7 @@ describe('Listado', () => {
     };
     respuesta.next([reciente, ...NOTICIAS]);
     await fixture.whenStable();
-    expect(destacadas()[0].textContent).toContain('Se cae el puente peatonal');
-    expect(destacadas()[0].querySelector('.etiqueta-urgente')?.textContent).toContain(ETIQUETAS_NOTICIA.ultimaHora);
+    expect(cine()?.querySelector('h1')?.textContent).toContain('Se cae el puente peatonal');
+    expect(cine()?.querySelector('.urgente')?.textContent).toContain(ETIQUETAS_NOTICIA.ultimaHora);
   });
 });

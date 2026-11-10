@@ -48,6 +48,22 @@ describe('Miniatura', () => {
     expect(svg()).toBeNull();
   });
 
+  it('como foto de fondo va sin texto alternativo', async () => {
+    fixture.componentRef.setInput('decorativa', true);
+    await mostrar('agua');
+    expect(foto()?.getAttribute('alt')).toBe('');
+  });
+
+  it('como foto principal se pide de primera, sin carga diferida', async () => {
+    await mostrar('agua');
+    expect(foto()?.hasAttribute('fetchpriority')).toBe(false);
+
+    fixture.componentRef.setInput('prioridad', true);
+    await fixture.whenStable();
+    expect(foto()?.getAttribute('loading')).toBe('eager');
+    expect(foto()?.getAttribute('fetchpriority')).toBe('high');
+  });
+
   it('cada categoría tiene su propio texto alternativo', async () => {
     const textos = new Set<string | null>();
     for (const categoria of CATEGORIAS) {

@@ -2,7 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { ETIQUETAS_NOTICIA } from '../../../core/constants/portada.constants';
 import { IDIOMA } from '../../../core/constants/regional.constants';
 import { Noticia } from '../../../core/models/noticia.model';
-import { esUltimaHora, tiempoRelativo } from '../../../core/utils/noticia';
+import { esUltimaHora, nombreAutor, tiempoRelativo } from '../../../core/utils/noticia';
 import { iniciales } from '../../../core/utils/texto';
 
 const FORMATO_FECHA = new Intl.DateTimeFormat(IDIOMA, { dateStyle: 'long' });
@@ -22,14 +22,7 @@ export class AutorNoticia {
 
   protected readonly etiquetas = ETIQUETAS_NOTICIA;
 
-  protected readonly autor = computed(() => {
-    const noticia = this.noticia();
-    const nombre = noticia.autor?.trim();
-    if (nombre) {
-      return nombre;
-    }
-    return noticia.oficial ? ETIQUETAS_NOTICIA.autorOficial : ETIQUETAS_NOTICIA.autorComunidad;
-  });
+  protected readonly autor = computed(() => nombreAutor(this.noticia()));
 
   protected readonly iniciales = computed(() => iniciales(this.autor()));
   protected readonly cuando = computed(() => tiempoRelativo(this.noticia().fechaPublicacion));

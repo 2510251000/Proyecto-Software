@@ -19,6 +19,9 @@ export const TEXTOS_NAVEGACION = {
   buscar: 'Buscar noticias',
 } as const;
 
+/** Píxeles que hay que bajar para que la barra superior de la portada deje de ser transparente. */
+export const DESPLAZAMIENTO_BARRA_SOLIDA = 24;
+
 /** Nombre accesible del círculo de la cuenta: «Tu cuenta: Carlos Activo, nivel 2». */
 export function etiquetaCuenta(nombre: string, nivel: number): string {
   return `${TEXTOS_NAVEGACION.usuario}: ${nombre}, ${TEXTOS_NAVEGACION.nivel.toLowerCase()} ${nivel}`;

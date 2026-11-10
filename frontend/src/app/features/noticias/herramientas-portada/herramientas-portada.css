@@ -1,0 +1,112 @@
+/*
+  En computador van dentro de la barra azul: píldoras oscuras con borde y letra blancos.
+  Los colores salen de estas variables para cambiarlos de una vez en tableta y celular.
+*/
+:host {
+  --control-fondo: rgba(9, 25, 58, 0.72);
+  --control-borde: rgba(255, 255, 255, 0.5);
+  --control-texto: var(--color-sobre-marca);
+  --control-marcador: var(--color-sobre-marca-suave);
+  --control-pin: var(--color-sol);
+  --control-radio: 999px;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.busqueda,
+.caja-municipio {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.icono {
+  position: absolute;
+  left: 15px;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--control-texto);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.pin {
+  stroke: var(--control-pin);
+  stroke-width: 2.4;
+}
+
+.control {
+  box-sizing: border-box;
+  height: var(--alto-control);
+  padding: 0 14px 0 40px;
+  border: 1px solid var(--control-borde);
+  border-radius: var(--control-radio);
+  background: var(--control-fondo);
+  color: var(--control-texto);
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.entrada {
+  width: 220px;
+  max-width: 100%;
+}
+
+.entrada::placeholder {
+  color: var(--control-marcador);
+  opacity: 1;
+}
+
+.municipio {
+  max-width: 17rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* La lista que despliega el navegador va en claro, como cualquier lista del sistema. */
+.municipio option {
+  background: var(--color-fondo);
+  color: var(--color-marca);
+}
+
+/* Tableta y celular: debajo de la barra del logo, sobre la página clara. */
+@media (max-width: 63.99rem) {
+  :host {
+    --control-fondo: var(--color-tarjeta);
+    --control-borde: var(--color-borde);
+    --control-texto: var(--color-texto);
+    --control-marcador: var(--color-texto-suave);
+    --control-pin: var(--color-marca);
+    --control-radio: var(--radio-s);
+
+    flex-wrap: nowrap;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--color-linea);
+    background: var(--color-tarjeta);
+  }
+
+  .busqueda {
+    flex: 1 0 9.5rem;
+  }
+
+  .entrada {
+    width: 100%;
+  }
+
+  .caja-municipio {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .municipio {
+    width: 100%;
+    max-width: none;
+  }
+}

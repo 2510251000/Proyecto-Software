@@ -32,6 +32,10 @@ export class Miniatura {
   readonly categoria = input.required<CategoriaMiniatura>();
   readonly foto = input<ImagenNoticia | null>(null);
   readonly protegida = input(false);
+  /** La foto es de fondo y el texto de al lado ya dice lo mismo: va sin texto alternativo. */
+  readonly decorativa = input(false);
+  /** Es la foto principal de la pantalla: se pide de primera, sin esperar a que se vea. */
+  readonly prioridad = input(false);
 
   /** La foto real no cargó: se usa la de la categoría. */
   protected readonly falloFoto = signal(false);
