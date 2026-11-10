@@ -28,6 +28,23 @@
   --color-error: #b3261e; /* errores de formulario: 6.5:1 sobre blanco, 5.8:1 sobre la página */
 
   /*
+    Portada «El día en vivo». El realce es el color de los textos y enlaces destacados; el botón,
+    el relleno del botón principal, de la pestaña activa y de la etiqueta «Oficial». En el tema
+    de noche los dos pasan a ámbar (ver [data-tema='noche'] más abajo).
+  */
+  --color-realce: #0e2551;
+  --color-boton: #0e2551;
+  --color-boton-texto: #ffffff;
+
+  /* El cielo de la portada de cine: tiñe la foto según el momento. Siempre con texto blanco encima. */
+  --color-cielo-amanecer: #1f4a8a;
+  --color-cielo-dia: #1f4580;
+  --color-cielo-atardecer: #8f3f27;
+  --color-cielo-crepusculo: #4f2140;
+  --color-cielo-anochecer: #1f1b3d;
+  --color-sol-poniente: #e4572e; /* solo relleno: el sol cuando se oculta */
+
+  /*
     Velo azul sobre el muro de noticias del login: más denso en el centro, donde van el logo
     y el lema en blanco (sobre el centro, el blanco queda por encima de 12:1).
   */
@@ -47,6 +64,7 @@
   --radio-s: 10px; /* controles: botones, campos, items del menú, fotos dentro de una tarjeta */
   --radio-m: 14px; /* tarjetas */
   --radio-g: 18px; /* piezas grandes, como el bloque de bienvenida */
+  --radio-ficha: 26px; /* fichas del mosaico de la portada y tarjeta del reloj */
   --radio: var(--radio-s);
   --alto-control: 2.75rem; /* 44 px: tamaño táctil mínimo */
   --ancho-maximo: 72rem; /* ancho del contenido en las pantallas de la aplicación */
@@ -67,6 +85,44 @@
   --fuente-titulos: 'Source Serif 4 Variable', Georgia, 'Times New Roman', serif;
   --fuente-texto: 'Manrope Variable', system-ui, sans-serif;
   --fuente-titulares-serif: var(--fuente-titulos);
+}
+
+/*
+  Temas de la portada. Se eligen con data-tema en el elemento raíz de la portada: todo lo que
+  ya usa estas variables cambia solo. El de día repite los valores de :root para que una pieza
+  dentro de la portada de noche (el modal de la noticia) pueda volver a claro.
+*/
+[data-tema='dia'] {
+  --color-pagina: #f7f9fc;
+  --color-tarjeta: #ffffff;
+  --color-superficie: #f7f9fc;
+  --color-superficie-2: #edf1f7;
+  --color-linea: #e3e7ef;
+  --color-borde: #7a869c;
+  --color-texto: #111827;
+  --color-texto-suave: #5c6880;
+  --color-realce: #0e2551;
+  --color-boton: #0e2551;
+  --color-boton-texto: #ffffff;
+}
+
+/*
+  Noche: texto 15.1:1 sobre tarjeta; texto suave 8.0:1 sobre tarjeta y 6.8:1 sobre superficie-2;
+  borde de campos 4.1:1 sobre tarjeta. Aquí el ámbar sí puede ser letra: 8.7:1 sobre la página
+  y 7.6:1 sobre la tarjeta.
+*/
+[data-tema='noche'] {
+  --color-pagina: #081226;
+  --color-tarjeta: #0f1f3d;
+  --color-superficie: #0f1f3d;
+  --color-superficie-2: #182b52;
+  --color-linea: #263a63;
+  --color-borde: #6b7fa8;
+  --color-texto: #f4f6fb;
+  --color-texto-suave: #a9b6cf;
+  --color-realce: #f0a028;
+  --color-boton: #f0a028;
+  --color-boton-texto: #0e2551;
 }
 
 *,
