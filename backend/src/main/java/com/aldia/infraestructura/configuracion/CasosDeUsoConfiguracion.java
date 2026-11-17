@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.aldia.aplicacion.servicio.AlertasServicio;
 import com.aldia.aplicacion.servicio.ArchivosDeImagenes;
 import com.aldia.aplicacion.servicio.CalificarNoticiaServicio;
 import com.aldia.aplicacion.servicio.ComentariosServicio;
@@ -26,6 +27,7 @@ import com.aldia.dominio.modelo.ParametrosImagenes;
 import com.aldia.dominio.modelo.ParametrosInteraccion;
 import com.aldia.dominio.modelo.ParametrosNiveles;
 import com.aldia.dominio.modelo.ParametrosRecomendacion;
+import com.aldia.dominio.puerto.salida.AlertaRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.AlmacenImagenesPuerto;
 import com.aldia.dominio.puerto.salida.CalificacionRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.CifradorPuerto;
@@ -161,9 +163,21 @@ public class CasosDeUsoConfiguracion {
                                                            AvisosPorCiudad avisosPorCiudad,
                                                            Clock reloj,
                                                            ArchivosDeImagenes archivosDeImagenes,
-                                                           ImagenRepositorioPuerto imagenes) {
+                                                           ImagenRepositorioPuerto imagenes,
+                                                           AlertaRepositorioPuerto alertas) {
         return new PublicarNoticiaServicio(usuarios, ciudades, noticias, historial, niveles, notificaciones,
-                transaccion, reglaLimiteDiario, calculadoraNivel, avisosPorCiudad, reloj, archivosDeImagenes, imagenes);
+                transaccion, reglaLimiteDiario, calculadoraNivel, avisosPorCiudad, reloj, archivosDeImagenes, imagenes,
+                alertas);
+    }
+
+    @Bean
+    public AlertasServicio alertasServicio(AlertaRepositorioPuerto alertas, UsuarioRepositorioPuerto usuarios,
+                                           NotificacionRepositorioPuerto notificaciones,
+                                           EjecutorTransaccionalPuerto transaccion, AvisosPorCiudad avisosPorCiudad,
+                                           Clock reloj,
+                                           @Value("${aldia.alertas.horas-vigencia}") int horasVigencia) {
+        return new AlertasServicio(alertas, usuarios, notificaciones, transaccion, avisosPorCiudad, reloj,
+                horasVigencia);
     }
 
     @Bean

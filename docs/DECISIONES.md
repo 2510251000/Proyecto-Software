@@ -292,3 +292,21 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     conserva el orden de norte a sur. El margen del área es 14 % (la especificación decía 12 %)
     para que los nombres no se corten en los bordes. (decidido por Claude Code; revisar)
 77. Sin noticias, o si falla la carga, debajo del mensaje siguen «Tu nivel» y «Avisos cerca de ti».
+
+## Alertas de emergencia, al estilo de la Alerta Amber (2026-11-17)
+
+78. Una alerta es una **noticia marcada como urgente** (tabla `alerta`, 1 a 1 con `noticia`,
+    migración V7). Así conserva las fotos, el mapa, los comentarios y la moderación de siempre, y
+    la tabla `noticia` no cambia. Tipos: DESAPARICION, ROBO y EMERGENCIA.
+79. Al publicarla, todos los usuarios activos del municipio (menos el autor) reciben una
+    notificación de tipo ALERTA en vez de CERCANIA. Cualquier usuario puede enviar una alerta:
+    cuenta contra su límite diario y, si es falsa, el administrador la oculta y deja de sonar.
+80. La aplicación pregunta cada 15 s por `GET /api/alertas/pendientes` (no hay push: haría falta
+    un service worker y un servidor de avisos). La alerta sale a pantalla completa en cualquier
+    pantalla con sesión, con sirena de dos tonos (853 Hz y 960 Hz, como los avisos de los
+    celulares), vibración y, si el usuario dio permiso, aviso del sistema operativo. Al cerrarla
+    se marca leída y no vuelve a salir.
+81. Una alerta deja de sonar a las 72 horas (`ALERTAS_HORAS_VIGENCIA`) o cuando su autor o un
+    administrador la marca como resuelta; en ese caso se avisa a los vecinos que se resolvió.
+82. El navegador puede bloquear el sonido si el usuario no ha tocado la página todavía; el aviso
+    a pantalla completa se muestra igual. (decidido por Claude Code; revisar)

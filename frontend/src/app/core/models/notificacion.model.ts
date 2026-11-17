@@ -1,4 +1,4 @@
-export type TipoNotificacion = 'CERCANIA' | 'ASCENSO_NIVEL' | 'MODERACION' | 'COMENTARIO' | 'CALIFICACION';
+export type TipoNotificacion = 'CERCANIA' | 'ASCENSO_NIVEL' | 'MODERACION' | 'COMENTARIO' | 'CALIFICACION' | 'ALERTA';
 
 /** Respuesta de GET /api/notificaciones. */
 export interface Notificacion {

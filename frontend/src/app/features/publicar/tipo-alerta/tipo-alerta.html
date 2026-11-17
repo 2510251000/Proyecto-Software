@@ -1,0 +1,21 @@
+<fieldset class="tipo-alerta" [class.elegida]="control().value !== null">
+  <legend>{{ textos.pregunta }}</legend>
+
+  <div class="opciones">
+    <label class="opcion">
+      <input type="radio" [name]="nombreGrupo" [value]="null" [formControl]="control()" />
+      {{ textos.ninguna }}
+    </label>
+    @for (tipo of tipos; track tipo) {
+      <label class="opcion urgente">
+        <input type="radio" [name]="nombreGrupo" [value]="tipo" [formControl]="control()" />
+        {{ nombres[tipo] }}
+      </label>
+    }
+  </div>
+
+  @if (control().value; as elegido) {
+    <p class="ayuda">{{ ayudas[elegido] }}</p>
+    <p class="advertencia" role="note">{{ textos.advertencia }}</p>
+  }
+</fieldset>

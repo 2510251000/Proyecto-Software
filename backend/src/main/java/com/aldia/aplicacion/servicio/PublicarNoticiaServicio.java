@@ -17,6 +17,7 @@ import com.aldia.dominio.modelo.NuevaNoticia;
 import com.aldia.dominio.modelo.TipoNotificacion;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.entrada.PublicarNoticiaCasoDeUso;
+import com.aldia.dominio.puerto.salida.AlertaRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.CiudadRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.EjecutorTransaccionalPuerto;
 import com.aldia.dominio.puerto.salida.HistorialRepositorioPuerto;
@@ -44,6 +45,7 @@ public class PublicarNoticiaServicio implements PublicarNoticiaCasoDeUso {
     private final Clock reloj;
     private final ArchivosDeImagenes archivosDeImagenes;
     private final ImagenRepositorioPuerto imagenRepositorioPuerto;
+    private final AlertaRepositorioPuerto alertaRepositorioPuerto;
 
     @SuppressWarnings("java:S107") // Caso de uso que orquesta varias reglas: recibe un puerto por cada una.
     public PublicarNoticiaServicio(UsuarioRepositorioPuerto usuarioRepositorioPuerto,
@@ -58,7 +60,9 @@ public class PublicarNoticiaServicio implements PublicarNoticiaCasoDeUso {
                                    AvisosPorCiudad avisosPorCiudad,
                                    Clock reloj,
                                    ArchivosDeImagenes archivosDeImagenes,
-                                   ImagenRepositorioPuerto imagenRepositorioPuerto) {
+                                   ImagenRepositorioPuerto imagenRepositorioPuerto,
+                                   AlertaRepositorioPuerto alertaRepositorioPuerto) {
+        this.alertaRepositorioPuerto = alertaRepositorioPuerto;
         this.usuarioRepositorioPuerto = usuarioRepositorioPuerto;
         this.ciudadRepositorioPuerto = ciudadRepositorioPuerto;
         this.noticiaRepositorioPuerto = noticiaRepositorioPuerto;
@@ -121,9 +125,16 @@ public class PublicarNoticiaServicio implements PublicarNoticiaCasoDeUso {
                 "Publicó la noticia " + publicada.getId(), ahora);
 
         // Avisos a quienes viven en la ciudad de la noticia (el autor no se avisa a sí mismo).
+        // Una alerta de emergencia llega como ALERTA, que la app muestra a pantalla completa.
         List<Long> vecinos = usuarioRepositorioPuerto.idsActivosEnCiudad(datos.ciudadId());
-        notificacionRepositorioPuerto.guardarTodas(
-                avisosPorCiudad.paraNoticiaNueva(conAutor(publicada, autor), vecinos, ahora));
+        Noticia conSuAutor = conAutor(publicada, autor);
+        if (datos.esAlerta()) {
+            alertaRepositorioPuerto.guardar(publicada.getId(), datos.alerta());
+            notificacionRepositorioPuerto.guardarTodas(
+                    avisosPorCiudad.paraAlerta(conSuAutor, datos.alerta(), vecinos, ahora));
+        } else {
+            notificacionRepositorioPuerto.guardarTodas(avisosPorCiudad.paraNoticiaNueva(conSuAutor, vecinos, ahora));
+        }
 
         if (!oficial) {
             sumarPuntos(autor, ahora);

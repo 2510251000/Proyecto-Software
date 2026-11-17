@@ -5,6 +5,7 @@ import { catchError, of } from 'rxjs';
 import { DESPLAZAMIENTO_BARRA_SOLIDA, TEXTOS_NAVEGACION } from '../../core/constants/pantallas.constants';
 import { RUTAS } from '../../core/constants/rutas.constants';
 import { PerfilService } from '../../core/services/perfil.service';
+import { AlertaEmergencia } from '../alerta-emergencia/alerta-emergencia';
 import { Logo } from '../logo/logo';
 import { Navegacion } from '../navegacion/navegacion';
 import { BarraInferior } from './barra-inferior/barra-inferior';
@@ -21,7 +22,7 @@ import { MenuCuenta } from './menu-cuenta/menu-cuenta';
  */
 @Component({
   selector: 'app-marco',
-  imports: [BarraInferior, BarraMovil, Logo, MenuCuenta, Navegacion, RouterLink],
+  imports: [AlertaEmergencia, BarraInferior, BarraMovil, Logo, MenuCuenta, Navegacion, RouterLink],
   templateUrl: './marco.html',
   styleUrl: './marco.css',
   host: { '(window:scroll)': 'alDesplazar()' },

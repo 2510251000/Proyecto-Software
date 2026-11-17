@@ -1,21 +1,41 @@
-import { Provider, signal } from '@angular/core';
+import { computed, Provider, signal } from '@angular/core';
 import { NEVER, of } from 'rxjs';
+import { AlertaPendiente } from '../app/core/models/alerta.model';
 import { Notificacion } from '../app/core/models/notificacion.model';
 import { CampanaNotificaciones } from '../app/core/services/campana-notificaciones';
 import { NotificacionService } from '../app/core/services/notificacion.service';
 import { PerfilService } from '../app/core/services/perfil.service';
+import { VigiaAlertas } from '../app/core/services/vigia-alertas';
 
 /**
  * El menú principal pregunta cada cierto tiempo cuántas notificaciones hay sin leer.
  * En las pruebas de las pantallas esa campana no sale a la red.
  */
 export function campanaFalsa(noLeidas = 0): Provider {
+  return [
+    {
+      provide: CampanaNotificaciones,
+      useValue: {
+        noLeidas: signal(noLeidas).asReadonly(),
+        vigilar: () => undefined,
+        actualizar: () => undefined,
+      },
+    },
+    // El marco también muestra las alertas de emergencia: sin alertas y sin preguntar al backend.
+    alertasFalsas(),
+  ];
+}
+
+/** Vigía de alertas de emergencia que no pregunta nada y no tiene ninguna pendiente. */
+export function alertasFalsas(pendientes: AlertaPendiente[] = []): Provider {
+  const fila = signal(pendientes);
   return {
-    provide: CampanaNotificaciones,
+    provide: VigiaAlertas,
     useValue: {
-      noLeidas: signal(noLeidas).asReadonly(),
+      pendientes: fila.asReadonly(),
+      actual: computed(() => fila()[0] ?? null),
       vigilar: () => undefined,
-      actualizar: () => undefined,
+      cerrar: (p: AlertaPendiente) => fila.update((lista) => lista.filter((x) => x !== p)),
     },
   };
 }

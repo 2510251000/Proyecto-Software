@@ -84,6 +84,10 @@ aldia:
     # de la fuente) que todavía no estén. No duplica: se reconocen por el título.
     cargar: ${NOTICIAS_INICIALES:true}
 
+  alertas:
+    # Horas que una alerta de emergencia sigue sonando y apareciendo si nadie la resuelve.
+    horas-vigencia: ${ALERTAS_HORAS_VIGENCIA:72}
+
   notificaciones:
     maximo-listado: ${NOTIFICACIONES_MAXIMO_LISTADO:50}
 
