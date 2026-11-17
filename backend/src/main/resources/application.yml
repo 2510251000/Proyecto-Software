@@ -110,6 +110,9 @@ aldia:
     maximo-reportes-listado: ${REPORTES_MAXIMO_LISTADO:200}
 
   imagenes:
+    # Dónde se guardan los archivos: disco (carpeta de abajo) o base-datos (tabla archivo_imagen,
+    # para servidores sin disco permanente como Render gratis).
+    almacen: ${IMAGENES_ALMACEN:disco}
     # Carpeta donde se guardan las fotos (relativa a donde arranca el backend). En Docker es
     # el volumen «imagenes». Con varios servidores habría que cambiar de adaptador (ver DECISIONES).
     directorio: ${IMAGENES_DIRECTORIO:imagenes}

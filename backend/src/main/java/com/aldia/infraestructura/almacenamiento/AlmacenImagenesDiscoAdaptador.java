@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.aldia.dominio.excepcion.AlmacenamientoExcepcion;
@@ -22,6 +23,7 @@ import com.aldia.dominio.puerto.salida.AlmacenImagenesPuerto;
  * Con varios servidores esta carpeta no se comparte: ahí se cambia por un adaptador de nube.
  */
 @Component
+@ConditionalOnProperty(name = "aldia.imagenes.almacen", havingValue = "disco", matchIfMissing = true)
 public class AlmacenImagenesDiscoAdaptador implements AlmacenImagenesPuerto {
 
     /** Solo claves que este adaptador generó: «uuid.extensión». Impide salir de la carpeta. */
