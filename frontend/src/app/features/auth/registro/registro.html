@@ -53,6 +53,8 @@
         <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">{{ textos.crearCuenta }}</app-boton>
       </form>
 
+      <app-boton-google />
+
       <p class="enlace-alterno">
         {{ textos.conCuenta }} <a [routerLink]="['/', rutas.login]">{{ textos.iniciarSesion }}</a>
       </p>

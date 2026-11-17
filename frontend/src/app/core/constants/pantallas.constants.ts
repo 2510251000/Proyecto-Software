@@ -83,6 +83,8 @@ export const MENSAJES_PUBLICAR = {
 
 export const TEXTOS_PERFIL = {
   titulo: 'Mi perfil',
+  sinMunicipio:
+    'Elige tu municipio y guarda: así verás las noticias de tu zona y te llegarán sus avisos y alertas.',
   nombre: 'Nombre',
   correo: 'Correo',
   nivel: 'Nivel',

@@ -84,6 +84,17 @@ aldia:
     # de la fuente) que todavía no estén. No duplica: se reconocen por el título.
     cargar: ${NOTICIAS_INICIALES:true}
 
+  firebase:
+    # ID del proyecto de Firebase (inicio de sesión con Google). Vacío: el inicio con Google se apaga.
+    proyecto: ${FIREBASE_PROYECTO:}
+    # Llaves públicas con las que Google firma los tokens de Firebase Authentication.
+    llaves-url: ${FIREBASE_LLAVES_URL:https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com}
+
+  administrador:
+    # Cuenta de administrador que se asegura al arrancar (producción). Vacío: no se toca nada.
+    correo: ${ADMIN_CORREO:}
+    contrasena: ${ADMIN_CONTRASENA:}
+
   alertas:
     # Horas que una alerta de emergencia sigue sonando y apareciendo si nadie la resuelve.
     horas-vigencia: ${ALERTAS_HORAS_VIGENCIA:72}

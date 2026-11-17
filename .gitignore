@@ -2,3 +2,6 @@ Claude outputs/
 
 # Variables de docker compose (copiar desde .env.example)
 .env
+
+# Secretos del despliegue en Firebase / Cloud Run (nunca se suben)
+despliegue/produccion.env

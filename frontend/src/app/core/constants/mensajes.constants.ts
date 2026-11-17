@@ -55,6 +55,9 @@ export const TEXTOS_AUTH = {
   crearCuenta: 'Crear cuenta',
   conCuenta: '¿Ya tienes cuenta?',
   iniciarSesion: 'Inicia sesión',
+  continuarGoogle: 'Continuar con Google',
+  separador: 'o',
+  errorGoogle: 'No pudimos entrar con Google. Inténtalo de nuevo.',
 } as const;
 
 export const TEXTOS_COMUNES = {
