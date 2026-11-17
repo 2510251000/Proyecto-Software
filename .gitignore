@@ -5,3 +5,7 @@ Claude outputs/
 
 # Secretos del despliegue en Firebase / Cloud Run (nunca se suben)
 despliegue/produccion.env
+.neon
+node_modules/
+# Resultados de JMeter: se generan al correr las pruebas (el resumen va en docs/PRUEBAS-JMETER.md).
+pruebas/jmeter/resultados/

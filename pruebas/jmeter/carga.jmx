@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
+<hashTree>
+<TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Al Día - Prueba de carga" enabled="true">
+      <stringProp name="TestPlan.comments">Uso esperado sostenido: visitantes que leen, usuarios con sesión (campana y alertas) y navegadores que abren la app. Por defecto 30 + 15 + 5 = 50 usuarios simultáneos durante 3 minutos. Cambiar con -Jvisitantes, -Jcon_sesion, -Jnavegadores, -Jduracion, -Jrampa.</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        <elementProp name="API_HOST" elementType="Argument">
+          <stringProp name="Argument.name">API_HOST</stringProp>
+          <stringProp name="Argument.value">${__P(api_host,backend)}</stringProp>
+          <stringProp name="Argument.metadata">=</stringProp>
+        </elementProp>
+        <elementProp name="API_PUERTO" elementType="Argument">
+          <stringProp name="Argument.name">API_PUERTO</stringProp>
+          <stringProp name="Argument.value">${__P(api_puerto,8080)}</stringProp>
+          <stringProp name="Argument.metadata">=</stringProp>
+        </elementProp>
+        <elementProp name="API_PROTOCOLO" elementType="Argument">
+          <stringProp name="Argument.name">API_PROTOCOLO</stringProp>
+          <stringProp name="Argument.value">${__P(api_protocolo,http)}</stringProp>
+          <stringProp name="Argument.metadata">=</stringProp>
+        </elementProp>
+        <elementProp name="WEB_HOST" elementType="Argument">
+          <stringProp name="Argument.name">WEB_HOST</stringProp>
+          <stringProp name="Argument.value">${__P(web_host,frontend)}</stringProp>
+          <stringProp name="Argument.metadata">=</stringProp>
+        </elementProp>
+        <elementProp name="WEB_PUERTO" elementType="Argument">
+          <stringProp name="Argument.name">WEB_PUERTO</stringProp>
+          <stringProp name="Argument.value">${__P(web_puerto,80)}</stringProp>
+          <stringProp name="Argument.metadata">=</stringProp>
+        </elementProp>
+        <elementProp name="WEB_PROTOCOLO" elementType="Argument">
+          <stringProp name="Argument.name">WEB_PROTOCOLO</stringProp>
+          <stringProp name="Argument.value">${__P(web_protocolo,http)}</stringProp>
+          <stringProp name="Argument.metadata">=</stringProp>
+        </elementProp>
+        <elementProp name="CORREO" elementType="Argument">
+          <stringProp name="Argument.name">CORREO</stringProp>
+          <stringProp name="Argument.value">${__P(correo,vecina@aldia.com)}</stringProp>
+          <stringProp name="Argument.metadata">=</stringProp>
+        </elementProp>
+        <elementProp name="CONTRASENA" elementType="Argument">
+          <stringProp name="Argument.name">CONTRASENA</stringProp>
+          <stringProp name="Argument.value">${__P(contrasena,Usuario12345)}</stringProp>
+          <stringProp name="Argument.metadata">=</stringProp>
+        </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+<hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Visitantes que leen noticias" enabled="true">
+      <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Bucle" enabled="true">
+        <boolProp name="LoopController.continue_forever">false</boolProp>
+        <intProp name="LoopController.loops">-1</intProp>
+      </elementProp>
+      <stringProp name="ThreadGroup.num_threads">${__P(visitantes,30)}</stringProp>
+      <stringProp name="ThreadGroup.ramp_time">${__P(rampa,30)}</stringProp>
+      <boolProp name="ThreadGroup.scheduler">true</boolProp>
+      <stringProp name="ThreadGroup.duration">${__P(duracion,180)}</stringProp>
+      <stringProp name="ThreadGroup.delay">0</stringProp>
+      <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+    </ThreadGroup>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Portada: listar noticias" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/noticias</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extraer noticiaId" enabled="true">
+      <stringProp name="JSONPostProcessor.referenceNames">noticiaId</stringProp>
+      <stringProp name="JSONPostProcessor.jsonPathExprs">$[*].id</stringProp>
+      <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+      <stringProp name="JSONPostProcessor.defaultValues">1</stringProp>
+    </JSONPostProcessor>
+<hashTree/>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Abrir una noticia" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/noticias/${noticiaId}</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Comentarios de la noticia" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/noticias/${noticiaId}/comentarios</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Noticias recomendadas" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/noticias?orden=RECOMENDADAS</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Buscar «agua»" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/noticias?q=agua</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Municipios" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/ubicacion/ciudades</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pausa de lectura (1-3 s)" enabled="true">
+      <stringProp name="ConstantTimer.delay">1000</stringProp>
+      <stringProp name="RandomTimer.range">2000</stringProp>
+    </UniformRandomTimer>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Usuarios con sesión" enabled="true">
+      <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Bucle" enabled="true">
+        <boolProp name="LoopController.continue_forever">false</boolProp>
+        <intProp name="LoopController.loops">-1</intProp>
+      </elementProp>
+      <stringProp name="ThreadGroup.num_threads">${__P(con_sesion,15)}</stringProp>
+      <stringProp name="ThreadGroup.ramp_time">${__P(rampa,30)}</stringProp>
+      <boolProp name="ThreadGroup.scheduler">true</boolProp>
+      <stringProp name="ThreadGroup.duration">${__P(duracion,180)}</stringProp>
+      <stringProp name="ThreadGroup.delay">0</stringProp>
+      <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+    </ThreadGroup>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Token de la sesión" enabled="true">
+      <collectionProp name="HeaderManager.headers">
+        <elementProp name="" elementType="Header">
+          <stringProp name="Header.name">Authorization</stringProp>
+          <stringProp name="Header.value">Bearer ${token}</stringProp>
+        </elementProp>
+      </collectionProp>
+    </HeaderManager>
+<hashTree/>
+<OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Iniciar sesión una vez por usuario" enabled="true"/>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Iniciar sesión (BCrypt)" enabled="true">
+      <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="" elementType="HTTPArgument">
+            <boolProp name="HTTPArgument.always_encode">false</boolProp>
+            <stringProp name="Argument.value">{&quot;correo&quot;:&quot;${CORREO}&quot;,&quot;contrasena&quot;:&quot;${CONTRASENA}&quot;}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/auth/login</stringProp>
+      <stringProp name="HTTPSampler.method">POST</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="JSON" enabled="true">
+      <collectionProp name="HeaderManager.headers">
+        <elementProp name="" elementType="Header">
+          <stringProp name="Header.name">Content-Type</stringProp>
+          <stringProp name="Header.value">application/json</stringProp>
+        </elementProp>
+      </collectionProp>
+    </HeaderManager>
+<hashTree/>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extraer token" enabled="true">
+      <stringProp name="JSONPostProcessor.referenceNames">token</stringProp>
+      <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
+      <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+      <stringProp name="JSONPostProcessor.defaultValues">1</stringProp>
+    </JSONPostProcessor>
+<hashTree/>
+</hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Mi perfil" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/usuarios/me</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Campana: avisos sin leer" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/notificaciones/no-leidas</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Alertas pendientes (cada 15 s en la app)" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/alertas/pendientes</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Alertas vigentes del municipio" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/alertas</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Bandeja de avisos" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/notificaciones</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Portada con sesión" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${API_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${API_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${API_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/api/noticias</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pausa de lectura (1-3 s)" enabled="true">
+      <stringProp name="ConstantTimer.delay">1000</stringProp>
+      <stringProp name="RandomTimer.range">2000</stringProp>
+    </UniformRandomTimer>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Navegadores que abren la app" enabled="true">
+      <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Bucle" enabled="true">
+        <boolProp name="LoopController.continue_forever">false</boolProp>
+        <intProp name="LoopController.loops">-1</intProp>
+      </elementProp>
+      <stringProp name="ThreadGroup.num_threads">${__P(navegadores,5)}</stringProp>
+      <stringProp name="ThreadGroup.ramp_time">${__P(rampa,30)}</stringProp>
+      <boolProp name="ThreadGroup.scheduler">true</boolProp>
+      <stringProp name="ThreadGroup.duration">${__P(duracion,180)}</stringProp>
+      <stringProp name="ThreadGroup.delay">0</stringProp>
+      <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+    </ThreadGroup>
+<hashTree>
+<CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="Caché del navegador" enabled="true">
+      <boolProp name="clearEachIteration">true</boolProp>
+      <boolProp name="useExpires">true</boolProp>
+    </CacheManager>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Abrir la app (index.html + JS + CSS)" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${WEB_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${WEB_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${WEB_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+      <boolProp name="HTTPSampler.image_parser">true</boolProp>
+      <boolProp name="HTTPSampler.concurrentDwn">true</boolProp>
+      <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Manifiesto de la app" enabled="true">
+      
+      <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+        <collectionProp name="Arguments.arguments">
+        </collectionProp>
+      </elementProp>
+      <stringProp name="HTTPSampler.domain">${WEB_HOST}</stringProp>
+      <stringProp name="HTTPSampler.port">${WEB_PUERTO}</stringProp>
+      <stringProp name="HTTPSampler.protocol">${WEB_PROTOCOLO}</stringProp>
+      <stringProp name="HTTPSampler.path">/manifest.webmanifest</stringProp>
+      <stringProp name="HTTPSampler.method">GET</stringProp>
+      <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+      <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+      <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+      <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+    </HTTPSamplerProxy>
+<hashTree>
+
+</hashTree>
+<UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pausa de lectura (2-5 s)" enabled="true">
+      <stringProp name="ConstantTimer.delay">2000</stringProp>
+      <stringProp name="RandomTimer.range">3000</stringProp>
+    </UniformRandomTimer>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Responde 2xx" enabled="true">
+      <collectionProp name="Asserion.test_strings">
+        <stringProp name="49586">2\d\d</stringProp>
+      </collectionProp>
+      <stringProp name="Assertion.custom_message"></stringProp>
+      <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+      <boolProp name="Assertion.assume_success">false</boolProp>
+      <intProp name="Assertion.test_type">1</intProp>
+    </ResponseAssertion>
+<hashTree>
+
+</hashTree>
+</hashTree>
+</hashTree>
+</jmeterTestPlan>
