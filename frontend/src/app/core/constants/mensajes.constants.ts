@@ -58,6 +58,8 @@ export const TEXTOS_AUTH = {
   continuarGoogle: 'Continuar con Google',
   separador: 'o',
   errorGoogle: 'No pudimos entrar con Google. Inténtalo de nuevo.',
+  abrirEnNavegador:
+    'Para entrar con Google abre este enlace en Chrome o Safari: toca ⋮ o el ícono de compartir y elige «Abrir en el navegador».',
 } as const;
 
 export const TEXTOS_COMUNES = {

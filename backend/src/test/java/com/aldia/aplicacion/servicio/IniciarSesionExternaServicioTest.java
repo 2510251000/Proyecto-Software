@@ -115,6 +115,15 @@ class IniciarSesionExternaServicioTest {
     }
 
     @Test
+    void laContrasenaAlAzarCabeEnBCryptYCambiaCadaVez() {
+        String una = IniciarSesionExternaServicio.textoAlAzar();
+        assertThat(una.getBytes(java.nio.charset.StandardCharsets.UTF_8)).hasSizeLessThanOrEqualTo(72);
+        assertThat(una).hasSizeGreaterThanOrEqualTo(40).isNotEqualTo(IniciarSesionExternaServicio.textoAlAzar());
+        // Con el cifrador real (el que falló en producción con 73 caracteres).
+        assertThat(new com.aldia.infraestructura.seguridad.CifradorBCryptAdaptador().cifrar(una)).startsWith("$2");
+    }
+
+    @Test
     void sinNombreEnGoogleQuedaSinNombre() {
         when(verificador.verificar("tok")).thenReturn(new IdentidadExterna("x@gmail.com", null));
         when(usuarios.buscarPorCorreo("x@gmail.com")).thenReturn(Optional.empty());

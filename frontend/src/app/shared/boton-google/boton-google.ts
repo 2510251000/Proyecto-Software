@@ -7,7 +7,7 @@ import { RUTAS } from '../../core/constants/rutas.constants';
 import { ErrorApi } from '../../core/models/error-api.model';
 import { AuthService } from '../../core/services/auth.service';
 import { PerfilService } from '../../core/services/perfil.service';
-import { CANCELACIONES_GOOGLE, codigoFirebase } from '../../core/services/proveedor-google';
+import { CANCELACIONES_GOOGLE, codigoFirebase, esNavegadorDeApp } from '../../core/services/proveedor-google';
 
 /**
  * «Continuar con Google» del login y del registro. Solo aparece si el ambiente tiene Firebase.
@@ -26,6 +26,8 @@ export class BotonGoogle {
 
   protected readonly textos = TEXTOS_AUTH;
   protected readonly disponible = this.auth.googleDisponible;
+  /** Dentro de WhatsApp, Instagram… Google no deja entrar: se explica cómo abrir el navegador. */
+  protected readonly dentroDeApp = esNavegadorDeApp();
   protected readonly cargando = signal(false);
   protected readonly error = signal<string | null>(null);
 

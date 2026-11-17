@@ -25,6 +25,14 @@
   border-top: 1px solid var(--color-linea);
 }
 
+.aviso {
+  margin: 0;
+  padding: var(--espacio-s) var(--espacio-m);
+  border-left: 4px solid var(--color-sol);
+  background: var(--color-superficie);
+  font-size: 0.9375rem;
+}
+
 .error {
   margin: 0;
   color: var(--color-error);

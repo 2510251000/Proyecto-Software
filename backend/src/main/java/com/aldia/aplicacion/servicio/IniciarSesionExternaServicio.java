@@ -2,7 +2,8 @@ package com.aldia.aplicacion.servicio;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 import com.aldia.dominio.excepcion.CuentaDesactivadaExcepcion;
 import com.aldia.dominio.excepcion.NivelInicialNoConfiguradoExcepcion;
@@ -25,6 +26,9 @@ import com.aldia.dominio.puerto.salida.VerificadorIdentidadPuerto;
  * igual: puede entrar de las dos formas.
  */
 public class IniciarSesionExternaServicio implements IniciarSesionExternaCasoDeUso {
+
+    private static final SecureRandom AZAR = new SecureRandom();
+    private static final int BYTES_AL_AZAR = 32;
 
     private final VerificadorIdentidadPuerto verificador;
     private final UsuarioRepositorioPuerto usuarios;
@@ -65,10 +69,20 @@ public class IniciarSesionExternaServicio implements IniciarSesionExternaCasoDeU
         });
     }
 
+    /**
+     * 32 bytes al azar en Base64 (43 caracteres): bastante fuerte y por debajo del límite de 72 bytes
+     * que acepta BCrypt.
+     */
+    static String textoAlAzar() {
+        byte[] bytes = new byte[BYTES_AL_AZAR];
+        AZAR.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
     private Usuario crear(String correo, String nombre, LocalDateTime ahora) {
         Nivel nivelInicial = niveles.buscarNivelInicial().orElseThrow(NivelInicialNoConfiguradoExcepcion::new);
         // No tiene contraseña propia: se guarda una al azar que nadie conoce (la columna es obligatoria).
-        String contrasenaAlAzar = cifrador.cifrar(UUID.randomUUID() + "-" + UUID.randomUUID());
+        String contrasenaAlAzar = cifrador.cifrar(textoAlAzar());
         String nombreLimpio = nombre == null || nombre.isBlank() ? null : nombre.trim();
         Usuario guardado = usuarios.guardar(new Usuario(null, correo, contrasenaAlAzar, Usuario.Rol.USUARIO_COMUN,
                 nivelInicial, ahora, true, nombreLimpio, null, 0));
