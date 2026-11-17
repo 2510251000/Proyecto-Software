@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aldia.dominio.modelo.Notificacion;
+import com.aldia.dominio.modelo.TipoNotificacion;
 import com.aldia.dominio.puerto.salida.NotificacionRepositorioPuerto;
 import com.aldia.infraestructura.persistencia.mapeador.NotificacionMapeador;
 import com.aldia.infraestructura.persistencia.repositorio.NotificacionRepositorioJPA;
@@ -41,6 +42,15 @@ public class NotificacionRepositorioAdaptador implements NotificacionRepositorio
     @Transactional(readOnly = true)
     public long contarNoLeidas(Long usuarioId) {
         return notificacionRepositorioJPA.countByUsuarioIdAndLeidaFalse(usuarioId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Notificacion> listarNoLeidasDeTipo(Long usuarioId, TipoNotificacion tipo) {
+        return notificacionRepositorioJPA.findByUsuarioIdAndTipoAndLeidaFalseOrderByFechaDescIdDesc(usuarioId, tipo)
+                .stream()
+                .map(NotificacionMapeador::aDominio)
+                .toList();
     }
 
     @Override

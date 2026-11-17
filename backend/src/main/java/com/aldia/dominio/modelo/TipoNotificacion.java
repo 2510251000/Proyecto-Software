@@ -9,5 +9,7 @@ public enum TipoNotificacion {
     ASCENSO_NIVEL,
     MODERACION,
     COMENTARIO,
-    CALIFICACION
+    CALIFICACION,
+    /** Alerta de emergencia en la ciudad del usuario: se muestra a pantalla completa. */
+    ALERTA
 }

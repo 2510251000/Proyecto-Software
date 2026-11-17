@@ -1,0 +1,25 @@
+@if (alerta(); as datos) {
+  <section
+    class="franja-alerta"
+    [class.resuelta]="!datos.activa"
+    [attr.aria-label]="textos.etiqueta"
+  >
+    <p class="estado">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M12 3 2 21h20L12 3Z" fill="currentColor" />
+      </svg>
+      {{ datos.activa ? textos.activa : textos.resuelta }} · {{ nombres[datos.tipo] }}
+    </p>
+    @if (datos.activa) {
+      <p class="ayuda">{{ textos.ayudaCompartir }}</p>
+    }
+    @if (puedeResolver()) {
+      <button type="button" class="resolver" [disabled]="resolviendo()" (click)="resolver()">
+        {{ textos.resolver }}
+      </button>
+    }
+    @if (error(); as mensaje) {
+      <p class="error" role="alert">{{ mensaje }}</p>
+    }
+  </section>
+}

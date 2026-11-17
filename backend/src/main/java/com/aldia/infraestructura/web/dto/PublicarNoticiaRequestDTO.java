@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.aldia.dominio.modelo.NuevaNoticia;
+import com.aldia.dominio.modelo.TipoAlerta;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -38,7 +39,13 @@ public record PublicarNoticiaRequestDTO(
         String idLugarGoogle,
 
         /** Descripción de cada foto, en el mismo orden de las partes «imagenes» (solo con multipart). */
-        List<String> descripcionesImagenes
+        List<String> descripcionesImagenes,
+
+        /**
+         * DESAPARICION, ROBO o EMERGENCIA para publicarla como alerta de emergencia: toda la
+         * ciudad la recibe a pantalla completa. Vacío en una noticia normal.
+         */
+        TipoAlerta alerta
 ) {
 
     /** La descripción de la foto número {@code posicion} (desde 0), o null si no la mandaron. */
@@ -49,6 +56,6 @@ public record PublicarNoticiaRequestDTO(
     }
 
     public NuevaNoticia aDominio() {
-        return new NuevaNoticia(titulo, resumen, contenido, ciudadId, latitud, longitud, idLugarGoogle);
+        return new NuevaNoticia(titulo, resumen, contenido, ciudadId, latitud, longitud, idLugarGoogle, alerta);
     }
 }
