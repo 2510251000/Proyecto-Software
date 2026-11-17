@@ -506,3 +506,39 @@ html:has(dialog:modal) {
   gap: var(--espacio-xs);
   font-family: var(--fuente-texto);
 }
+
+/*
+  Pantallas táctiles (cualquier celular o tableta).
+  - Sin la demora del doble toque para acercar y sin el recuadro gris al tocar.
+  - El texto no cambia de tamaño solo al girar el celular.
+  - Botones del mapa de 44 px y marcadores con un área de toque de 44 px (se ven igual).
+*/
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+a,
+button,
+input,
+select,
+textarea,
+label,
+[role='button'] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (pointer: coarse) {
+  .leaflet-touch .leaflet-bar a {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+  }
+
+  .marcador-noticia::after {
+    content: '';
+    position: absolute;
+    inset: -9px;
+  }
+}

@@ -19,6 +19,8 @@
 }
 
 .mapa {
+  /* Leaflet usa capas con z-index de hasta 1000: se quedan dentro del mapa y no tapan las barras. */
+  isolation: isolate;
   height: max(22rem, calc(100dvh - 15rem));
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-m);
@@ -50,7 +52,11 @@
   border-top: 1px solid var(--color-linea);
 }
 
+/* Alto mínimo de 44 px para tocarlo con el dedo. */
 .noticia a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alto-control);
   font-weight: 700;
 }
 

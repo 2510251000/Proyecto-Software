@@ -70,5 +70,7 @@ h1 {
 }
 
 .enlace-alterno a {
+  display: inline-block;
+  padding: 11px 4px;
   font-weight: 700;
 }

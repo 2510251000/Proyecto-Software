@@ -11,6 +11,7 @@ import { MENSAJES_ERROR_HTTP } from '../constants/mensajes.constants';
 import { ROLES } from '../constants/roles.constants';
 import { ErrorApi } from '../models/error-api.model';
 import { AuthService } from './auth.service';
+import { ProveedorGoogle } from './proveedor-google';
 
 describe('AuthService', () => {
   let servicio: AuthService;
@@ -28,6 +29,64 @@ describe('AuthService', () => {
   afterEach(() => {
     http.verify();
     vi.unstubAllGlobals();
+  });
+
+  describe('con Google', () => {
+    const CONFIG = { apiKey: 'k', authDomain: 'a.firebaseapp.com', projectId: 'a', appId: '1:2:web:3' };
+    let obtenerToken: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      obtenerToken = vi.fn(() => Promise.resolve('token-de-google'));
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: ProveedorGoogle, useValue: { obtenerToken } },
+        ],
+      });
+      http = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => {
+      environment.firebase = null;
+    });
+
+    it('sin Firebase en el ambiente no está disponible y falla sin abrir nada', () => {
+      const servicioSinGoogle = TestBed.inject(AuthService);
+      let fallo = false;
+      servicioSinGoogle.iniciarSesionConGoogle().subscribe({ error: () => (fallo = true) });
+      expect(servicioSinGoogle.googleDisponible).toBe(false);
+      expect(fallo).toBe(true);
+      expect(obtenerToken).not.toHaveBeenCalled();
+    });
+
+    it('manda el token de Google al backend y guarda la sesión', async () => {
+      environment.firebase = CONFIG;
+      const conGoogle = TestBed.inject(AuthService);
+      const respuesta = new Promise((listo) => conGoogle.iniciarSesionConGoogle().subscribe(listo));
+      await Promise.resolve();
+      await Promise.resolve();
+
+      const peticion = http.expectOne(`${environment.apiUrl}${ENDPOINTS.loginGoogle}`);
+      expect(obtenerToken).toHaveBeenCalledWith(CONFIG);
+      expect(peticion.request.body).toEqual({ token: 'token-de-google' });
+      peticion.flush({ token: 'jwt-de-aldia' });
+      await respuesta;
+      expect(localStorage.getItem(CLAVE_TOKEN)).toBe('jwt-de-aldia');
+    });
+
+    it('un error del backend llega como ErrorApi', async () => {
+      environment.firebase = CONFIG;
+      const conGoogle = TestBed.inject(AuthService);
+      const error = new Promise<ErrorApi>((listo) => conGoogle.iniciarSesionConGoogle().subscribe({ error: listo }));
+      await Promise.resolve();
+      await Promise.resolve();
+      http
+        .expectOne(`${environment.apiUrl}${ENDPOINTS.loginGoogle}`)
+        .flush({ mensaje: 'Tu cuenta está desactivada' }, { status: 403, statusText: 'Forbidden' });
+      expect((await error).estado).toBe(403);
+    });
   });
 
   it('inicia sesión y guarda el token', () => {

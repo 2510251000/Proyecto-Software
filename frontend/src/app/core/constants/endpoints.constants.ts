@@ -1,6 +1,7 @@
 export const ENDPOINTS = {
   registro: '/api/auth/registro',
   login: '/api/auth/login',
+  loginGoogle: '/api/auth/google',
   usuarioActual: '/api/usuarios/me',
   noticias: '/api/noticias',
   notificaciones: '/api/notificaciones',

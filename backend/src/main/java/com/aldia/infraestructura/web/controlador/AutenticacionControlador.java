@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aldia.dominio.modelo.NuevoUsuario;
 import com.aldia.dominio.modelo.Usuario;
 import com.aldia.dominio.puerto.entrada.IniciarSesionCasoDeUso;
+import com.aldia.dominio.puerto.entrada.IniciarSesionExternaCasoDeUso;
 import com.aldia.dominio.puerto.entrada.RegistrarUsuarioCasoDeUso;
+import com.aldia.infraestructura.web.dto.LoginExternoRequestDTO;
 import com.aldia.infraestructura.web.dto.LoginRequestDTO;
 import com.aldia.infraestructura.web.dto.LoginResponseDTO;
 import com.aldia.infraestructura.web.dto.RegistroRequestDTO;
@@ -25,11 +27,14 @@ public class AutenticacionControlador {
 
     private final RegistrarUsuarioCasoDeUso registrarUsuarioCasoDeUso;
     private final IniciarSesionCasoDeUso iniciarSesionCasoDeUso;
+    private final IniciarSesionExternaCasoDeUso iniciarSesionExternaCasoDeUso;
 
     public AutenticacionControlador(RegistrarUsuarioCasoDeUso registrarUsuarioCasoDeUso,
-                                     IniciarSesionCasoDeUso iniciarSesionCasoDeUso) {
+                                     IniciarSesionCasoDeUso iniciarSesionCasoDeUso,
+                                     IniciarSesionExternaCasoDeUso iniciarSesionExternaCasoDeUso) {
         this.registrarUsuarioCasoDeUso = registrarUsuarioCasoDeUso;
         this.iniciarSesionCasoDeUso = iniciarSesionCasoDeUso;
+        this.iniciarSesionExternaCasoDeUso = iniciarSesionExternaCasoDeUso;
     }
 
     @PostMapping("/registro")
@@ -52,5 +57,11 @@ public class AutenticacionControlador {
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         String token = iniciarSesionCasoDeUso.iniciarSesion(request.getCorreo(), request.getContrasena());
         return ResponseEntity.ok(new LoginResponseDTO(token));
+    }
+
+    @PostMapping("/google")
+    @Operation(summary = "Iniciar sesión con Google (token de Firebase Authentication); crea la cuenta si no existe")
+    public ResponseEntity<LoginResponseDTO> loginConGoogle(@Valid @RequestBody LoginExternoRequestDTO request) {
+        return ResponseEntity.ok(new LoginResponseDTO(iniciarSesionExternaCasoDeUso.iniciarSesion(request.token())));
     }
 }

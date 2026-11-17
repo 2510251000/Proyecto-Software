@@ -1,0 +1,72 @@
+:host {
+  display: block;
+}
+
+.google {
+  display: grid;
+  gap: var(--espacio-m);
+  margin-top: var(--espacio-m);
+}
+
+/* «— o —» entre el formulario y el botón de Google. */
+.separador {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-m);
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+.separador::before,
+.separador::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--color-linea);
+}
+
+.aviso {
+  margin: 0;
+  padding: var(--espacio-s) var(--espacio-m);
+  border-left: 4px solid var(--color-sol);
+  background: var(--color-superficie);
+  font-size: 0.9375rem;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+/* Botón claro con la «G» de colores, como pide la guía de marca de Google. */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-s);
+  width: 100%;
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-m);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton:hover {
+  background: var(--color-superficie);
+}
+
+.boton:focus-visible {
+  outline: 3px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}

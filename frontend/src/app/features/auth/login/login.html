@@ -39,6 +39,8 @@
         <app-boton tipo="submit" [cargando]="cargando()" [bloque]="true">{{ textos.entrar }}</app-boton>
       </form>
 
+      <app-boton-google />
+
       <p class="enlace-alterno">
         {{ textos.sinCuenta }} <a [routerLink]="['/', rutas.registro]">{{ textos.crearUna }}</a>
       </p>

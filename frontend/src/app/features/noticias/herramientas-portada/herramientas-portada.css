@@ -109,4 +109,21 @@
     width: 100%;
     max-width: none;
   }
+
+  /* Letra de 16 px: con menos, el iPhone acerca la pantalla al tocar el campo. */
+  .control {
+    font-size: 1rem;
+  }
+}
+
+/* Celulares (hasta 480 px): cada control en su fila para que no se corte el texto. */
+@media (max-width: 29.99rem) {
+  :host {
+    flex-wrap: wrap;
+  }
+
+  .busqueda,
+  .caja-municipio {
+    flex: 1 1 100%;
+  }
 }
