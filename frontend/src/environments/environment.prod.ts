@@ -6,7 +6,7 @@ import { ConfiguracionFirebase } from '../app/core/models/configuracion-firebase
  */
 export const environment = {
   production: true,
-  apiUrl: 'https://aldia-backend.onrender.com',
+  apiUrl: 'https://aldia-backend-epzs.onrender.com',
   /** Cada cuánto se pregunta al backend si hay notificaciones nuevas (milisegundos). */
   intervaloNotificacionesMs: 30000,
   /**

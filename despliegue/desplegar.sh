@@ -4,7 +4,7 @@
 #
 #    Frontend (Angular)       → Firebase Hosting (plan Spark)   https://PROYECTO.web.app
 #    Inicio con Google        → Firebase Authentication
-#    Backend (Spring Boot)    → Render (plan free, Docker)      https://aldia-backend.onrender.com
+#    Backend (Spring Boot)    → Render (plan free, Docker)      https://aldia-backend-epzs.onrender.com
 #    Base de datos y fotos    → Neon (PostgreSQL)
 #
 #  Uso (desde la raíz del repositorio, en Git Bash):

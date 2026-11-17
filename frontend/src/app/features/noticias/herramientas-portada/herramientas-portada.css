@@ -116,8 +116,8 @@
   }
 }
 
-/* Celulares angostos (320-380 px): cada control en su fila para que no se corte el texto. */
-@media (max-width: 23.99rem) {
+/* Celulares (hasta 480 px): cada control en su fila para que no se corte el texto. */
+@media (max-width: 29.99rem) {
   :host {
     flex-wrap: wrap;
   }
