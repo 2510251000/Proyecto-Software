@@ -12,6 +12,8 @@ export const ENDPOINTS = {
   adminNoticias: '/api/admin/noticias',
   adminUsuarios: '/api/admin/usuarios',
   adminReportes: '/api/admin/reportes',
+  alertas: '/api/alertas',
+  alertasPendientes: '/api/alertas/pendientes',
 } as const;
 
 /** Parámetros de búsqueda que entiende GET /api/noticias. */
@@ -30,4 +32,5 @@ export const SUFIJOS = {
   comentarios: 'comentarios',
   calificacion: 'calificacion',
   reportes: 'reportes',
+  resuelta: 'resuelta',
 } as const;

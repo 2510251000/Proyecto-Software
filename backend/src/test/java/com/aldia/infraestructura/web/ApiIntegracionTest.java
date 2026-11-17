@@ -267,6 +267,58 @@ class ApiIntegracionTest {
         assertThat(leer(conToken(get("/api/usuarios/me"), autor), 200).get("puntaje").asInt()).isEqualTo(10);
     }
 
+    private List<Long> idsDeAlertas(JsonNode arreglo, String campo) {
+        return lista(arreglo).stream()
+                .map(elemento -> campo == null ? elemento : elemento.get(campo))
+                .map(alerta -> alerta.get("noticiaId").asLong())
+                .toList();
+    }
+
+    @Test
+    void unaAlertaDeEmergenciaLlegaATodaLaCiudadHastaQueSeResuelve() throws Exception {
+        String autor = usuarioNuevo("Fusagasugá");
+        String vecina = token("vecina@aldia.com", CLAVE_DEMO);
+        String lectorDeZipaquira = token("lector@aldia.com", CLAVE_DEMO);
+        long id = leer(conToken(conJson(post("/api/noticias"), Map.of("titulo", "Se busca a Ana, 8 años",
+                "resumen", "Vista por última vez en el parque principal", "contenido", "Lleva chaqueta roja.",
+                "ciudadId", idCiudad("Fusagasugá"), "alerta", "DESAPARICION")), autor), 201).get("id").asLong();
+
+        JsonNode pendientes = leer(conToken(get("/api/alertas/pendientes"), vecina), 200);
+        assertThat(idsDeAlertas(pendientes, "alerta")).contains(id);
+        JsonNode pendiente = lista(pendientes).stream()
+                .filter(p -> p.get("alerta").get("noticiaId").asLong() == id).findFirst().orElseThrow();
+        assertThat(pendiente.get("alerta").get("tipo").asText()).isEqualTo("DESAPARICION");
+        assertThat(idsDeAlertas(leer(conToken(get("/api/alertas"), vecina), 200), null)).contains(id);
+        assertThat(idsDeAlertas(leer(conToken(get("/api/alertas/pendientes"), lectorDeZipaquira), 200), "alerta"))
+                .doesNotContain(id);
+        assertThat(idsDeAlertas(leer(conToken(get("/api/alertas/pendientes"), autor), 200), "alerta"))
+                .doesNotContain(id);
+        mvc.perform(conToken(get("/api/alertas/" + id), vecina)).andExpect(status().isOk());
+
+        // Al cerrarla en pantalla se marca leída y ya no vuelve a saltar.
+        leer(conToken(put("/api/notificaciones/" + pendiente.get("notificacionId").asLong() + "/leida"), vecina), 204);
+        assertThat(idsDeAlertas(leer(conToken(get("/api/alertas/pendientes"), vecina), 200), "alerta"))
+                .doesNotContain(id);
+
+        mvc.perform(conToken(put("/api/alertas/" + id + "/resuelta"), vecina)).andExpect(status().isForbidden());
+        JsonNode resuelta = leer(conToken(put("/api/alertas/" + id + "/resuelta"), autor), 200);
+        assertThat(resuelta.get("activa").asBoolean()).isFalse();
+        assertThat(idsDeAlertas(leer(conToken(get("/api/alertas"), vecina), 200), null)).doesNotContain(id);
+        assertThat(leer(conToken(get("/api/notificaciones"), vecina), 200).get(0).get("mensaje").asText())
+                .startsWith("Alerta resuelta en Fusagasugá");
+    }
+
+    @Test
+    void unaNoticiaNormalNoEsAlertaYUnTipoDesconocidoSeRechaza() throws Exception {
+        String autor = usuarioNuevo("Fusagasugá");
+        long id = publicar(autor, "Feria del libro", idCiudad("Fusagasugá"), 201).get("id").asLong();
+
+        mvc.perform(conToken(get("/api/alertas/" + id), autor)).andExpect(status().isNotFound());
+        mvc.perform(conToken(conJson(post("/api/noticias"), Map.of("titulo", "x", "contenido", "y",
+                "ciudadId", idCiudad("Fusagasugá"), "alerta", "TERREMOTO")), autor)).andExpect(status().isBadRequest());
+        mvc.perform(get("/api/alertas")).andExpect(status().isUnauthorized());
+    }
+
     @Test
     void elNivel1NoPuedePublicarMasDeTresNoticiasAlDia() throws Exception {
         String autor = usuarioNuevo("Girardot");

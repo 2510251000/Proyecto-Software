@@ -117,6 +117,7 @@ export const ETIQUETAS_NOTIFICACION: Readonly<Record<TipoNotificacion, string>> 
   MODERACION: 'Moderación',
   COMENTARIO: 'Comentario',
   CALIFICACION: 'Voto a tu noticia',
+  ALERTA: 'Alerta de emergencia',
 };
 
 export const TEXTOS_ADMIN = {

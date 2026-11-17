@@ -27,6 +27,9 @@ import { Marco } from '../../shared/marco/marco';
 import { SelectorCiudad } from '../../shared/selector-ciudad/selector-ciudad';
 import { SelectorImagenes } from '../../shared/selector-imagenes/selector-imagenes';
 import { AlmacenNoticias } from '../noticias/almacen-noticias';
+import { TipoAlertaPublicar } from './tipo-alerta/tipo-alerta';
+import { TEXTOS_ALERTA } from '../../core/constants/alertas.constants';
+import { TipoAlerta } from '../../core/models/alerta.model';
 
 /**
  * Publicar una noticia. Arriba dice cuántas publicaciones le quedan hoy al usuario según
@@ -34,7 +37,7 @@ import { AlmacenNoticias } from '../noticias/almacen-noticias';
  */
 @Component({
   selector: 'app-publicar',
-  imports: [ReactiveFormsModule, Marco, Campo, Boton, SelectorCiudad, SelectorImagenes],
+  imports: [ReactiveFormsModule, Marco, Campo, Boton, SelectorCiudad, SelectorImagenes, TipoAlertaPublicar],
   templateUrl: './publicar.html',
 })
 export class Publicar implements OnInit {
@@ -61,7 +64,9 @@ export class Publicar implements OnInit {
     resumen: ['', [Validators.maxLength(LONGITUD_MAXIMA_RESUMEN)]],
     contenido: ['', [Validators.required]],
     ciudadId: this.fb.control<number | null>(null, Validators.required),
+    alerta: this.fb.control<TipoAlerta | null>(null),
   });
+  protected readonly textosAlerta = TEXTOS_ALERTA;
 
   protected readonly perfil = signal<Perfil | null>(null);
   protected readonly ciudad = signal<Ciudad | null>(null);
@@ -110,7 +115,7 @@ export class Publicar implements OnInit {
     if (this.cargando() || this.sinCupo()) {
       return;
     }
-    const { titulo, resumen, contenido, ciudadId } = this.formulario.getRawValue();
+    const { titulo, resumen, contenido, ciudadId, alerta } = this.formulario.getRawValue();
     if (this.formulario.invalid || ciudadId === null) {
       this.formulario.markAllAsTouched();
       return;
@@ -122,6 +127,7 @@ export class Publicar implements OnInit {
       resumen: resumen.trim(),
       contenido: contenido.trim(),
       ciudadId,
+      ...(alerta === null ? {} : { alerta }),
       // El punto de la ciudad que entregó la API de mapas, si lo hay.
       ...(ciudad !== null && ciudad.latitud !== null && ciudad.longitud !== null
         ? { latitud: ciudad.latitud, longitud: ciudad.longitud }

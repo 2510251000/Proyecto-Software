@@ -1,3 +1,5 @@
+import { TipoAlerta } from './alerta.model';
+
 /** Estados de una noticia en el backend. Solo las PUBLICADA se ven en la portada. */
 export type EstadoNoticia = 'PUBLICADA' | 'OCULTA' | 'ELIMINADA';
 
@@ -48,6 +50,8 @@ export interface NuevaNoticia {
   longitud?: number;
   /** Descripción de cada foto, en el mismo orden (solo al publicar con fotos). */
   descripcionesImagenes?: string[];
+  /** Para publicarla como alerta de emergencia; ausente en una noticia normal. */
+  alerta?: TipoAlerta;
 }
 
 export type TipoNoticias = 'TODAS' | 'OFICIALES' | 'COMUNITARIAS';
