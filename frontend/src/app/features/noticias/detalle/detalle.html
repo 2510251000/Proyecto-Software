@@ -9,6 +9,7 @@
 
     @if (noticia(); as encontrada) {
       <div class="hoja">
+        <app-alerta-noticia [noticiaId]="encontrada.id" />
         <app-contenido-noticia [noticia]="encontrada" [idTitulo]="idTitulo" [nivelTitulo]="1" />
         <div class="interaccion">
           <div class="interaccion-fila">

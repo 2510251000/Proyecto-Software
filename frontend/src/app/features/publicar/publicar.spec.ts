@@ -14,6 +14,7 @@ import { PerfilService } from '../../core/services/perfil.service';
 import { campanaFalsa } from '../../../testing/menu-falso';
 import { AlmacenNoticias } from '../noticias/almacen-noticias';
 import { Publicar } from './publicar';
+import { TEXTOS_ALERTA } from '../../core/constants/alertas.constants';
 
 function perfil(cupo: CupoDiario): Perfil {
   return {
@@ -79,6 +80,22 @@ describe('Publicar', () => {
     const raiz = await crear({ limite: 3, publicadasHoy: 3, restantes: 0, ilimitado: false });
     expect(raiz.querySelector('.aviso-cupo')?.textContent).toContain(TEXTOS_PUBLICAR.cupoAgotado);
     expect(raiz.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(true);
+  });
+
+  it('publica como alerta de emergencia y advierte que llegará a todo el municipio', async () => {
+    const raiz = await crear({ limite: 3, publicadasHoy: 0, restantes: 3, ilimitado: false });
+    expect(raiz.querySelector('.advertencia')).toBeNull();
+    const desaparicion = raiz.querySelectorAll<HTMLInputElement>('app-tipo-alerta input[type="radio"]')[1];
+    desaparicion.click();
+    await fixture.whenStable();
+
+    expect(raiz.querySelector('.advertencia')?.textContent).toContain('a pantalla completa');
+    expect(raiz.querySelector('button[type="submit"]')?.textContent).toContain(TEXTOS_ALERTA.publicarAlerta);
+    await escribir(raiz, '#publicar-titulo', 'Se busca a Ana, 8 años');
+    await escribir(raiz, '#publicar-contenido', 'Chaqueta roja.');
+    raiz.querySelector('form')?.dispatchEvent(new Event('submit'));
+
+    expect(publicar).toHaveBeenCalledWith(expect.objectContaining({ alerta: 'DESAPARICION', ciudadId: 7 }));
   });
 
   it('publica en la ciudad del perfil y abre la noticia publicada', async () => {

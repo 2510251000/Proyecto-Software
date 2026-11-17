@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.aldia.dominio.modelo.TipoNotificacion;
 import com.aldia.infraestructura.persistencia.entidad.NotificacionEntidad;
 
 public interface NotificacionRepositorioJPA extends JpaRepository<NotificacionEntidad, Long> {
@@ -15,6 +16,9 @@ public interface NotificacionRepositorioJPA extends JpaRepository<NotificacionEn
     List<NotificacionEntidad> findByUsuarioIdOrderByFechaDescIdDesc(Long usuarioId, Pageable pagina);
 
     long countByUsuarioIdAndLeidaFalse(Long usuarioId);
+
+    List<NotificacionEntidad> findByUsuarioIdAndTipoAndLeidaFalseOrderByFechaDescIdDesc(Long usuarioId,
+                                                                                       TipoNotificacion tipo);
 
     @Modifying
     @Query("update NotificacionEntidad n set n.leida = true where n.id = :id and n.usuarioId = :usuarioId")

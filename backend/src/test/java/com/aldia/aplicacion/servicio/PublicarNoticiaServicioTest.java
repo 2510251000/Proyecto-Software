@@ -45,8 +45,10 @@ import com.aldia.dominio.modelo.Noticia;
 import com.aldia.dominio.modelo.Notificacion;
 import com.aldia.dominio.modelo.NuevaNoticia;
 import com.aldia.dominio.modelo.ParametrosNiveles;
+import com.aldia.dominio.modelo.TipoAlerta;
 import com.aldia.dominio.modelo.TipoNotificacion;
 import com.aldia.dominio.modelo.Usuario;
+import com.aldia.dominio.puerto.salida.AlertaRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.CiudadRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.EjecutorTransaccionalPuerto;
 import com.aldia.dominio.puerto.salida.HistorialRepositorioPuerto;
@@ -106,6 +108,9 @@ class PublicarNoticiaServicioTest {
     @Mock
     private ImagenRepositorioPuerto imagenRepositorioPuerto;
 
+    @Mock
+    private AlertaRepositorioPuerto alertaRepositorioPuerto;
+
     @Captor
     private ArgumentCaptor<List<Notificacion>> notificaciones;
 
@@ -128,7 +133,7 @@ class PublicarNoticiaServicioTest {
                 noticiaRepositorioPuerto, historialRepositorioPuerto, nivelRepositorioPuerto,
                 notificacionRepositorioPuerto, SIN_TRANSACCION, new ReglaLimiteDiario(true),
                 new CalculadoraNivel(new ParametrosNiveles(10, 20)), new AvisosPorCiudad(), RELOJ,
-                archivos, imagenRepositorioPuerto);
+                archivos, imagenRepositorioPuerto, alertaRepositorioPuerto);
         lenient().when(nivelRepositorioPuerto.listarTodos()).thenReturn(NIVELES);
     }
 
@@ -180,6 +185,28 @@ class PublicarNoticiaServicioTest {
         assertThat(avisos).allSatisfy(n -> {
             assertThat(n.tipo()).isEqualTo(TipoNotificacion.CERCANIA);
             assertThat(n.noticiaId()).isEqualTo(50L);
+        });
+        verify(alertaRepositorioPuerto, never()).guardar(anyLong(), any());
+    }
+
+    @Test
+    void unaAlertaDeEmergenciaSeGuardaYLlegaComoAlertaATodaLaCiudad() {
+        NuevaNoticia alerta = new NuevaNoticia("Se busca a Ana, 8 años", "Vista en el parque", "Contenido",
+                CIUDAD_ID, null, null, null, TipoAlerta.DESAPARICION);
+        autorYCiudadValidos(autor(Usuario.Rol.USUARIO_COMUN, true));
+        when(noticiaRepositorioPuerto.contarDelAutorDesde(AUTOR_ID, INICIO_DEL_DIA)).thenReturn(0L);
+        when(noticiaRepositorioPuerto.guardarNueva(alerta, AUTOR_ID, false, AHORA)).thenReturn(noticiaGuardada(false));
+        when(usuarioRepositorioPuerto.idsActivosEnCiudad(CIUDAD_ID)).thenReturn(List.of(AUTOR_ID, 7L, 8L));
+
+        servicio.publicar(CORREO, alerta);
+
+        verify(alertaRepositorioPuerto).guardar(50L, TipoAlerta.DESAPARICION);
+        verify(notificacionRepositorioPuerto, atLeastOnce()).guardarTodas(notificaciones.capture());
+        List<Notificacion> avisos = notificaciones.getAllValues().get(0);
+        assertThat(avisos).extracting(Notificacion::usuarioId).containsExactly(7L, 8L);
+        assertThat(avisos).allSatisfy(n -> {
+            assertThat(n.tipo()).isEqualTo(TipoNotificacion.ALERTA);
+            assertThat(n.mensaje()).startsWith("ALERTA · Desaparición en Fusagasugá");
         });
     }
 

@@ -1,0 +1,55 @@
+@if (actual(); as pendiente) {
+  <div
+    class="velo"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="alerta-emergencia-titulo"
+    aria-describedby="alerta-emergencia-resumen"
+  >
+    <div class="franja" aria-hidden="true"></div>
+    <section class="aviso">
+      <p class="tipo">
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false">
+          <path d="M12 3 2 21h20L12 3Z" fill="currentColor" />
+          <path
+            d="M12 10v5M12 18v.5"
+            stroke="var(--color-urgente)"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          />
+        </svg>
+        {{ textos.etiqueta }} · {{ nombres[pendiente.alerta.tipo] }}
+      </p>
+      <p class="lugar">
+        {{ pendiente.alerta.ciudad }} ·
+        <time [attr.datetime]="pendiente.alerta.fecha">{{ hace(pendiente.alerta.fecha) }}</time>
+      </p>
+
+      @if (foto(); as url) {
+        <img class="foto" [src]="url" alt="" />
+      }
+
+      <h2 id="alerta-emergencia-titulo" class="titulo">{{ pendiente.alerta.titulo }}</h2>
+      @if (pendiente.alerta.resumen) {
+        <p id="alerta-emergencia-resumen" class="resumen">{{ pendiente.alerta.resumen }}</p>
+      }
+      <p class="ayuda">{{ textos.ayudaCompartir }}</p>
+
+      <div class="acciones">
+        <button type="button" class="principal" (click)="verDetalles(pendiente)">
+          {{ textos.verDetalles }}
+        </button>
+        <button #entendido type="button" class="secundario" (click)="cerrar(pendiente)">
+          {{ textos.entendido }}
+        </button>
+      </div>
+
+      @if (pedirPermiso()) {
+        <button type="button" class="permiso" (click)="activarAvisos()">
+          {{ textos.activarAvisos }}
+        </button>
+      }
+    </section>
+    <div class="franja" aria-hidden="true"></div>
+  </div>
+}

@@ -9,6 +9,7 @@ import { Noticia } from '../../../core/models/noticia.model';
 import { NoticiaService } from '../../../core/services/noticia.service';
 import { Boton } from '../../../shared/boton/boton';
 import { Marco } from '../../../shared/marco/marco';
+import { AlertaNoticia } from '../alerta-noticia/alerta-noticia';
 import { AlmacenNoticias } from '../almacen-noticias';
 import { ContenidoNoticia } from '../contenido-noticia/contenido-noticia';
 import { CalificacionNoticia } from '../interaccion/calificacion-noticia/calificacion-noticia';
@@ -22,7 +23,7 @@ import { ReportarNoticia } from '../interaccion/reportar-noticia/reportar-notici
  */
 @Component({
   selector: 'app-detalle',
-  imports: [Marco, Boton, ContenidoNoticia, RouterLink, CalificacionNoticia, ComentariosNoticia, ReportarNoticia],
+  imports: [AlertaNoticia, Marco, Boton, ContenidoNoticia, RouterLink, CalificacionNoticia, ComentariosNoticia, ReportarNoticia],
   templateUrl: './detalle.html',
   styleUrl: './detalle.css',
 })
