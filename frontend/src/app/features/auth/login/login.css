@@ -21,7 +21,8 @@
   gap: var(--espacio-l);
   min-height: 100vh;
   min-height: 100dvh;
-  padding: var(--espacio-xl) var(--espacio-m);
+  padding: max(var(--espacio-xl), env(safe-area-inset-top)) max(var(--espacio-m), env(safe-area-inset-right))
+    max(var(--espacio-xl), env(safe-area-inset-bottom)) max(var(--espacio-m), env(safe-area-inset-left));
 }
 
 .marca {
@@ -76,5 +77,21 @@
     justify-content: flex-start;
     gap: var(--espacio-m);
     padding-top: var(--espacio-l);
+  }
+}
+
+/* Celular en horizontal: el logo no se come la pantalla. */
+@media (max-height: 30rem) and (orientation: landscape) {
+  .logo-grande {
+    font-size: 2.25rem;
+  }
+
+  .logo-grande ::ng-deep svg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .lema {
+    display: none;
   }
 }

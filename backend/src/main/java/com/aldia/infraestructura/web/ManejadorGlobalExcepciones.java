@@ -17,6 +17,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.beans.factory.annotation.Value;
 
 import com.aldia.dominio.excepcion.AccionNoPermitidaExcepcion;
+import com.aldia.dominio.excepcion.InicioExternoNoDisponibleExcepcion;
 import com.aldia.dominio.excepcion.AlertaNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.CiudadNoEncontradaExcepcion;
 import com.aldia.dominio.excepcion.ComentarioNoEncontradoExcepcion;
@@ -98,6 +99,11 @@ public class ManejadorGlobalExcepciones {
             ReporteNoEncontradoExcepcion.class, AlertaNoEncontradaExcepcion.class})
     public ResponseEntity<ErrorResponseDTO> manejarNoEncontrado(RuntimeException ex) {
         return responder(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(InicioExternoNoDisponibleExcepcion.class)
+    public ResponseEntity<ErrorResponseDTO> manejarInicioExternoNoDisponible(InicioExternoNoDisponibleExcepcion ex) {
+        return responder(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
     }
 
     @ExceptionHandler(ServicioUbicacionNoDisponibleExcepcion.class)

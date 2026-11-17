@@ -21,6 +21,7 @@ import { ErrorApi } from '../../../core/models/error-api.model';
 import { Ciudad } from '../../../core/models/ubicacion.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { Boton } from '../../../shared/boton/boton';
+import { BotonGoogle } from '../../../shared/boton-google/boton-google';
 import { Campo } from '../../../shared/campo/campo';
 import { PanelMarca } from '../panel-marca/panel-marca';
 import { SelectorCiudad } from '../../../shared/selector-ciudad/selector-ciudad';
@@ -28,7 +29,7 @@ import { contrasenasIguales } from '../../../shared/validadores/contrasenas-igua
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule, RouterLink, Campo, Boton, PanelMarca, SelectorCiudad],
+  imports: [ReactiveFormsModule, RouterLink, Campo, Boton, BotonGoogle, PanelMarca, SelectorCiudad],
   templateUrl: './registro.html',
   styleUrl: '../auth.css',
 })

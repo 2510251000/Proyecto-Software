@@ -13,6 +13,7 @@ import com.aldia.aplicacion.servicio.ComentariosServicio;
 import com.aldia.aplicacion.servicio.ReportesServicio;
 import com.aldia.aplicacion.servicio.GestionarUsuariosServicio;
 import com.aldia.aplicacion.servicio.ImagenesNoticiaServicio;
+import com.aldia.aplicacion.servicio.IniciarSesionExternaServicio;
 import com.aldia.aplicacion.servicio.IniciarSesionServicio;
 import com.aldia.aplicacion.servicio.ListarNoticiasServicio;
 import com.aldia.aplicacion.servicio.ModerarNoticiaServicio;
@@ -44,6 +45,7 @@ import com.aldia.dominio.puerto.salida.ProcesadorImagenesPuerto;
 import com.aldia.dominio.puerto.salida.ReporteRepositorioPuerto;
 import com.aldia.dominio.puerto.salida.TokenPuerto;
 import com.aldia.dominio.puerto.salida.UsuarioRepositorioPuerto;
+import com.aldia.dominio.puerto.salida.VerificadorIdentidadPuerto;
 import com.aldia.dominio.servicio.AvisosPorCiudad;
 import com.aldia.dominio.servicio.CalculadoraNivel;
 import com.aldia.dominio.servicio.PoliticaRecomendacion;
@@ -121,6 +123,18 @@ public class CasosDeUsoConfiguracion {
                                                        TokenPuerto token, HistorialRepositorioPuerto historial,
                                                        Clock reloj) {
         return new IniciarSesionServicio(usuarios, cifrador, token, historial, reloj);
+    }
+
+    @Bean
+    public IniciarSesionExternaServicio iniciarSesionExternaServicio(VerificadorIdentidadPuerto verificador,
+                                                                     UsuarioRepositorioPuerto usuarios,
+                                                                     NivelRepositorioPuerto niveles,
+                                                                     CifradorPuerto cifrador, TokenPuerto token,
+                                                                     HistorialRepositorioPuerto historial,
+                                                                     EjecutorTransaccionalPuerto transaccion,
+                                                                     Clock reloj) {
+        return new IniciarSesionExternaServicio(verificador, usuarios, niveles, cifrador, token, historial,
+                transaccion, reloj);
     }
 
     @Bean

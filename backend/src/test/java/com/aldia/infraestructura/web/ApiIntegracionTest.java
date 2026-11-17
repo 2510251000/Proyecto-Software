@@ -320,6 +320,13 @@ class ApiIntegracionTest {
     }
 
     @Test
+    void sinFirebaseConfiguradoElInicioConGoogleRespondeQueNoEstaDisponible() throws Exception {
+        JsonNode error = leer(conJson(post("/api/auth/google"), Map.of("token", "cualquiera")), 503);
+        assertThat(error.get("mensaje").asText()).contains("Google");
+        leer(conJson(post("/api/auth/google"), Map.of("token", "")), 400);
+    }
+
+    @Test
     void elNivel1NoPuedePublicarMasDeTresNoticiasAlDia() throws Exception {
         String autor = usuarioNuevo("Girardot");
         long girardot = idCiudad("Girardot");

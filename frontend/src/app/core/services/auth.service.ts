@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, from, Observable, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CLAVE_TOKEN } from '../constants/almacenamiento.constants';
 import { ENDPOINTS } from '../constants/endpoints.constants';
@@ -10,10 +10,15 @@ import { RespuestaAutenticacion } from '../models/respuesta-autenticacion.model'
 import { RespuestaRegistro } from '../models/respuesta-registro.model';
 import { SolicitudRegistro } from '../models/solicitud-registro.model';
 import { aErrorApi } from './error-http';
+import { ProveedorGoogle } from './proveedor-google';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly google = inject(ProveedorGoogle);
+
+  /** true si este ambiente tiene configurado el inicio con Google. */
+  readonly googleDisponible = environment.firebase !== null;
 
   registrar(datos: SolicitudRegistro): Observable<RespuestaRegistro> {
     return this.http
@@ -28,6 +33,26 @@ export class AuthService {
         tap((respuesta) => localStorage.setItem(CLAVE_TOKEN, respuesta.token)),
         catchError((error: HttpErrorResponse) => throwError(() => aErrorApi(error))),
       );
+  }
+
+  /**
+   * Abre la ventana de Google y, con el token que entrega Firebase, inicia sesión en el backend
+   * (que crea la cuenta si no existe). Los errores de la API llegan como ErrorApi; los de la
+   * ventana de Google, tal cual (ver codigoFirebase).
+   */
+  iniciarSesionConGoogle(): Observable<RespuestaAutenticacion> {
+    const configuracion = environment.firebase;
+    if (configuracion === null) {
+      return throwError(() => new Error('Firebase no está configurado en este ambiente'));
+    }
+    return from(this.google.obtenerToken(configuracion)).pipe(
+      switchMap((token) =>
+        this.http
+          .post<RespuestaAutenticacion>(`${environment.apiUrl}${ENDPOINTS.loginGoogle}`, { token })
+          .pipe(catchError((error: HttpErrorResponse) => throwError(() => aErrorApi(error)))),
+      ),
+      tap((respuesta) => localStorage.setItem(CLAVE_TOKEN, respuesta.token)),
+    );
   }
 
   cerrarSesion(): void {
