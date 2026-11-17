@@ -1,3 +1,5 @@
+import { ConfiguracionFirebase } from '../app/core/models/configuracion-firebase.model';
+
 // DOCKER: la aplicación compilada como en producción, para docker-compose.yml.
 // El navegador corre en la máquina del usuario, así que llega al backend por el puerto
 // que el contenedor publica en localhost, no por el nombre del servicio.
@@ -6,4 +8,6 @@ export const environment = {
   apiUrl: 'http://localhost:8080',
   /** Cada cuánto se pregunta al backend si hay notificaciones nuevas (milisegundos). */
   intervaloNotificacionesMs: 30000,
+  /** Inicio de sesión con Google (Firebase). null: el botón «Continuar con Google» no aparece. */
+  firebase: null as ConfiguracionFirebase | null,
 };

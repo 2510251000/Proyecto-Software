@@ -310,3 +310,17 @@ Rama `feature/completar-app`. Cada decisión dice qué se eligió, por qué, y c
     administrador la marca como resuelta; en ese caso se avisa a los vecinos que se resolvió.
 82. El navegador puede bloquear el sonido si el usuario no ha tocado la página todavía; el aviso
     a pantalla completa se muestra igual. (decidido por Claude Code; revisar)
+
+## Adaptación a cualquier celular (2026-11-17)
+
+83. Revisión automática de las 9 pantallas en 6 tamaños (320, 360, 390 y 412 px, celular en
+    horizontal y tableta): ninguna se sale de lado. Se corrigió: el mapa tapaba la barra de abajo
+    (`isolation: isolate`), el buscador y el municipio se cortaban a 320 px (pasan a dos filas), en
+    horizontal las barras se comían la pantalla (pasan a una línea) y los campos con letra menor de
+    16 px hacían que el iPhone acercara la pantalla.
+84. Toques de 44 px como mínimo: botones de zoom del mapa, marcadores (área invisible alrededor),
+    enlaces de las listas y «Crea una cuenta». Sin la demora del doble toque.
+85. `viewport-fit=cover` con márgenes `env(safe-area-inset-*)`: nada queda debajo de la muesca, de la
+    isla ni de la barra de gestos.
+86. La app se puede instalar en la pantalla de inicio (manifiesto, íconos de 192 y 512 px, ícono
+    adaptable de Android y de iPhone). Sin service worker por ahora: no funciona sin internet.

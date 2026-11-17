@@ -14,6 +14,7 @@ import { LONGITUD_MINIMA_CONTRASENA } from '../../../core/constants/validacion.c
 import { ErrorApi } from '../../../core/models/error-api.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { Boton } from '../../../shared/boton/boton';
+import { BotonGoogle } from '../../../shared/boton-google/boton-google';
 import { Campo } from '../../../shared/campo/campo';
 import { Logo } from '../../../shared/logo/logo';
 import { FondoNoticias } from '../fondo-noticias/fondo-noticias';
@@ -21,7 +22,7 @@ import { FondoNoticias } from '../fondo-noticias/fondo-noticias';
 /** Login: muro de noticias de fondo, el logo grande al centro y debajo el formulario. */
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, Campo, Boton, Logo, FondoNoticias],
+  imports: [ReactiveFormsModule, RouterLink, Campo, Boton, BotonGoogle, Logo, FondoNoticias],
   templateUrl: './login.html',
   styleUrls: ['../auth.css', './login.css'],
 })

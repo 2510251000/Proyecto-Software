@@ -59,3 +59,10 @@
   color: var(--color-texto);
   font: inherit;
 }
+
+/* Letra de 16 px en el celular: con menos, el iPhone acerca la pantalla al tocar la lista. */
+@media (max-width: 47.99rem), (pointer: coarse) {
+  .selector {
+    font-size: 1rem;
+  }
+}

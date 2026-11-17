@@ -49,6 +49,9 @@
       </section>
 
       <form class="seccion-papel" [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+        @if (perfil.ciudad === null) {
+          <p class="aviso-cupo" role="status">{{ textos.sinMunicipio }}</p>
+        }
         @if (guardado()) {
           <p class="aviso-exito" role="status">{{ textos.guardado }}</p>
         }
