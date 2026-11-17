@@ -1,4 +1,4 @@
-import { CANCELACIONES_GOOGLE, codigoFirebase, dominioDeInicio, esNavegadorDeApp } from './proveedor-google';
+import { CANCELACIONES_GOOGLE, codigoFirebase, destinoEnDominioDeInicio, esNavegadorDeApp } from './proveedor-google';
 
 describe('codigoFirebase', () => {
   it('saca el código de un error de Firebase', () => {
@@ -14,16 +14,19 @@ describe('codigoFirebase', () => {
   });
 });
 
-describe('dominioDeInicio', () => {
+describe('destinoEnDominioDeInicio', () => {
   const config = { apiKey: 'k', authDomain: 'p.firebaseapp.com', projectId: 'p', appId: 'a' };
+  const en = (host: string) => ({ host, pathname: '/noticias/5', search: '?q=agua', hash: '#c' });
 
-  it('en el dominio de Hosting del proyecto usa ese mismo dominio', () => {
-    expect(dominioDeInicio(config, 'p.web.app')).toBe('p.web.app');
+  it('desde PROYECTO.web.app manda a firebaseapp.com con la misma ruta', () => {
+    expect(destinoEnDominioDeInicio(config, en('p.web.app'))).toBe('https://p.firebaseapp.com/noticias/5?q=agua#c');
   });
 
-  it('en cualquier otro dominio usa el de Firebase', () => {
-    expect(dominioDeInicio(config, 'localhost:4200')).toBe('p.firebaseapp.com');
-    expect(dominioDeInicio(config, 'otro.web.app')).toBe('p.firebaseapp.com');
+  it('en firebaseapp.com, en local o en otro dominio no cambia nada', () => {
+    expect(destinoEnDominioDeInicio(config, en('p.firebaseapp.com'))).toBeNull();
+    expect(destinoEnDominioDeInicio(config, en('localhost:4200'))).toBeNull();
+    expect(destinoEnDominioDeInicio(config, en('otro.web.app'))).toBeNull();
+    expect(destinoEnDominioDeInicio({ ...config, authDomain: 'p.web.app' }, en('p.web.app'))).toBeNull();
   });
 });
 

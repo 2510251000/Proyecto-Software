@@ -11,7 +11,7 @@ export class ProveedorGoogle {
   async obtenerToken(configuracion: ConfiguracionFirebase): Promise<string> {
     const { getApps, initializeApp } = await import('firebase/app');
     const { getAuth, GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
-    const app = getApps()[0] ?? initializeApp({ ...configuracion, authDomain: dominioDeInicio(configuracion) });
+    const app = getApps()[0] ?? initializeApp(configuracion);
     const proveedor = new GoogleAuthProvider();
     // Siempre deja elegir la cuenta (en un computador compartido no entra con la última usada).
     proveedor.setCustomParameters({ prompt: 'select_account' });
@@ -21,12 +21,20 @@ export class ProveedorGoogle {
 }
 
 /**
- * Si la app corre en el dominio de Firebase Hosting del proyecto (PROYECTO.web.app), el inicio
- * de Google usa ese mismo dominio: los navegadores de celular bloquean que otro dominio
- * (PROYECTO.firebaseapp.com) guarde datos, y Firebase falla con «Unable to save initial state».
+ * Firebase Hosting publica la app en PROYECTO.web.app y en PROYECTO.firebaseapp.com. El inicio de
+ * Google vive en el segundo (authDomain): si la app corre en el primero, los navegadores de
+ * celular bloquean que ese otro dominio guarde datos y Firebase falla con «Unable to save initial
+ * state». Por eso quien entra por web.app pasa a firebaseapp.com (misma ruta). Devuelve la
+ * dirección a la que hay que ir, o null si ya está en el dominio correcto.
  */
-export function dominioDeInicio(configuracion: ConfiguracionFirebase, host = globalThis.location?.host ?? ''): string {
-  return host === `${configuracion.projectId}.web.app` ? host : configuracion.authDomain;
+export function destinoEnDominioDeInicio(
+  configuracion: ConfiguracionFirebase,
+  ubicacion: Pick<Location, 'host' | 'pathname' | 'search' | 'hash'>,
+): string | null {
+  if (ubicacion.host !== `${configuracion.projectId}.web.app` || ubicacion.host === configuracion.authDomain) {
+    return null;
+  }
+  return `https://${configuracion.authDomain}${ubicacion.pathname}${ubicacion.search}${ubicacion.hash}`;
 }
 
 /**
