@@ -24,17 +24,18 @@ export class ProveedorGoogle {
  * Firebase Hosting publica la app en PROYECTO.web.app y en PROYECTO.firebaseapp.com. El inicio de
  * Google vive en el segundo (authDomain): si la app corre en el primero, los navegadores de
  * celular bloquean que ese otro dominio guarde datos y Firebase falla con «Unable to save initial
- * state». Por eso quien entra por web.app pasa a firebaseapp.com (misma ruta). Devuelve la
- * dirección a la que hay que ir, o null si ya está en el dominio correcto.
+ * state». Por eso quien entra por web.app pasa al inicio de firebaseapp.com. Siempre a la raíz
+ * fija, sin copiar nada de la URL: así la redirección no se puede usar para mandar a otro sitio.
+ * Devuelve la dirección a la que hay que ir, o null si ya está en el dominio correcto.
  */
 export function destinoEnDominioDeInicio(
   configuracion: ConfiguracionFirebase,
-  ubicacion: Pick<Location, 'host' | 'pathname' | 'search' | 'hash'>,
+  ubicacion: Pick<Location, 'host'>,
 ): string | null {
   if (ubicacion.host !== `${configuracion.projectId}.web.app` || ubicacion.host === configuracion.authDomain) {
     return null;
   }
-  return `https://${configuracion.authDomain}${ubicacion.pathname}${ubicacion.search}${ubicacion.hash}`;
+  return `https://${configuracion.authDomain}/`;
 }
 
 /**

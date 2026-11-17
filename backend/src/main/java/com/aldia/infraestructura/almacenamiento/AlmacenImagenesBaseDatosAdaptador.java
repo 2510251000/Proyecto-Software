@@ -5,10 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
 import com.aldia.dominio.excepcion.AlmacenamientoExcepcion;
 import com.aldia.dominio.puerto.salida.AlmacenImagenesPuerto;
@@ -18,8 +16,6 @@ import com.aldia.dominio.puerto.salida.AlmacenImagenesPuerto;
  * Sirve para servidores sin disco permanente, como el plan gratuito de Render: la base de
  * Neon sí guarda todo. Las fotos llegan ya reducidas, así que ocupan poco.
  */
-@Component
-@ConditionalOnProperty(name = "aldia.imagenes.almacen", havingValue = "base-datos")
 public class AlmacenImagenesBaseDatosAdaptador implements AlmacenImagenesPuerto {
 
     private static final Pattern EXTENSION_VALIDA = Pattern.compile("^(jpg|png|webp)$");

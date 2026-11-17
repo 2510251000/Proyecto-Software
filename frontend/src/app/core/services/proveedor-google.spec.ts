@@ -16,10 +16,10 @@ describe('codigoFirebase', () => {
 
 describe('destinoEnDominioDeInicio', () => {
   const config = { apiKey: 'k', authDomain: 'p.firebaseapp.com', projectId: 'p', appId: 'a' };
-  const en = (host: string) => ({ host, pathname: '/noticias/5', search: '?q=agua', hash: '#c' });
+  const en = (host: string) => ({ host });
 
-  it('desde PROYECTO.web.app manda a firebaseapp.com con la misma ruta', () => {
-    expect(destinoEnDominioDeInicio(config, en('p.web.app'))).toBe('https://p.firebaseapp.com/noticias/5?q=agua#c');
+  it('desde PROYECTO.web.app manda al inicio fijo de firebaseapp.com', () => {
+    expect(destinoEnDominioDeInicio(config, en('p.web.app'))).toBe('https://p.firebaseapp.com/');
   });
 
   it('en firebaseapp.com, en local o en otro dominio no cambia nada', () => {
