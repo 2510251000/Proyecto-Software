@@ -34,15 +34,19 @@ describe('AuthService', () => {
   describe('con Google', () => {
     const CONFIG = { apiKey: 'k', authDomain: 'a.firebaseapp.com', projectId: 'a', appId: '1:2:web:3' };
     let obtenerToken: ReturnType<typeof vi.fn>;
+    let preparar: ReturnType<typeof vi.fn>;
+    let tokenDeRedireccion: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
       obtenerToken = vi.fn(() => Promise.resolve('token-de-google'));
+      preparar = vi.fn(() => Promise.resolve({}));
+      tokenDeRedireccion = vi.fn(() => Promise.resolve<string | null>(null));
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
         providers: [
           provideHttpClient(),
           provideHttpClientTesting(),
-          { provide: ProveedorGoogle, useValue: { obtenerToken } },
+          { provide: ProveedorGoogle, useValue: { obtenerToken, preparar, tokenDeRedireccion } },
         ],
       });
       http = TestBed.inject(HttpTestingController);
@@ -86,6 +90,49 @@ describe('AuthService', () => {
         .expectOne(`${environment.apiUrl}${ENDPOINTS.loginGoogle}`)
         .flush({ mensaje: 'Tu cuenta está desactivada' }, { status: 403, statusText: 'Forbidden' });
       expect((await error).estado).toBe(403);
+    });
+
+    it('abre Google en el mismo toque, sin esperar a que alguien se suscriba (Safari)', () => {
+      environment.firebase = CONFIG;
+      TestBed.inject(AuthService).iniciarSesionConGoogle();
+      expect(obtenerToken).toHaveBeenCalledWith(CONFIG);
+    });
+
+    it('prepararGoogle descarga Firebase solo si el ambiente lo tiene, y un fallo no rompe nada', async () => {
+      TestBed.inject(AuthService).prepararGoogle();
+      expect(preparar).not.toHaveBeenCalled();
+
+      environment.firebase = CONFIG;
+      preparar.mockReturnValueOnce(Promise.reject(new Error('sin red')));
+      TestBed.inject(AuthService).prepararGoogle();
+      expect(preparar).toHaveBeenCalledWith(CONFIG);
+      await Promise.resolve();
+    });
+
+    it('retomarGoogle entrega null sin Firebase o si no se venía de Google', async () => {
+      const servicioSinGoogle = TestBed.inject(AuthService);
+      const sinFirebase = await new Promise((listo) => servicioSinGoogle.retomarGoogle().subscribe(listo));
+      expect(sinFirebase).toBeNull();
+      expect(tokenDeRedireccion).not.toHaveBeenCalled();
+
+      environment.firebase = CONFIG;
+      const sinPendiente = await new Promise((listo) => servicioSinGoogle.retomarGoogle().subscribe(listo));
+      expect(sinPendiente).toBeNull();
+      expect(tokenDeRedireccion).toHaveBeenCalledWith(CONFIG);
+    });
+
+    it('retomarGoogle, al volver de Google, inicia sesión en el backend con su token', async () => {
+      environment.firebase = CONFIG;
+      tokenDeRedireccion.mockReturnValueOnce(Promise.resolve('token-de-redireccion'));
+      const respuesta = new Promise((listo) => TestBed.inject(AuthService).retomarGoogle().subscribe(listo));
+      await Promise.resolve();
+      await Promise.resolve();
+
+      const peticion = http.expectOne(`${environment.apiUrl}${ENDPOINTS.loginGoogle}`);
+      expect(peticion.request.body).toEqual({ token: 'token-de-redireccion' });
+      peticion.flush({ token: 'jwt-de-aldia' });
+      expect(await respuesta).toEqual({ token: 'jwt-de-aldia' });
+      expect(localStorage.getItem(CLAVE_TOKEN)).toBe('jwt-de-aldia');
     });
   });
 
