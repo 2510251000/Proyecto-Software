@@ -9,16 +9,23 @@ import { PerfilService } from '../../core/services/perfil.service';
 import { BotonGoogle } from './boton-google';
 
 describe('BotonGoogle', () => {
+  let prepararGoogle: ReturnType<typeof vi.fn>;
+
   async function crear(
     disponible: boolean,
     entrar: () => Observable<RespuestaAutenticacion>,
     perfil: () => Observable<Partial<Perfil>> = () => of({ ciudad: null }),
+    retomar: () => Observable<RespuestaAutenticacion | null> = () => of(null),
   ) {
+    prepararGoogle = vi.fn();
     TestBed.configureTestingModule({
       imports: [BotonGoogle],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { googleDisponible: disponible, iniciarSesionConGoogle: entrar } },
+        {
+          provide: AuthService,
+          useValue: { googleDisponible: disponible, iniciarSesionConGoogle: entrar, prepararGoogle, retomarGoogle: retomar },
+        },
         { provide: PerfilService, useValue: { obtener: perfil } },
       ],
     });
@@ -35,9 +42,27 @@ describe('BotonGoogle', () => {
 
   const token = () => of({ token: 'jwt' });
 
-  it('sin Firebase en el ambiente no aparece', async () => {
+  it('sin Firebase en el ambiente no aparece ni descarga nada', async () => {
     const { raiz } = await crear(false, token);
     expect(raiz.querySelector('.boton')).toBeNull();
+    expect(prepararGoogle).not.toHaveBeenCalled();
+  });
+
+  it('apenas aparece deja Firebase listo (Safari) y, si no viene de Google, queda esperando el toque', async () => {
+    const { raiz, navegar } = await crear(true, token);
+    expect(prepararGoogle).toHaveBeenCalledTimes(1);
+    expect(navegar).not.toHaveBeenCalled();
+    expect(raiz.querySelector<HTMLButtonElement>('.boton')?.disabled).toBe(false);
+  });
+
+  it('al volver de Google por redirección termina de entrar sin tocar nada', async () => {
+    const { navegar } = await crear(true, token, () => of({ ciudad: null }), () => of({ token: 'jwt' }));
+    expect(navegar).toHaveBeenCalledWith(['/', 'perfil']);
+  });
+
+  it('si la redirección de Google falla muestra el error', async () => {
+    const { raiz } = await crear(true, token, undefined, () => throwError(() => new Error('sin red')));
+    expect(raiz.querySelector('.error')?.textContent).toContain(TEXTOS_AUTH.errorGoogle);
   });
 
   it('quien entra por primera vez (sin municipio) va a su perfil', async () => {
