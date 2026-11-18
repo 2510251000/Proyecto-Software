@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, from, Observable, switchMap, tap, throwError } from 'rxjs';
+import { catchError, from, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CLAVE_TOKEN } from '../constants/almacenamiento.constants';
 import { ENDPOINTS } from '../constants/endpoints.constants';
@@ -45,12 +45,32 @@ export class AuthService {
     if (configuracion === null) {
       return throwError(() => new Error('Firebase no está configurado en este ambiente'));
     }
-    return from(this.google.obtenerToken(configuracion)).pipe(
-      switchMap((token) =>
-        this.http
-          .post<RespuestaAutenticacion>(`${environment.apiUrl}${ENDPOINTS.loginGoogle}`, { token })
-          .pipe(catchError((error: HttpErrorResponse) => throwError(() => aErrorApi(error)))),
-      ),
+    // obtenerToken se llama aquí mismo (no al suscribirse): así la ventana se abre dentro del toque.
+    return from(this.google.obtenerToken(configuracion)).pipe(switchMap((token) => this.entrarConGoogle(token)));
+  }
+
+  /** Descarga Firebase antes de que la persona toque el botón (Safari lo necesita, ver ProveedorGoogle). */
+  prepararGoogle(): void {
+    const configuracion = environment.firebase;
+    if (configuracion !== null) {
+      this.google.preparar(configuracion).catch(() => undefined); // si falla, se reintenta al tocar
+    }
+  }
+
+  /** Si la página vuelve de Google por redirección, termina de iniciar sesión; si no, entrega null. */
+  retomarGoogle(): Observable<RespuestaAutenticacion | null> {
+    const configuracion = environment.firebase;
+    if (configuracion === null) {
+      return of(null);
+    }
+    return from(this.google.tokenDeRedireccion(configuracion)).pipe(
+      switchMap((token) => (token === null ? of(null) : this.entrarConGoogle(token))),
+    );
+  }
+
+  private entrarConGoogle(token: string): Observable<RespuestaAutenticacion> {
+    return this.http.post<RespuestaAutenticacion>(`${environment.apiUrl}${ENDPOINTS.loginGoogle}`, { token }).pipe(
+      catchError((error: HttpErrorResponse) => throwError(() => aErrorApi(error))),
       tap((respuesta) => localStorage.setItem(CLAVE_TOKEN, respuesta.token)),
     );
   }
